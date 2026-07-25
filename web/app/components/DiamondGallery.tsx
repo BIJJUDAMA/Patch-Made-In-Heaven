@@ -925,16 +925,16 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         if (card === stateRef.current.openedCard) continue;
 
         card.position.y = 0;
-        card.rotation.y = u.angle + pointerSmooth.x * 0.18 * u.focus;
-        card.rotation.x = -pointerSmooth.y * 0.14 * u.focus;
+        card.rotation.y = u.angle;
+        card.rotation.x = 0;
 
         const s = 1 + 0.08 * u.focus;
         card.scale.setScalar(s);
       }
 
-      // Compute dynamic 2D screen coordinates of opened 3D card
+      // Keep opened 3D card steady facing forward without mouse pointer tilt
       if (stateRef.current.openedCard && (stateRef.current.state === "open" || stateRef.current.state === "opening")) {
-        let rotY = -stateRef.current.theta + pointer.x * 0.12;
+        let rotY = -stateRef.current.theta;
         rotY +=
           Math.round(
             (stateRef.current.openedCard.rotation.y - rotY) / (Math.PI * 2)
@@ -944,17 +944,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         stateRef.current.openedCard.rotation.y +=
           (rotY - stateRef.current.openedCard.rotation.y) * Math.min(1, dt * 4);
         stateRef.current.openedCard.rotation.x +=
-          (-pointer.y * 0.1 - stateRef.current.openedCard.rotation.x) *
-          Math.min(1, dt * 4);
+          (0 - stateRef.current.openedCard.rotation.x) * Math.min(1, dt * 4);
 
         if (overlayRef.current) {
-          const mesh = stateRef.current.openedCard;
-          const tiltX = -THREE.MathUtils.radToDeg(mesh.rotation.x);
-          const deltaY = mesh.rotation.y - (-stateRef.current.theta);
-          const tiltY = THREE.MathUtils.radToDeg(deltaY);
           const scaleVal = 0.45 + 0.55 * stateRef.current.openProgressVal;
-
-          overlayRef.current.style.transform = `translate(-50%, -50%) perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scaleVal})`;
+          overlayRef.current.style.transform = `translate(-50%, -50%) scale(${scaleVal})`;
           overlayRef.current.style.opacity = `${Math.min(1, stateRef.current.openProgressVal * 1.6)}`;
         }
       }
