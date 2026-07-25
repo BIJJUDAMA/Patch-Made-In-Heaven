@@ -1,9 +1,11 @@
-name: mcp-phase1
+name: mcp-ci
 
 on:
   push:
     branches:
+      - main
       - feat/phase-01-core-search
+      - feat/phase-03-verification-submission
     paths:
       - "mcp/**"
       - ".github/workflows/mcp-phase1.yml"
