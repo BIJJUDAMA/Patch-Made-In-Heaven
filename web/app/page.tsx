@@ -276,7 +276,7 @@ export default function Dashboard() {
 
 
 
-        {/* Main hero content — centered */}
+        {/* Main hero content — Ultra-Minimalist Monolith */}
         <div
           style={{
             flex: 1,
@@ -286,65 +286,72 @@ export default function Dashboard() {
             justifyContent: 'center',
             padding: '4rem 2rem',
             textAlign: 'center',
-            maxWidth: '760px',
+            maxWidth: '960px',
             margin: '0 auto',
             width: '100%',
             position: 'relative',
             zIndex: 2,
           }}
         >
-
-
-          {/* Title */}
+          {/* Headline */}
           <h1
-            className="stagger-2 display-font"
+            className="stagger-1 display-font"
             style={{
-              fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
+              fontSize: 'clamp(3rem, 8.5vw, 6.5rem)',
               fontWeight: 800,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.0,
-              color: 'var(--text-high)',
-              marginBottom: '1.5rem',
+              letterSpacing: '0.12em',
+              textTransform: 'uppercase',
+              lineHeight: 1.05,
+              color: '#ffffff',
+              marginBottom: '1.25rem',
             }}
           >
-            Patch Made<br />
-            <span style={{ color: 'var(--accent-primary)' }}>In Heaven</span>
+            PATCH MADE<br />IN HEAVEN
           </h1>
 
-          {/* Subtitle */}
+          {/* Monospace Subtitle */}
           <p
-            className="stagger-3"
+            className="mono-font stagger-2"
             style={{
-              fontSize: '1.0625rem',
+              fontSize: '0.8125rem',
+              letterSpacing: '0.24em',
+              textTransform: 'uppercase',
               color: 'var(--text-medium)',
-              lineHeight: 1.7,
-              fontWeight: 300,
-              maxWidth: '520px',
               marginBottom: '3rem',
             }}
           >
-            A powerful MCP server built with NitroStack. Connect directly using the Server-Sent Events endpoint:
+            Self-Healing Knowledge Base for Autonomous Agents
           </p>
 
-          {/* Endpoint card */}
+          {/* Restrained Hairline Glass Endpoint Card */}
           <div
-            className="stagger-4"
+            className="stagger-3"
             style={{
               width: '100%',
-              maxWidth: '600px',
-              backgroundColor: 'var(--surface-subtle)',
+              maxWidth: '660px',
+              backgroundColor: 'rgba(18, 18, 18, 0.75)',
+              backdropFilter: 'blur(16px)',
+              WebkitBackdropFilter: 'blur(16px)',
               border: '1px solid var(--border-strong)',
-              borderRadius: '10px',
-              padding: '1.25rem 1.5rem',
-              marginBottom: '1.5rem',
+              borderRadius: '100px',
+              padding: '0.625rem 0.625rem 0.625rem 1.5rem',
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
+              boxShadow: '0 20px 40px rgba(0, 0, 0, 0.6)',
             }}
           >
             <div
               className="endpoint-text"
-              style={{ flex: 1, textAlign: 'left', wordBreak: 'break-all', lineHeight: 1.5 }}
+              style={{
+                flex: 1,
+                textAlign: 'left',
+                wordBreak: 'break-all',
+                fontSize: '0.78rem',
+                color: '#ffffff',
+                fontFamily: 'var(--font-mono)',
+                letterSpacing: '0.02em',
+              }}
             >
               {MCP_URL}
             </div>
@@ -355,61 +362,73 @@ export default function Dashboard() {
                 flexShrink: 0,
                 display: 'flex',
                 alignItems: 'center',
-                gap: '0.375rem',
-                padding: '0.5rem 0.875rem',
-                borderRadius: '6px',
-                backgroundColor: copied ? 'var(--status-pass-subtle)' : 'var(--accent-primary)',
-                color: copied ? 'var(--status-pass)' : '#0e0e0e',
-                fontFamily: 'var(--font-body)',
+                gap: '0.5rem',
+                borderRadius: '100px',
+                padding: '0.625rem 1.25rem',
+                backgroundColor: copied ? '#ffffff' : 'rgba(255, 255, 255, 0.1)',
+                color: copied ? '#000000' : '#ffffff',
+                border: '1px solid rgba(255, 255, 255, 0.25)',
+                fontFamily: 'var(--font-mono)',
                 fontWeight: 600,
-                fontSize: '0.8125rem',
-                border: 'none',
+                fontSize: '0.75rem',
+                letterSpacing: '0.12em',
+                textTransform: 'uppercase',
                 cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'background-color 200ms ease, color 200ms ease',
+                transition: 'all 200ms ease',
               }}
             >
               {copied ? <Check style={{ width: '0.875rem', height: '0.875rem' }} /> : <Copy style={{ width: '0.875rem', height: '0.875rem' }} />}
-              {copied ? 'Copied' : 'Copy'}
+              {copied ? 'Copied' : 'Copy Endpoint'}
             </button>
           </div>
-
-          {/* CTA scroll hint */}
-          <a
-            className="stagger-5 active-press"
-            href="#tools"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: 'var(--text-low)',
-              fontSize: '0.8125rem',
-              fontFamily: 'var(--font-mono)',
-              textDecoration: 'none',
-              letterSpacing: '0.03em',
-              transition: 'color 200ms ease',
-            }}
-          >
-            View available tools
-            <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
-          </a>
         </div>
 
-        {/* Ambient glow — behind the title */}
+        {/* Architectural Bottom-Left Anchor */}
         <div
-          aria-hidden
           style={{
             position: 'absolute',
-            top: '30%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: '600px',
-            height: '400px',
-            background: 'radial-gradient(ellipse at center, rgba(232, 160, 32, 0.07) 0%, transparent 70%)',
-            pointerEvents: 'none',
-            zIndex: 0,
+            left: '3rem',
+            bottom: '2.5rem',
+            zIndex: 2,
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6875rem',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--text-low)',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.75rem',
           }}
-        />
+        >
+          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#ffffff', display: 'inline-block' }} />
+          01 / AVAILABLE TOOLS ({TOOLS.length})
+        </div>
+
+        {/* Architectural Bottom-Right Anchor */}
+        <a
+          href="#tools"
+          style={{
+            position: 'absolute',
+            right: '3rem',
+            bottom: '2.5rem',
+            zIndex: 2,
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.6875rem',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'var(--text-medium)',
+            textDecoration: 'none',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.875rem',
+            transition: 'color 200ms ease',
+          }}
+        >
+          <span>Scroll to explore</span>
+          <div style={{ width: '1px', height: '24px', backgroundColor: 'rgba(255, 255, 255, 0.25)', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ width: '100%', height: '8px', backgroundColor: '#ffffff', animation: 'scrollDot 2s ease-in-out infinite' }} />
+          </div>
+        </a>
       </section>
 
       {/* ══════════════════════════════════════════
