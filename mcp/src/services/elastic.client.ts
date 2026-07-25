@@ -1,35 +1,12 @@
 import { Client } from '@elastic/elasticsearch';
 import dotenv from 'dotenv';
+import type { KnowledgeCard, EnvironmentMeta, VerificationMeta } from '../domain/knowledge-card.js';
 
 dotenv.config();
 
-export interface EnvironmentMeta {
-  language: string;
-  version?: string;
-  framework?: string;
-  packageVersions?: Record<string, string>;
-}
-
-export interface VerificationMeta {
-  status: 'PASS' | 'FAIL';
-  score: number;
-  lastVerified: string;
-  sandbox: string;
-}
-
-export interface KnowledgeCard {
-  id: string;
-  problem: string;
-  errorType: string;
-  stacktrace?: string;
-  environment: EnvironmentMeta;
-  patch: string;
-  verification: VerificationMeta;
-  metrics: {
-    reuseCount: number;
-  };
-  embedding?: number[];
-}
+// Re-exported so existing tool imports (`from '../services/elastic.client.js'`)
+// keep resolving to the single `hm.v1` contract defined in `domain/knowledge-card.ts`.
+export type { KnowledgeCard, EnvironmentMeta, VerificationMeta };
 
 export const INDEX_NAME = 'hacksmymachine-fixes';
 
