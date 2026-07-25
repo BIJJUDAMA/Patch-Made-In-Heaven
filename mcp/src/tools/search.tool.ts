@@ -1,6 +1,26 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
-import { ElasticService } from '../services/elastic.client.js';
+import { ElasticService, type RetrievalResult } from '../services/elastic.client.js';
+import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
+
+type SearchStatus = 'HIT' | 'MISS' | 'DEGRADED';
+
+/**
+ * HIT takes priority over DEGRADED whenever real hits were found, even via lexical
+ * fallback — the data is genuine either way. DEGRADED only fires on an empty lexical
+ * result, since a hybrid search might have found something a BM25-only pass could not.
+ * `warnings` still discloses lexical fallback on the HIT path (see below).
+ */
+function deriveSearchStatus(result: RetrievalResult): SearchStatus {
+  if (result.hits.length > 0) return 'HIT';
+  return result.mode === 'lexical' ? 'DEGRADED' : 'MISS';
+}
+
+function lexicalFallbackWarnings(result: RetrievalResult): string[] {
+  return result.mode === 'lexical'
+    ? ['Semantic vector search was unavailable; results reflect BM25 lexical search only.']
+    : [];
+}
 
 const searchFixSchema = z.object({
   stacktrace: z.string().describe('The error stacktrace or error message to search for.'),
@@ -25,12 +45,19 @@ export class SearchTools {
     inputSchema: searchFixSchema,
   })
   async searchFix(params: z.infer<typeof searchFixSchema>) {
+    if (!this.elasticService.isConnected()) {
+      return dependencyUnavailableEnvelope('Elasticsearch is not configured; search_fix cannot run.');
+    }
     const result = await this.elasticService.searchFix(params);
-    return {
-      count: result.hits.length,
-      searchMode: result.mode,
-      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
-    };
+    return buildSuccessEnvelope(
+      deriveSearchStatus(result),
+      {
+        count: result.hits.length,
+        searchMode: result.mode,
+        fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
+      },
+      lexicalFallbackWarnings(result)
+    );
   }
 
   @Tool({
@@ -39,11 +66,19 @@ export class SearchTools {
     inputSchema: findSimilarSchema,
   })
   async findSimilar(params: z.infer<typeof findSimilarSchema>) {
+    if (!this.elasticService.isConnected()) {
+      return dependencyUnavailableEnvelope('Elasticsearch is not configured; find_similar cannot run.');
+    }
     const result = await this.elasticService.findSimilar(params.query, params.limit);
-    return {
-      count: result.hits.length,
-      searchMode: result.mode,
-      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
-    };
+    return buildSuccessEnvelope(
+      deriveSearchStatus(result),
+      {
+        count: result.hits.length,
+        searchMode: result.mode,
+        applicationEligible: false as const,
+        fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
+      },
+      lexicalFallbackWarnings(result)
+    );
   }
 }

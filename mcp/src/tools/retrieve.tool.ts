@@ -1,6 +1,15 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
 import { ElasticService } from '../services/elastic.client.js';
+import { buildSuccessEnvelope, buildErrorEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
+
+function notFoundEnvelope(knowledgeCardId: string) {
+  return buildErrorEnvelope('NOT_FOUND', {
+    code: 'KNOWLEDGE_CARD_NOT_FOUND',
+    message: `Knowledge card '${knowledgeCardId}' not found.`,
+    retryable: false,
+  });
+}
 
 const getPatchSchema = z.object({
   knowledgeCardId: z.string().describe('Unique identifier of the verified knowledge card.'),
@@ -20,18 +29,17 @@ export class RetrieveTools {
     inputSchema: getPatchSchema,
   })
   async getPatch(params: z.infer<typeof getPatchSchema>) {
+    if (!this.elasticService.isConnected()) {
+      return dependencyUnavailableEnvelope('Elasticsearch is not configured; get_patch cannot run.');
+    }
     const card = await this.elasticService.getFixById(params.knowledgeCardId);
     if (!card) {
-      return {
-        found: false,
-        error: `Knowledge card '${params.knowledgeCardId}' not found.`,
-      };
+      return notFoundEnvelope(params.knowledgeCardId);
     }
-    return {
-      found: true,
+    return buildSuccessEnvelope('OK', {
       id: card.id,
       unifiedDiff: card.patch,
-    };
+    });
   }
 
   @Tool({
@@ -40,21 +48,20 @@ export class RetrieveTools {
     inputSchema: getExecutionLogSchema,
   })
   async getExecutionLog(params: z.infer<typeof getExecutionLogSchema>) {
+    if (!this.elasticService.isConnected()) {
+      return dependencyUnavailableEnvelope('Elasticsearch is not configured; get_execution_log cannot run.');
+    }
     const card = await this.elasticService.getFixById(params.knowledgeCardId);
     if (!card) {
-      return {
-        found: false,
-        error: `Knowledge card '${params.knowledgeCardId}' not found.`,
-      };
+      return notFoundEnvelope(params.knowledgeCardId);
     }
-    return {
-      found: true,
+    return buildSuccessEnvelope('OK', {
       id: card.id,
       verification: card.verification,
       stdout: card.verification.stdout ?? '',
       stderr: card.verification.stderr ?? '',
       exitCode: card.verification.exitCode ?? null,
       durationMs: card.verification.durationMs ?? null,
-    };
+    });
   }
 }
