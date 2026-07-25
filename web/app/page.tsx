@@ -809,8 +809,8 @@ export default function Dashboard() {
             </div>
           </div>
 
-          {/* 3-Pane Inspector Grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 300px', gap: '1rem', alignItems: 'stretch' }}>
+{/* 3-Pane Inspector Grid */}
+           <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 300px', gap: '1rem', alignItems: 'stretch', maxHeight: 'calc(100vh - 320px)' }}>
 
             {/* ── Pane 1: Card List ── */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
