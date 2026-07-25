@@ -22,67 +22,67 @@ interface Props {
   onSelectTool?: (tool: ToolItem) => void;
 }
 
-// ── Draw Card Canvas Texture for 3D Shader ─────────────────────────────────────
+// ── Draw Card Canvas Texture matching Editorial Dark Zen theme ────────────────
 function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 800;
   canvas.height = 800;
   const ctx = canvas.getContext("2d")!;
 
-  // Dark luxurious background
+  // Background matching site theme (--surface-subtle #161616 to --bg-app #0e0e0e)
   const bg = ctx.createLinearGradient(0, 0, 800, 800);
-  bg.addColorStop(0, "#0a0710");
-  bg.addColorStop(0.5, "#140e1f");
-  bg.addColorStop(1, "#050308");
+  bg.addColorStop(0, "#1c1c1c");
+  bg.addColorStop(0.5, "#141414");
+  bg.addColorStop(1, "#0e0e0e");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 800, 800);
 
-  // Geometric subtle pattern
-  ctx.strokeStyle = "rgba(201, 168, 118, 0.08)";
+  // Geometric subtle noise pattern line
+  ctx.strokeStyle = "rgba(232, 160, 32, 0.06)";
   ctx.lineWidth = 1;
-  for (let i = 0; i < 800; i += 80) {
+  for (let i = 0; i < 800; i += 70) {
     ctx.beginPath();
     ctx.moveTo(i, 0);
-    ctx.lineTo(i + 400, 800);
+    ctx.lineTo(i + 350, 800);
     ctx.stroke();
   }
 
-  // Border frame inner line
-  ctx.strokeStyle = "rgba(201, 168, 118, 0.3)";
+  // Border frame inner line (--accent-primary-border)
+  ctx.strokeStyle = "rgba(232, 160, 32, 0.35)";
   ctx.lineWidth = 2;
   ctx.strokeRect(30, 30, 740, 740);
 
-  // Number Badge
-  ctx.font = 'bold 36px "SF Mono", "Courier New", monospace';
-  ctx.fillStyle = "#c9a876";
+  // Number Badge (--accent-primary #e8a020, --font-mono)
+  ctx.font = '600 36px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.fillStyle = "#e8a020";
   ctx.fillText(`/ ${tool.num}`, 70, 110);
 
-  // Tag Pill
-  ctx.font = 'bold 22px "SF Mono", "Courier New", monospace';
-  ctx.fillStyle = "rgba(245, 241, 232, 0.6)";
+  // Tag Pill (--text-medium #a09a90, --font-mono)
+  ctx.font = '500 22px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.fillStyle = "#a09a90";
   const tagWidth = ctx.measureText(tool.tag).width;
   ctx.fillText(tool.tag, 730 - tagWidth, 105);
 
-  // Tool Title (Serif Italic)
-  ctx.font = 'italic 58px "Playfair Display", "Didot", Georgia, serif';
-  ctx.fillStyle = "#f5f1e8";
-  
+  // Tool Title (Syne Display Font --font-display, --text-high #f0ede8)
+  ctx.font = '700 56px "Syne", system-ui, sans-serif';
+  ctx.fillStyle = "#f0ede8";
+
   const titleWords = tool.name.split("_");
   let y = 260;
   for (const word of titleWords) {
     ctx.fillText(word, 70, y);
-    y += 70;
+    y += 66;
   }
 
-  // Gold Divider Line
-  ctx.fillStyle = "#c9a876";
-  ctx.fillRect(70, y + 10, 120, 3);
+  // Amber Accent Line
+  ctx.fillStyle = "#e8a020";
+  ctx.fillRect(70, y + 10, 100, 3);
 
-  // Description
+  // Description (DM Sans Body Font --font-body, --text-medium #a09a90)
   y += 70;
-  ctx.font = '26px "SF Mono", "Courier New", monospace';
-  ctx.fillStyle = "rgba(245, 241, 232, 0.75)";
-  
+  ctx.font = '300 26px "DM Sans", system-ui, sans-serif';
+  ctx.fillStyle = "#a09a90";
+
   const words = tool.desc.split(" ");
   let line = "";
   const maxWidth = 660;
@@ -101,10 +101,10 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   }
   ctx.fillText(line, 70, y);
 
-  // Arrow & MCP Branding Footer
-  ctx.font = 'bold 22px "SF Mono", "Courier New", monospace';
-  ctx.fillStyle = "#c9a876";
-  ctx.fillText("NITROCLOUD MCP TOOL →", 70, 710);
+  // Arrow & NitroCloud MCP Footer (--font-mono)
+  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.fillStyle = "#e8a020";
+  ctx.fillText("NITROCLOUD MCP TOOL →", 70, 715);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -259,11 +259,11 @@ const cardFragmentShader = /* glsl */ `
     float glass = pow(max(dot(reflect(-L, Nf), V), 0.0), 22.0);
 
     if (backFace) {
-      image = vec3(0.03, 0.02, 0.08) + iri * 0.15;
+      image = vec3(0.05, 0.04, 0.03) + iri * 0.15;
     }
 
-    vec3 crystal = mix(iri, vec3(0.72, 0.85, 1.0), 0.5);
-    vec3 iceGleam = mix(iri, vec3(0.5, 0.72, 1.0), 0.45);
+    vec3 crystal = mix(iri, vec3(0.91, 0.63, 0.13), 0.5); // Warm Amber Gold crystal reflection
+    vec3 iceGleam = mix(iri, vec3(0.9, 0.7, 0.3), 0.45);
     vec3 imgTint = 0.25 + 0.75 * image;
     vec3 iriChroma = iri - dot(iri, vec3(0.299, 0.587, 0.114));
     vec3 color = image * (0.98 + 0.05 * uFocus + 0.025 * sweep)
@@ -279,11 +279,11 @@ const cardFragmentShader = /* glsl */ `
     color += crystal * sheen * 0.10;
 
     float metalSheen = pow(0.5 + 0.5 * sin((vUv.x - vUv.y) * 5.0 + bandBase * 3.0 + uTime * 0.3), 8.0);
-    vec3 silver = mix(vec3(0.52, 0.55, 0.62), vec3(0.94, 0.96, 1.0), bevel);
+    vec3 silver = mix(vec3(0.65, 0.52, 0.32), vec3(0.95, 0.85, 0.65), bevel); // Amber Gold Frame
     silver *= 0.88 + 0.35 * fres;
     silver += iri * metalSheen * 0.9;
     silver += iri * 0.07;
-    silver += vec3(0.9, 0.92, 0.95) * sweepCore * 0.45 * holo;
+    silver += vec3(0.95, 0.85, 0.65) * sweepCore * 0.45 * holo;
     silver += iri * sweepFringe * 0.15 * holo;
     silver += crystal * sheen * 0.25;
     color = mix(color, silver, frame * 0.95);
@@ -333,7 +333,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     const OPEN_DISTANCE = 5;
 
     const params = {
-      bloomStrength: 0.15,
+      bloomStrength: 0.12,
       bloomRadius: 0.4,
       bloomThreshold: 0.85,
       holo: 1.0,
@@ -344,9 +344,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       floorGlow: 0.55,
     };
 
-    // Scene setup
+    // Scene setup — Dark Warm Charcoal bg matching --bg-app (#0e0e0e)
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x010102);
+    scene.background = new THREE.Color(0x0e0e0e);
 
     const camera = new THREE.PerspectiveCamera(
       55,
@@ -427,7 +427,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       clipBias: 0.003,
       textureWidth: 1024,
       textureHeight: 1024,
-      color: 0x1e1c26,
+      color: 0x1e1e1e,
     });
     mirror.rotation.x = -Math.PI / 2;
     mirror.position.y = FLOOR_Y;
@@ -447,7 +447,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             float d = length(vUv - 0.5) * 2.0;
             float fade = smoothstep(0.12, 0.85, d);
             float alpha = 1.0 - uStrength * (1.0 - fade);
-            gl_FragColor = vec4(vec3(0.0), alpha);
+            gl_FragColor = vec4(vec3(0.055), alpha);
           }
         `,
       })
@@ -472,7 +472,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             float ring = exp(-pow((d - 0.92) * 55.0, 2.0));
             float front = mix(0.15, 1.0, pow(1.0 - vUv.y, 1.8));
             float glow = ring * front * uGlow;
-            gl_FragColor = vec4(vec3(0.92, 0.7, 0.42), glow);
+            gl_FragColor = vec4(vec3(0.91, 0.63, 0.13), glow);
           }
         `,
       })
@@ -889,118 +889,36 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   }, [tools, onSelectTool]);
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        position: "relative",
-        width: "100%",
-        height: "650px",
-        background: "#010102",
-        overflow: "hidden",
-        userSelect: "none",
-      }}
-    >
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: "absolute",
-          inset: 0,
-          width: "100%",
-          height: "100%",
-          display: "block",
-          zIndex: 0,
-          touchAction: "none",
-        }}
-      />
-      {/* Glow Overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 1,
-          pointerEvents: "none",
-          background: `
-            radial-gradient(ellipse 42% 18% at 50% 74%, rgba(255, 198, 130, 0.06), transparent 70%),
-            radial-gradient(ellipse 46% 34% at 50% 50%, rgba(130, 110, 255, 0.05), transparent 70%)
-          `,
-        }}
-      />
+    <div ref={containerRef} className="dg-container">
+      <canvas ref={canvasRef} className="dg-canvas" />
+
+      {/* Radial Glow Overlay matching site accent */}
+      <div className="dg-glow" />
 
       {/* Counter & Panel Right */}
-      <div
-        style={{
-          position: "absolute",
-          right: "2rem",
-          top: "2.5rem",
-          zIndex: 10,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: "1.2rem",
-          pointerEvents: "none",
-        }}
-      >
-        <div style={{ textAlign: "right" }}>
-          <span
-            style={{
-              fontFamily: '"SF Mono", "Courier New", monospace',
-              fontSize: "0.85rem",
-              letterSpacing: "0.12em",
-              color: "#f5f1e8",
-            }}
-          >
+      <div className="dg-panel-right">
+        <div>
+          <span className="dg-counter-idx">
             / {String(activeIndex + 1).padStart(2, "0")}
           </span>
-          <span
-            style={{
-              display: "block",
-              marginTop: "0.3rem",
-              fontFamily: '"SF Mono", "Courier New", monospace',
-              fontSize: "0.55rem",
-              letterSpacing: "0.3em",
-              textTransform: "uppercase",
-              color: "rgba(201, 168, 118, 0.65)",
-            }}
-          >
+          <span className="dg-counter-title">
             {tools[activeIndex]?.name || "Tool"}
           </span>
         </div>
 
         {/* Arrow Navigation */}
-        <div style={{ display: "flex", gap: "0.6rem", pointerEvents: "auto" }}>
+        <div style={{ display: "flex", gap: "0.5rem", pointerEvents: "auto" }}>
           <button
+            className="dg-circle-btn"
             onClick={() => stateRef.current.stepCard(-1)}
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              border: "1px solid rgba(245, 241, 232, 0.28)",
-              background: "none",
-              color: "#f5f1e8",
-              cursor: "pointer",
-              display: "grid",
-              placeItems: "center",
-              fontSize: "0.9rem",
-              transition: "all 0.3s",
-            }}
+            title="Previous tool"
           >
             ←
           </button>
           <button
+            className="dg-circle-btn"
             onClick={() => stateRef.current.stepCard(1)}
-            style={{
-              width: "38px",
-              height: "38px",
-              borderRadius: "50%",
-              border: "1px solid rgba(245, 241, 232, 0.28)",
-              background: "none",
-              color: "#f5f1e8",
-              cursor: "pointer",
-              display: "grid",
-              placeItems: "center",
-              fontSize: "0.9rem",
-              transition: "all 0.3s",
-            }}
+            title="Next tool"
           >
             →
           </button>
@@ -1008,97 +926,38 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       </div>
 
       {/* Bottom Thumbnail Strip */}
-      <div
-        style={{
-          position: "absolute",
-          bottom: "1.8rem",
-          left: "50%",
-          transform: "translateX(-50%)",
-          zIndex: 10,
-          display: "flex",
-          alignItems: "center",
-          gap: "0.8rem",
-          pointerEvents: "auto",
-        }}
-      >
+      <div className="dg-thumb-strip">
         <button
+          className="dg-circle-btn"
+          style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
           onClick={() => stateRef.current.stepCard(-1)}
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            border: "1px solid rgba(245, 241, 232, 0.28)",
-            background: "none",
-            color: "#f5f1e8",
-            cursor: "pointer",
-            display: "grid",
-            placeItems: "center",
-            fontSize: "0.8rem",
-          }}
         >
           ←
         </button>
 
-        <div style={{ display: "flex", gap: "0.6rem" }}>
+        <div style={{ display: "flex", gap: "0.5rem" }}>
           {tools.map((t, idx) => (
-            <div
+            <button
               key={t.num}
               onClick={() => stateRef.current.goToCard(idx)}
-              style={{
-                padding: "6px 14px",
-                borderRadius: "3px",
-                border:
-                  idx === activeIndex
-                    ? "1px solid #c9a876"
-                    : "1px solid rgba(245, 241, 232, 0.16)",
-                background: idx === activeIndex ? "rgba(201, 168, 118, 0.15)" : "#010102",
-                color: idx === activeIndex ? "#c9a876" : "rgba(245, 241, 232, 0.5)",
-                fontFamily: '"SF Mono", "Courier New", monospace',
-                fontSize: "0.65rem",
-                letterSpacing: "0.1em",
-                cursor: "pointer",
-                transition: "all 0.3s",
-              }}
+              className={`dg-thumb-pill${idx === activeIndex ? " active" : ""}`}
             >
               {t.num} {t.name.split("_")[0]}
-            </div>
+            </button>
           ))}
         </div>
 
         <button
+          className="dg-circle-btn"
+          style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
           onClick={() => stateRef.current.stepCard(1)}
-          style={{
-            width: "32px",
-            height: "32px",
-            borderRadius: "50%",
-            border: "1px solid rgba(245, 241, 232, 0.28)",
-            background: "none",
-            color: "#f5f1e8",
-            cursor: "pointer",
-            display: "grid",
-            placeItems: "center",
-            fontSize: "0.8rem",
-          }}
         >
           →
         </button>
       </div>
 
       {/* Bottom Hint */}
-      <div
-        style={{
-          position: "absolute",
-          left: "2rem",
-          bottom: "1.8rem",
-          zIndex: 10,
-          fontFamily: '"SF Mono", "Courier New", monospace',
-          fontSize: "0.58rem",
-          letterSpacing: "0.25em",
-          textTransform: "uppercase",
-          color: "rgba(245, 241, 232, 0.45)",
-          pointerEvents: "none",
-        }}
-      >
+      <div className="dg-hint">
         DRAG OR USE ARROWS TO EXPLORE &nbsp;·&nbsp; CLICK TO ZOOM
       </div>
     </div>
