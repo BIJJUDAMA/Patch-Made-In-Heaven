@@ -2,6 +2,7 @@ import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitro
 import { z } from 'zod';
 import { createTwoFilesPatch } from 'diff';
 import { SandboxClient } from '../services/sandbox.client.js';
+import type { SandboxProvider } from '../services/sandbox-provider.js';
 import { VerificationRunClient } from '../services/verification-run.client.js';
 import { environmentMetaSchema } from '../domain/knowledge-card.js';
 import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
@@ -20,13 +21,13 @@ const verifyFixSchema = z.object({
 type VerifyStatus = 'PASS' | 'FAIL' | 'TIMEOUT';
 
 export interface VerifyToolsOptions {
-  sandboxClient?: SandboxClient;
+  sandboxClient?: SandboxProvider;
   verificationRunClient?: VerificationRunClient;
 }
 
 @Controller()
 export class VerifyTools {
-  private sandboxClient: SandboxClient;
+  private sandboxClient: SandboxProvider;
   private verificationRunClient: VerificationRunClient;
 
   constructor(options: VerifyToolsOptions = {}) {
