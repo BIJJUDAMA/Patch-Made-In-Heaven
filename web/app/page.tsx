@@ -14,6 +14,11 @@ import {
   Copy,
   Check,
   ChevronDown,
+  Cpu,
+  Database,
+  Hash,
+  Activity,
+  Box,
 } from 'lucide-react';
 
 export interface KnowledgeCardView {
@@ -219,12 +224,12 @@ export default function Dashboard() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)', color: 'var(--text-high)' }}>
-      {/* Clean Apple Minimalist Header */}
+      {/* Clean Header */}
       <header
         style={{
           borderBottom: '1px solid var(--border-muted)',
           backgroundColor: 'var(--surface-subtle)',
-          padding: '1.5rem 3.5rem',
+          padding: '1.25rem 3rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -295,9 +300,9 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Apple Minimal Viewport */}
-      <main style={{ maxWidth: '1600px', margin: '0 auto', padding: '4rem 3.5rem 6rem' }}>
-        {/* Connection Error Banner */}
+      {/* Main Viewport Container */}
+      <main style={{ maxWidth: '1720px', margin: '0 auto', padding: '3rem 3rem 6rem' }}>
+        {/* Error Alert */}
         {error && (
           <div
             style={{
@@ -320,13 +325,13 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Custom Apple Smooth Floating Dropdowns & Search Controls */}
+        {/* Custom Apple Floating Dropdowns & Search Controls */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: '2fr 1fr 1fr',
-            gap: '1.75rem',
-            marginBottom: '3.5rem',
+            gap: '1.5rem',
+            marginBottom: '3rem',
           }}
         >
           {/* Search Bar */}
@@ -590,11 +595,11 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Master / Detail Split View */}
-        <div style={{ display: 'grid', gridTemplateColumns: '440px 1fr', gap: '3.5rem' }}>
-          {/* Card List Sidebar */}
+        {/* 3-Pane Ergonomic Split Architecture */}
+        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr 340px', gap: '2rem' }}>
+          {/* Pane 1: Master Card List */}
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
                 Knowledge Base ({filteredCards.length})
               </h2>
@@ -622,7 +627,7 @@ export default function Dashboard() {
             {loading ? (
               <div
                 style={{
-                  padding: '6rem 2rem',
+                  padding: '5rem 2rem',
                   textAlign: 'center',
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
@@ -636,7 +641,7 @@ export default function Dashboard() {
             ) : filteredCards.length === 0 ? (
               <div
                 style={{
-                  padding: '6rem 2rem',
+                  padding: '5rem 2rem',
                   textAlign: 'center',
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
@@ -653,10 +658,10 @@ export default function Dashboard() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1.25rem',
-                  maxHeight: 'calc(100vh - 320px)',
+                  gap: '1rem',
+                  maxHeight: 'calc(100vh - 300px)',
                   overflowY: 'auto',
-                  paddingRight: '0.5rem',
+                  paddingRight: '0.375rem',
                 }}
               >
                 {filteredCards.map((card) => {
@@ -669,19 +674,19 @@ export default function Dashboard() {
                       onClick={() => setSelectedCard(card)}
                       className="active-press"
                       style={{
-                        padding: '1.5rem',
+                        padding: '1.25rem',
                         borderRadius: '10px',
                         backgroundColor: isSelected ? 'var(--surface-panel)' : 'var(--surface-subtle)',
                         border: isSelected ? '1px solid var(--border-strong)' : '1px solid var(--border-muted)',
                         cursor: 'pointer',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.875rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                         <span
                           style={{
                             fontSize: '0.7rem',
                             fontWeight: 600,
-                            padding: '0.25rem 0.625rem',
+                            padding: '0.2rem 0.5rem',
                             borderRadius: '10px',
                             backgroundColor: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid var(--border-muted)',
@@ -706,11 +711,11 @@ export default function Dashboard() {
 
                       <h3
                         style={{
-                          margin: '0 0 0.875rem',
+                          margin: '0 0 0.75rem',
                           fontSize: '0.875rem',
                           fontWeight: 600,
                           color: 'var(--text-high)',
-                          lineHeight: 1.5,
+                          lineHeight: 1.45,
                         }}
                       >
                         {card.problem}
@@ -723,7 +728,7 @@ export default function Dashboard() {
                           alignItems: 'center',
                           fontSize: '0.75rem',
                           color: 'var(--text-low)',
-                          paddingTop: '0.875rem',
+                          paddingTop: '0.625rem',
                           borderTop: '1px solid var(--border-muted)',
                         }}
                       >
@@ -741,7 +746,7 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Card Detail Panel */}
+          {/* Pane 2: Middle Diff & Execution Evidence Inspector */}
           <div>
             {selectedCard ? (
               <div
@@ -749,12 +754,12 @@ export default function Dashboard() {
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
-                  padding: '2.5rem',
+                  padding: '2rem',
                 }}
               >
                 {/* Header Metadata */}
-                <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '2rem', marginBottom: '2rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.25rem' }}>
+                <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
                     <div
                       style={{
                         fontFamily: "'JetBrains Mono', monospace",
@@ -769,61 +774,33 @@ export default function Dashboard() {
                       {selectedCard.id}
                     </div>
 
-                    <div style={{ display: 'flex', gap: '0.875rem', alignItems: 'center' }}>
-                      <span
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.375rem',
-                          fontSize: '0.75rem',
-                          color: 'var(--text-medium)',
-                          backgroundColor: 'var(--bg-app)',
-                          padding: '0.375rem 0.75rem',
-                          borderRadius: '10px',
-                          border: '1px solid var(--border-muted)',
-                        }}
-                      >
-                        <Clock style={{ width: '0.75rem', height: '0.75rem' }} />
-                        {selectedCard.verification?.durationMs ?? 100}ms
-                      </span>
-
-                      <span
-                        style={{
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.375rem',
-                          fontSize: '0.75rem',
-                          fontWeight: 600,
-                          color: '#34d399',
-                          backgroundColor: 'var(--status-pass-subtle)',
-                          padding: '0.375rem 0.875rem',
-                          borderRadius: '10px',
-                          border: '1px solid var(--status-pass-border)',
-                        }}
-                      >
-                        <CheckCircle2 style={{ width: '0.875rem', height: '0.875rem' }} />
-                        VERIFIED {selectedCard.verification?.status}
-                      </span>
-                    </div>
+                    <span
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '0.375rem',
+                        fontSize: '0.75rem',
+                        fontWeight: 600,
+                        color: '#34d399',
+                        backgroundColor: 'var(--status-pass-subtle)',
+                        padding: '0.375rem 0.875rem',
+                        borderRadius: '10px',
+                        border: '1px solid var(--status-pass-border)',
+                      }}
+                    >
+                      <CheckCircle2 style={{ width: '0.875rem', height: '0.875rem' }} />
+                      VERIFIED {selectedCard.verification?.status}
+                    </span>
                   </div>
 
-                  <h2 style={{ margin: '1.25rem 0 1rem', fontSize: '1.375rem', fontWeight: 700, color: 'var(--text-high)', lineHeight: 1.4 }}>
+                  <h2 style={{ margin: '1rem 0 0.5rem', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-high)', lineHeight: 1.4 }}>
                     {selectedCard.problem}
                   </h2>
-
-                  <div style={{ display: 'flex', gap: '2rem', fontSize: '0.8125rem', color: 'var(--text-medium)', marginTop: '1rem' }}>
-                    <span>Runtime: <strong style={{ color: 'var(--text-high)' }}>{selectedCard.environment?.language}</strong></span>
-                    {selectedCard.environment?.framework && (
-                      <span>Framework: <strong style={{ color: 'var(--text-high)' }}>{selectedCard.environment.framework}</strong></span>
-                    )}
-                    <span>Class: <strong style={{ color: 'var(--text-high)' }}>{selectedCard.errorType}</strong></span>
-                    <span>Reuse Hits: <strong style={{ color: 'var(--text-high)' }}>{selectedCard.metrics?.reuseCount || 0}</strong></span>
-                  </div>
                 </div>
 
                 {/* Tab Switcher */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-muted)', marginBottom: '2rem', paddingBottom: '0.875rem' }}>
-                  <div style={{ display: 'flex', gap: '0.875rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-muted)', marginBottom: '1.5rem', paddingBottom: '0.75rem' }}>
+                  <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button
                       onClick={() => setActiveTab('diff')}
                       className="active-press"
@@ -831,7 +808,7 @@ export default function Dashboard() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        padding: '0.5rem 1.25rem',
+                        padding: '0.5rem 1.125rem',
                         borderRadius: '10px',
                         border: 'none',
                         backgroundColor: activeTab === 'diff' ? 'var(--surface-panel)' : 'transparent',
@@ -852,7 +829,7 @@ export default function Dashboard() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        padding: '0.5rem 1.25rem',
+                        padding: '0.5rem 1.125rem',
                         borderRadius: '10px',
                         border: 'none',
                         backgroundColor: activeTab === 'logs' ? 'var(--surface-panel)' : 'transparent',
@@ -863,7 +840,7 @@ export default function Dashboard() {
                       }}
                     >
                       <Terminal style={{ width: '1rem', height: '1rem' }} />
-                      Verification Run Log
+                      Verification Logs
                     </button>
 
                     <button
@@ -873,7 +850,7 @@ export default function Dashboard() {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '0.5rem',
-                        padding: '0.5rem 1.25rem',
+                        padding: '0.5rem 1.125rem',
                         borderRadius: '10px',
                         border: 'none',
                         backgroundColor: activeTab === 'trace' ? 'var(--surface-panel)' : 'transparent',
@@ -884,7 +861,7 @@ export default function Dashboard() {
                       }}
                     >
                       <Layers style={{ width: '1rem', height: '1rem' }} />
-                      Original Stacktrace
+                      Stacktrace
                     </button>
                   </div>
 
@@ -905,7 +882,7 @@ export default function Dashboard() {
                       }}
                     >
                       {copied ? <Check style={{ width: '0.875rem', height: '0.875rem' }} /> : <Copy style={{ width: '0.875rem', height: '0.875rem' }} />}
-                      {copied ? 'Copied Diff' : 'Copy Diff'}
+                      {copied ? 'Copied' : 'Copy Diff'}
                     </button>
                   )}
                 </div>
@@ -925,7 +902,7 @@ export default function Dashboard() {
                 )}
 
                 {activeTab === 'logs' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                     <div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                         Captured STDOUT Output
@@ -971,36 +948,6 @@ export default function Dashboard() {
                         </pre>
                       </div>
                     )}
-
-                    <div
-                      style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(3, 1fr)',
-                        gap: '1.25rem',
-                        backgroundColor: 'var(--bg-app)',
-                        border: '1px solid var(--border-muted)',
-                        padding: '1.25rem',
-                        borderRadius: '10px',
-                        fontSize: '0.8125rem',
-                      }}
-                    >
-                      <div>
-                        <div style={{ color: 'var(--text-low)', fontSize: '0.75rem' }}>Sandbox Engine</div>
-                        <strong style={{ color: 'var(--text-high)' }}>{selectedCard.verification?.sandbox || 'docker'}</strong>
-                      </div>
-                      <div>
-                        <div style={{ color: 'var(--text-low)', fontSize: '0.75rem' }}>Exit Code</div>
-                        <strong style={{ color: selectedCard.verification?.exitCode === 0 ? '#34d399' : '#f87171' }}>
-                          {selectedCard.verification?.exitCode ?? 0}
-                        </strong>
-                      </div>
-                      <div>
-                        <div style={{ color: 'var(--text-low)', fontSize: '0.75rem' }}>Last Verified Date</div>
-                        <strong style={{ color: 'var(--text-high)' }}>
-                          {new Date(selectedCard.verification?.lastVerified || Date.now()).toLocaleDateString()}
-                        </strong>
-                      </div>
-                    </div>
                   </div>
                 )}
 
@@ -1031,12 +978,131 @@ export default function Dashboard() {
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
-                  padding: '7rem 2rem',
+                  padding: '6rem 2rem',
                   textAlign: 'center',
                   color: 'var(--text-low)',
                 }}
               >
                 Select a Knowledge Entry on the left to inspect execution evidence.
+              </div>
+            )}
+          </div>
+
+          {/* Pane 3: Right Context & Provenance Drawer */}
+          <div>
+            {selectedCard ? (
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-subtle)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-muted)',
+                  padding: '1.75rem',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.5rem',
+                }}
+              >
+                <h3 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
+                  Entry Metadata & Context
+                </h3>
+
+                {/* Runtime & Class info */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Language Runtime</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        {selectedCard.environment?.language} {selectedCard.environment?.version ? `(${selectedCard.environment.version})` : ''}
+                      </div>
+                    </div>
+                  </div>
+
+                  {selectedCard.environment?.framework && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                      <div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Framework</div>
+                        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                          {selectedCard.environment.framework}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Error Class</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        {selectedCard.errorType}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Sandbox Run Evidence */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Execution Duration</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        {selectedCard.verification?.durationMs ?? 100} ms
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Sandbox Provider</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        {selectedCard.verification?.sandbox || 'docker'}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
+                    <div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Last Verified</div>
+                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        {new Date(selectedCard.verification?.lastVerified || Date.now()).toLocaleDateString()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Provenance & Metrics */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
+                    <span style={{ color: 'var(--text-low)' }}>Reuse Hits</span>
+                    <strong style={{ color: 'var(--text-high)' }}>{selectedCard.metrics?.reuseCount || 0}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
+                    <span style={{ color: 'var(--text-low)' }}>Source</span>
+                    <strong style={{ color: 'var(--text-high)' }}>{selectedCard.provenance?.source || 'seed'}</strong>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
+                    <span style={{ color: 'var(--text-low)' }}>Confidence Score</span>
+                    <strong style={{ color: '#34d399' }}>{(selectedCard.verification?.score * 100).toFixed(0)}%</strong>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-subtle)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-muted)',
+                  padding: '4rem 1.5rem',
+                  textAlign: 'center',
+                  color: 'var(--text-low)',
+                  fontSize: '0.8125rem',
+                }}
+              >
+                No active selection
               </div>
             )}
           </div>

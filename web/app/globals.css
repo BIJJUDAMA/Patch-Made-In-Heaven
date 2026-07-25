@@ -3,28 +3,28 @@
 @tailwind utilities;
 
 :root {
-  /* Apple Minimal Monochrome Palette (Eye-Comfortable Warm Off-Black/Off-White) */
-  --bg-app: #0e0e10;
-  --surface-subtle: #16161a;
-  --surface-panel: #1e1e24;
-  --surface-hover: #262630;
-  --surface-active: #2e2e3a;
+  /* Refined Quartz Slate & Emerald/Rose Functional Palette */
+  --bg-app: #08090c;
+  --surface-subtle: #111319;
+  --surface-panel: #181b24;
+  --surface-hover: #202430;
+  --surface-active: #272c3b;
 
-  /* Status Accents (Functional, Low-Saturation Monochrome-Aligned) */
+  /* Functional Status Accents */
   --status-pass: #34d399;
-  --status-pass-subtle: rgba(52, 211, 153, 0.1);
-  --status-pass-border: rgba(52, 211, 153, 0.25);
+  --status-pass-subtle: rgba(52, 211, 153, 0.08);
+  --status-pass-border: rgba(52, 211, 153, 0.22);
 
   --status-fail: #f87171;
-  --status-fail-subtle: rgba(248, 113, 113, 0.1);
-  --status-fail-border: rgba(248, 113, 113, 0.25);
+  --status-fail-subtle: rgba(248, 113, 113, 0.08);
+  --status-fail-border: rgba(248, 113, 113, 0.22);
 
-  /* Precise Subtle Borders */
+  /* Precise Quartz Borders */
   --border-muted: rgba(255, 255, 255, 0.07);
   --border-strong: rgba(255, 255, 255, 0.15);
 
   /* Typography Scale */
-  --text-high: #f1f5f9;
+  --text-high: #f8fafc;
   --text-medium: #94a3b8;
   --text-low: #64748b;
 
@@ -54,15 +54,15 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: #232733;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #32384a;
 }
 
-/* Apple Fluid Active Press Scale */
+/* Apple Fluid Active Scale Feedback */
 .active-press {
   transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease, border-color 150ms ease;
 }
