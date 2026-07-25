@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "hackoverflow": {
+      "command": "node",
+      "args": ["dist/index.js"]
+    }
+  }
+}

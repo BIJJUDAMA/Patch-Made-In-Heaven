@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "hackoverflow": {
+      "command": "node",
+      "args": ["C:/My-Files/College/Hackthons/Nitrostack-Hackathon/mcp/dist/index.js"]
+    }
+  }
+}
