@@ -18,10 +18,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:53.840Z",
+      "lastVerified": "2026-07-25T14:47:44.693Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 99,
+      "durationMs": 98,
       "stdout": "hello world\n",
       "stderr": ""
     },
@@ -31,7 +31,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:53.840Z"
+      "addedAt": "2026-07-25T14:47:44.693Z"
     }
   },
   {
@@ -47,10 +47,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:54.029Z",
+      "lastVerified": "2026-07-25T14:47:44.879Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 91,
+      "durationMs": 87,
       "stdout": "bad value\n",
       "stderr": ""
     },
@@ -60,7 +60,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:54.029Z"
+      "addedAt": "2026-07-25T14:47:44.879Z"
     }
   },
   {
@@ -76,10 +76,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:54.229Z",
+      "lastVerified": "2026-07-25T14:47:45.094Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 98,
+      "durationMs": 109,
       "stdout": "True\n",
       "stderr": ""
     },
@@ -89,7 +89,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:54.229Z"
+      "addedAt": "2026-07-25T14:47:45.094Z"
     }
   },
   {
@@ -105,10 +105,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:54.417Z",
+      "lastVerified": "2026-07-25T14:47:45.295Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 93,
+      "durationMs": 97,
       "stdout": "Total: 5\n",
       "stderr": ""
     },
@@ -118,7 +118,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:54.417Z"
+      "addedAt": "2026-07-25T14:47:45.295Z"
     }
   },
   {
@@ -134,10 +134,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:54.617Z",
+      "lastVerified": "2026-07-25T14:47:45.521Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 96,
+      "durationMs": 111,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -147,7 +147,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:54.617Z"
+      "addedAt": "2026-07-25T14:47:45.521Z"
     }
   },
   {
@@ -163,10 +163,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:54.813Z",
+      "lastVerified": "2026-07-25T14:47:45.735Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 95,
+      "durationMs": 103,
       "stdout": "8080\n",
       "stderr": ""
     },
@@ -176,7 +176,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:54.813Z"
+      "addedAt": "2026-07-25T14:47:45.735Z"
     }
   },
   {
@@ -192,10 +192,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:55.000Z",
+      "lastVerified": "2026-07-25T14:47:45.947Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 90,
+      "durationMs": 104,
       "stdout": "30\n",
       "stderr": ""
     },
@@ -205,7 +205,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:55.000Z"
+      "addedAt": "2026-07-25T14:47:45.947Z"
     }
   },
   {
@@ -221,10 +221,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:55.196Z",
+      "lastVerified": "2026-07-25T14:47:46.153Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 95,
+      "durationMs": 105,
       "stdout": "[2, 4, 6, 4]\n",
       "stderr": ""
     },
@@ -234,7 +234,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:55.196Z"
+      "addedAt": "2026-07-25T14:47:46.153Z"
     }
   },
   {
@@ -250,10 +250,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:55.393Z",
+      "lastVerified": "2026-07-25T14:47:46.349Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 105,
+      "durationMs": 97,
       "stdout": "1\n",
       "stderr": ""
     },
@@ -263,7 +263,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:55.393Z"
+      "addedAt": "2026-07-25T14:47:46.349Z"
     }
   },
   {
@@ -279,10 +279,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:55.599Z",
+      "lastVerified": "2026-07-25T14:47:46.548Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 101,
+      "durationMs": 95,
       "stdout": "120\n",
       "stderr": ""
     },
@@ -292,7 +292,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:55.599Z"
+      "addedAt": "2026-07-25T14:47:46.548Z"
     }
   },
   {
@@ -308,7 +308,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:55.868Z",
+      "lastVerified": "2026-07-25T14:47:46.812Z",
       "sandbox": "docker",
       "exitCode": 0,
       "durationMs": 139,
@@ -321,7 +321,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:55.868Z"
+      "addedAt": "2026-07-25T14:47:46.812Z"
     }
   },
   {
@@ -337,10 +337,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:56.075Z",
+      "lastVerified": "2026-07-25T14:47:47.013Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 103,
+      "durationMs": 96,
       "stdout": "{}\n",
       "stderr": ""
     },
@@ -350,7 +350,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:56.075Z"
+      "addedAt": "2026-07-25T14:47:47.013Z"
     }
   },
   {
@@ -366,10 +366,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:56.274Z",
+      "lastVerified": "2026-07-25T14:47:47.214Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 97,
+      "durationMs": 104,
       "stdout": "{'active': True}\n",
       "stderr": ""
     },
@@ -379,7 +379,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:56.274Z"
+      "addedAt": "2026-07-25T14:47:47.214Z"
     }
   },
   {
@@ -395,10 +395,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:56.467Z",
+      "lastVerified": "2026-07-25T14:47:47.415Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 98,
+      "durationMs": 100,
       "stdout": "{'a': 1, 'c': 2}\n",
       "stderr": ""
     },
@@ -408,7 +408,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:56.467Z"
+      "addedAt": "2026-07-25T14:47:47.415Z"
     }
   },
   {
@@ -424,10 +424,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:56.663Z",
+      "lastVerified": "2026-07-25T14:47:47.623Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 97,
+      "durationMs": 109,
       "stdout": "default\n",
       "stderr": ""
     },
@@ -437,7 +437,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:56.663Z"
+      "addedAt": "2026-07-25T14:47:47.623Z"
     }
   },
   {
@@ -453,10 +453,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:56.867Z",
+      "lastVerified": "2026-07-25T14:47:47.831Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 99,
+      "durationMs": 100,
       "stdout": "Hello, World!\n",
       "stderr": ""
     },
@@ -466,7 +466,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:56.867Z"
+      "addedAt": "2026-07-25T14:47:47.831Z"
     }
   },
   {
@@ -482,10 +482,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:57.063Z",
+      "lastVerified": "2026-07-25T14:47:48.041Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 94,
+      "durationMs": 105,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -495,7 +495,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:57.063Z"
+      "addedAt": "2026-07-25T14:47:48.041Z"
     }
   },
   {
@@ -511,10 +511,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:57.265Z",
+      "lastVerified": "2026-07-25T14:47:48.251Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 97,
+      "durationMs": 99,
       "stdout": "[0, 3, 5]\n",
       "stderr": ""
     },
@@ -524,7 +524,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:57.265Z"
+      "addedAt": "2026-07-25T14:47:48.251Z"
     }
   },
   {
@@ -540,10 +540,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:57.474Z",
+      "lastVerified": "2026-07-25T14:47:48.448Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 107,
+      "durationMs": 97,
       "stdout": "None\n",
       "stderr": ""
     },
@@ -553,7 +553,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:57.474Z"
+      "addedAt": "2026-07-25T14:47:48.448Z"
     }
   },
   {
@@ -569,10 +569,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:57.675Z",
+      "lastVerified": "2026-07-25T14:47:48.658Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 97,
+      "durationMs": 109,
       "stdout": "[2, 3, 'a']\n",
       "stderr": ""
     },
@@ -582,7 +582,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T14:15:57.675Z"
+      "addedAt": "2026-07-25T14:47:48.658Z"
     }
   },
   {
@@ -598,10 +598,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:57.905Z",
+      "lastVerified": "2026-07-25T14:47:48.882Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 114,
+      "durationMs": 109,
       "stdout": "main.mjs\n",
       "stderr": ""
     },
@@ -611,7 +611,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:57.905Z"
+      "addedAt": "2026-07-25T14:47:48.882Z"
     }
   },
   {
@@ -627,10 +627,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:58.129Z",
+      "lastVerified": "2026-07-25T14:47:49.101Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 110,
+      "durationMs": 113,
       "stdout": "function\n",
       "stderr": ""
     },
@@ -640,7 +640,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:58.129Z"
+      "addedAt": "2026-07-25T14:47:49.101Z"
     }
   },
   {
@@ -656,10 +656,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:58.351Z",
+      "lastVerified": "2026-07-25T14:47:49.318Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 112,
+      "durationMs": 113,
       "stdout": "{}\n",
       "stderr": ""
     },
@@ -669,7 +669,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:58.351Z"
+      "addedAt": "2026-07-25T14:47:49.318Z"
     }
   },
   {
@@ -685,10 +685,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:58.580Z",
+      "lastVerified": "2026-07-25T14:47:49.537Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 116,
+      "durationMs": 109,
       "stdout": "unknown\n",
       "stderr": ""
     },
@@ -698,7 +698,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:58.580Z"
+      "addedAt": "2026-07-25T14:47:49.537Z"
     }
   },
   {
@@ -714,10 +714,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:58.806Z",
+      "lastVerified": "2026-07-25T14:47:49.760Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 117,
+      "durationMs": 115,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -727,7 +727,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:58.806Z"
+      "addedAt": "2026-07-25T14:47:49.760Z"
     }
   },
   {
@@ -743,10 +743,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:59.018Z",
+      "lastVerified": "2026-07-25T14:47:49.982Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 104,
+      "durationMs": 111,
       "stdout": "{\"name\":\"root\"}\n",
       "stderr": ""
     },
@@ -756,7 +756,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:59.018Z"
+      "addedAt": "2026-07-25T14:47:49.982Z"
     }
   },
   {
@@ -772,10 +772,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:59.242Z",
+      "lastVerified": "2026-07-25T14:47:50.205Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 109,
+      "durationMs": 116,
       "stdout": "[]\n",
       "stderr": ""
     },
@@ -785,7 +785,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:59.242Z"
+      "addedAt": "2026-07-25T14:47:50.205Z"
     }
   },
   {
@@ -801,10 +801,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:59.470Z",
+      "lastVerified": "2026-07-25T14:47:50.437Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 114,
+      "durationMs": 117,
       "stdout": "handled: config missing\n",
       "stderr": ""
     },
@@ -814,7 +814,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:59.470Z"
+      "addedAt": "2026-07-25T14:47:50.437Z"
     }
   },
   {
@@ -830,10 +830,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:59.699Z",
+      "lastVerified": "2026-07-25T14:47:50.672Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 116,
+      "durationMs": 120,
       "stdout": "120\n",
       "stderr": ""
     },
@@ -843,7 +843,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:59.699Z"
+      "addedAt": "2026-07-25T14:47:50.672Z"
     }
   },
   {
@@ -859,10 +859,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:15:59.925Z",
+      "lastVerified": "2026-07-25T14:47:50.880Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 109,
+      "durationMs": 105,
       "stdout": "[ 1 ]\n",
       "stderr": ""
     },
@@ -872,7 +872,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:15:59.925Z"
+      "addedAt": "2026-07-25T14:47:50.880Z"
     }
   },
   {
@@ -888,10 +888,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:16:00.148Z",
+      "lastVerified": "2026-07-25T14:47:51.092Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 107,
+      "durationMs": 104,
       "stdout": "hello, world\n",
       "stderr": ""
     },
@@ -901,7 +901,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:16:00.148Z"
+      "addedAt": "2026-07-25T14:47:51.092Z"
     }
   },
   {
@@ -917,10 +917,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:16:00.374Z",
+      "lastVerified": "2026-07-25T14:47:51.298Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 119,
+      "durationMs": 103,
       "stdout": "2\n",
       "stderr": ""
     },
@@ -930,7 +930,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:16:00.374Z"
+      "addedAt": "2026-07-25T14:47:51.298Z"
     }
   },
   {
@@ -946,10 +946,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:16:00.589Z",
+      "lastVerified": "2026-07-25T14:47:51.516Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 103,
+      "durationMs": 110,
       "stdout": "hello\n",
       "stderr": ""
     },
@@ -959,7 +959,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:16:00.589Z"
+      "addedAt": "2026-07-25T14:47:51.516Z"
     }
   },
   {
@@ -975,10 +975,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:16:00.806Z",
+      "lastVerified": "2026-07-25T14:47:51.734Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 114,
+      "durationMs": 108,
       "stdout": "ID: Symbol(user-id)\n",
       "stderr": ""
     },
@@ -988,7 +988,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:16:00.806Z"
+      "addedAt": "2026-07-25T14:47:51.734Z"
     }
   },
   {
@@ -1004,10 +1004,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T14:16:01.010Z",
+      "lastVerified": "2026-07-25T14:47:51.952Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 101,
+      "durationMs": 106,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -1017,7 +1017,427 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "node",
-      "addedAt": "2026-07-25T14:16:01.010Z"
+      "addedAt": "2026-07-25T14:47:51.952Z"
+    }
+  },
+  {
+    "id": "fix_docker_unknown_instruction_typo",
+    "problem": "A typo'd Dockerfile instruction (\"RUNN\") fails the build with an unknown-instruction error",
+    "errorType": "DockerBuildError",
+    "stacktrace": "time=\"2026-07-25T20:17:51+05:30\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\"}, Command:\\\"runn\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"RUNN \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"RUNN echo \\\\\\\"hello\\\\\\\"\\\"}\"\nError: building at STEP \"RUNN \": Build error: Unknown instruction: \"RUNN\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\"}, Command:\"runn\", Args:[]string{\"\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\"RUNN \", Heredocs:[]parser.Heredoc(nil), Original:\"RUNN echo \\\"hello\\\"\"}",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-RUNN echo \"hello\"\n+RUN echo \"hello\"",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:47:52.439Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 347,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: RUN echo \"hello\"\nhello\nCOMMIT hm-seed-verify-1e29a14806ee\n--> af09cba2b175\nSuccessfully tagged localhost/hm-seed-verify-1e29a14806ee:latest\naf09cba2b175e89bafd39af4f106ec5654a757836f0197988c754ccd60b88742\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:47:52.439Z"
+    }
+  },
+  {
+    "id": "fix_docker_copy_from_wrong_stage_name",
+    "problem": "COPY --from referencing a build stage name that was never defined fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: COPY --from=wrongstage: no stage or image found with that name",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,5 +1,5 @@\n FROM alpine:3.19 AS builder\n RUN echo \"build\" > /out.txt\n \n FROM alpine:3.19\n-COPY --from=wrongstage /out.txt /out.txt\n+COPY --from=builder /out.txt /out.txt",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:01.703Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 6930,
+      "stdout": "[1/2] STEP 1/2: FROM alpine:3.19 AS builder\n[1/2] STEP 2/2: RUN echo \"build\" > /out.txt\n--> f05037b552b2\n[2/2] STEP 1/2: FROM alpine:3.19\n[2/2] STEP 2/2: COPY --from=builder /out.txt /out.txt\n[2/2] COMMIT hm-seed-verify-f80df5dc9482\n--> 2a8258ccc153\nSuccessfully tagged localhost/hm-seed-verify-f80df5dc9482:latest\n2a8258ccc153afb8b5ec511c9e9b2335e3fc982c8c19108b995093a2647c3691\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:01.703Z"
+    }
+  },
+  {
+    "id": "fix_docker_copy_missing_context_file",
+    "problem": "COPY referencing a file that does not exist in the build context fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"COPY nonexistent-file.txt /app/nonexistent-file.txt\": checking on sources under \"/var/tmp/buildah-context-961483183/overlay/669943460/merge\": copier: stat: \"/nonexistent-file.txt\": no such file or directory",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-COPY nonexistent-file.txt /app/nonexistent-file.txt\n+RUN mkdir -p /app && echo \"generated at build time\" > /app/nonexistent-file.txt",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:02.126Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 336,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: RUN mkdir -p /app && echo \"generated at build time\" > /app/nonexistent-file.txt\nCOMMIT hm-seed-verify-61d870780513\n--> 50d69a6b5275\nSuccessfully tagged localhost/hm-seed-verify-61d870780513:latest\n50d69a6b5275fea895233a65f4f286a569c4c246933ac4703cd3ef8772a486c3\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:02.126Z"
+    }
+  },
+  {
+    "id": "fix_docker_env_missing_value",
+    "problem": "An ENV instruction with only a key and no value fails to parse",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: parsing main Dockerfile: /tmp/hm-docker-fixture-i5uqSp/Dockerfile: ENV must have two arguments",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,3 +1,3 @@\n FROM alpine:3.19\n-ENV APP_PORT\n+ENV APP_PORT=8080\n CMD [\"sh\", \"-c\", \"echo listening on $APP_PORT\"]",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:02.282Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 89,
+      "stdout": "STEP 1/3: FROM alpine:3.19\nSTEP 2/3: ENV APP_PORT=8080\n--> f3f1384a5b23\nSTEP 3/3: CMD [\"sh\", \"-c\", \"echo listening on $APP_PORT\"]\nCOMMIT hm-seed-verify-6ac6ead8bdbd\n--> 5341d249d912\nSuccessfully tagged localhost/hm-seed-verify-6ac6ead8bdbd:latest\n5341d249d912e8daf6d6b817dea5ccc522f1cfac2b7a7a4f8337d69abe9cb325\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:02.282Z"
+    }
+  },
+  {
+    "id": "fix_docker_missing_from_first_instruction",
+    "problem": "A Dockerfile whose first instruction is not FROM fails to build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n-RUN echo \"no from\"\n FROM alpine:3.19\n+RUN echo \"no from\"",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:02.688Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 343,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: RUN echo \"no from\"\nno from\nCOMMIT hm-seed-verify-60a11f168076\n--> f10192362054\nSuccessfully tagged localhost/hm-seed-verify-60a11f168076:latest\nf1019236205441bb607b0cf3469242a44a15640a88a61b279cb1545577757537\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:02.688Z"
+    }
+  },
+  {
+    "id": "fix_docker_healthcheck_invalid_interval",
+    "problem": "A HEALTHCHECK with a non-duration --interval value fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"HEALTHCHECK --interval=notanumber CMD echo ok\": time: invalid duration \"notanumber\"",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-HEALTHCHECK --interval=notanumber CMD echo ok\n+HEALTHCHECK --interval=30s CMD echo ok",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:02.820Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 59,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: HEALTHCHECK --interval=30s CMD echo ok\nCOMMIT hm-seed-verify-2fdfd54a00dc\n--> 09f92fe637d4\nSuccessfully tagged localhost/hm-seed-verify-2fdfd54a00dc:latest\n09f92fe637d44efae447a61b432426a67455b688f5fb07503e1936b81ae9a428\n",
+      "stderr": "time=\"2026-07-25T20:18:02+05:30\" level=warning msg=\"HEALTHCHECK is not supported for OCI image format and will be ignored. Must use `docker` format\"\n"
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:02.820Z"
+    }
+  },
+  {
+    "id": "fix_docker_copy_from_invalid_stage_index",
+    "problem": "COPY --from referencing a numeric build-stage index that does not exist fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: COPY --from=5: no stage or image found with that name",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,3 +1,3 @@\n FROM alpine:3.19\n FROM alpine:3.19\n-COPY --from=5 /etc/hostname /tmp/hostname\n+COPY --from=0 /etc/hostname /tmp/hostname",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:10.031Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 4902,
+      "stdout": "[1/2] STEP 1/1: FROM alpine:3.19\n--> 83b2b6703a62\n[2/2] STEP 1/2: FROM alpine:3.19\n[2/2] STEP 2/2: COPY --from=0 /etc/hostname /tmp/hostname\n[2/2] COMMIT hm-seed-verify-094362a25584\n--> af94246c6974\nSuccessfully tagged localhost/hm-seed-verify-094362a25584:latest\naf94246c6974d79863e79f019dc330feddba299904b8fd25464527d2fea4acf7\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:10.031Z"
+    }
+  },
+  {
+    "id": "fix_docker_workdir_missing_argument",
+    "problem": "A WORKDIR instruction with no path argument fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"WORKDIR \": WORKDIR requires exactly one argument",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-WORKDIR\n+WORKDIR /app",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:10.158Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 59,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: WORKDIR /app\nCOMMIT hm-seed-verify-93bafee2888e\n--> af2589ae96ba\nSuccessfully tagged localhost/hm-seed-verify-93bafee2888e:latest\naf2589ae96bae90775a0b8127fb60ec2fa60a30002c05eaff04ea19f6cf3d18e\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:10.158Z"
+    }
+  },
+  {
+    "id": "fix_docker_user_nonexistent",
+    "problem": "A USER instruction referencing a user that does not exist in the image fails subsequent RUN steps",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"RUN echo hi\": determining run uid: user: unknown user error looking up user \"nonexistentuser\"",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,3 +1,3 @@\n FROM alpine:3.19\n-USER nonexistentuser\n+USER root\n RUN echo hi",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:10.859Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 445,
+      "stdout": "STEP 1/3: FROM alpine:3.19\nSTEP 2/3: USER root\n--> 5ba85cc54c0d\nSTEP 3/3: RUN echo hi\nhi\nCOMMIT hm-seed-verify-ecac87665d51\n--> a49a8ea32f6c\nSuccessfully tagged localhost/hm-seed-verify-ecac87665d51:latest\na49a8ea32f6c796c942f6bbd67db65f3a3f4074e9064803b67be150e57b99b2f\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:10.859Z"
+    }
+  },
+  {
+    "id": "fix_docker_stopsignal_invalid",
+    "problem": "A STOPSIGNAL instruction with an invalid signal name fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"STOPSIGNAL NOTASIGNAL\": Invalid signal: NOTASIGNAL",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-STOPSIGNAL NOTASIGNAL\n+STOPSIGNAL SIGTERM",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:10.990Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 59,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: STOPSIGNAL SIGTERM\nCOMMIT hm-seed-verify-3989eea7560c\n--> 4133864cff5d\nSuccessfully tagged localhost/hm-seed-verify-3989eea7560c:latest\n4133864cff5d2160b9ebf3d75780adf78b545e0a7eb229bce4f0f3f80274df6b\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:10.990Z"
+    }
+  },
+  {
+    "id": "fix_docker_arg_undeclared_before_from",
+    "problem": "Referencing an ARG in FROM without declaring it beforehand leaves FROM with no image and fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: determining starting point for build: no FROM statement found",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,3 @@\n+ARG BASE_IMAGE=alpine:3.19\n FROM ${BASE_IMAGE}\n RUN echo hi",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:11.372Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 319,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: RUN echo hi\nhi\nCOMMIT hm-seed-verify-46385a44e95a\n--> c5657efe63c1\nSuccessfully tagged localhost/hm-seed-verify-46385a44e95a:latest\nc5657efe63c139c76f6b2934a29ab326f5c12584c19c8fbfaceee893ad7d4339\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:11.372Z"
+    }
+  },
+  {
+    "id": "fix_docker_shell_invalid_form",
+    "problem": "A SHELL instruction not written as a JSON array fails the build",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"SHELL /bin/sh -c\": SHELL requires the arguments to be in JSON form",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-SHELL /bin/sh -c\n+SHELL [\"/bin/sh\", \"-c\"]",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:11.500Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 60,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: SHELL [\"/bin/sh\", \"-c\"]\nCOMMIT hm-seed-verify-2ed14600dc84\n--> 7ec703a8d61f\nSuccessfully tagged localhost/hm-seed-verify-2ed14600dc84:latest\n7ec703a8d61f91c167f779c0348e05bb3ff8452c9a68b89142f127951b63f1f5\n",
+      "stderr": "time=\"2026-07-25T20:18:11+05:30\" level=warning msg=\"SHELL is not persisted in the OCI image format, [/bin/sh -c] will be used for RUN subsequent instructions to build this image but will not be present in saved image which may affect any images that use this as a base. Must use `docker` format to persist in saved image\"\n"
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:11.500Z"
+    }
+  },
+  {
+    "id": "fix_docker_onbuild_forbidden_trigger",
+    "problem": "ONBUILD wrapping a FROM instruction fails the build, since FROM is not allowed as an ONBUILD trigger",
+    "errorType": "DockerBuildError",
+    "stacktrace": "Error: building at STEP \"ONBUILD from alpine:3.19\": FROM isn't allowed as an ONBUILD trigger",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/Dockerfile\n+++ b/Dockerfile\n@@ -1,2 +1,2 @@\n FROM alpine:3.19\n-ONBUILD FROM alpine:3.19\n+ONBUILD RUN echo \"building downstream image\"",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:11.628Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 60,
+      "stdout": "STEP 1/2: FROM alpine:3.19\nSTEP 2/2: ONBUILD RUN echo \"building downstream image\"\nCOMMIT hm-seed-verify-5252e9dae456\n--> a9387cd71775\nSuccessfully tagged localhost/hm-seed-verify-5252e9dae456:latest\na9387cd71775fd8e295b8b484d70524aec653eac1741805617d60efe1292b249\n",
+      "stderr": "time=\"2026-07-25T20:18:11+05:30\" level=warning msg=\"ONBUILD is not supported for OCI image format, RUN echo \\\"building downstream image\\\" will be ignored. Must use `docker` format\"\n"
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:11.628Z"
+    }
+  },
+  {
+    "id": "fix_docker_compose_bad_indentation",
+    "problem": "A docker-compose.yml with a stray extra indentation level fails YAML parsing",
+    "errorType": "ComposeConfigError",
+    "stacktrace": "\u001b[4m>>>> Executing external compose provider \"/usr/bin/podman-compose\". Please see podman-compose(1) for how to disable this message. <<<<\n\n\u001b[0mCRITICAL:podman_compose:Compose file contains an error:\nmapping values are not allowed here\n  in \"/tmp/hm-docker-fixture-sBmcnT/compose.yml\", line 4, column 11\nError: executing /usr/bin/podman-compose -f /tmp/hm-docker-fixture-sBmcnT/compose.yml config: exit status 1",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/docker-compose.yml\n+++ b/docker-compose.yml\n@@ -1,5 +1,5 @@\n services:\n   web:\n     image: alpine:3.19\n-     ports:\n+    ports:\n       - \"8080:80\"",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:11.823Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 98,
+      "stdout": "services:\n  web:\n    image: alpine:3.19\n    ports:\n    - 8080:80\n\n",
+      "stderr": "\u001b[4m>>>> Executing external compose provider \"/usr/bin/podman-compose\". Please see podman-compose(1) for how to disable this message. <<<<\n\n\u001b[0m"
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:11.823Z"
+    }
+  },
+  {
+    "id": "fix_docker_compose_tab_character",
+    "problem": "A docker-compose.yml containing a tab character for indentation fails YAML parsing",
+    "errorType": "ComposeConfigError",
+    "stacktrace": "\u001b[4m>>>> Executing external compose provider \"/usr/bin/podman-compose\". Please see podman-compose(1) for how to disable this message. <<<<\n\n\u001b[0mCRITICAL:podman_compose:Compose file contains an error:\nwhile scanning for the next token\nfound character '\\t' that cannot start any token\n  in \"/tmp/hm-docker-fixture-OEEZHq/compose.yml\", line 3, column 1\nError: executing /usr/bin/podman-compose -f /tmp/hm-docker-fixture-OEEZHq/compose.yml config: exit status 1",
+    "environment": {
+      "language": "docker"
+    },
+    "patch": "===================================================================\n--- a/docker-compose.yml\n+++ b/docker-compose.yml\n@@ -1,3 +1,3 @@\n services:\n   web:\n-\timage: alpine:3.19\n+    image: alpine:3.19",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:48:12.018Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 99,
+      "stdout": "services:\n  web:\n    image: alpine:3.19\n\n",
+      "stderr": "\u001b[4m>>>> Executing external compose provider \"/usr/bin/podman-compose\". Please see podman-compose(1) for how to disable this message. <<<<\n\n\u001b[0m"
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "docker",
+      "addedAt": "2026-07-25T14:48:12.018Z"
     }
   }
 ];

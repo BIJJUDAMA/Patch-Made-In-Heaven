@@ -51,6 +51,11 @@ describe('seed corpus (schema, uniqueness, honesty)', () => {
     expect(nodeCards).toHaveLength(15);
   });
 
+  it('has exactly 15 Docker fixtures (Checkpoint 8 deliverable)', () => {
+    const dockerCards = SEED_KNOWLEDGE_CARDS.filter((card) => card.provenance?.category === 'docker');
+    expect(dockerCards).toHaveLength(15);
+  });
+
   it('every card carries real PASS verification evidence, not a placeholder', () => {
     for (const card of SEED_KNOWLEDGE_CARDS) {
       expect(card.verification.status).toBe('PASS');

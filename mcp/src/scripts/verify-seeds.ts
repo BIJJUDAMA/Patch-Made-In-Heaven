@@ -2,7 +2,9 @@ import { createTwoFilesPatch } from 'diff';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as path from 'path';
+import * as crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import { ALL_SEED_FIXTURES, type SeedFixtureDefinition } from '../services/seeds/index.js';
 import { SandboxClient, resolveSandboxImage } from '../services/sandbox.client.js';
@@ -10,6 +12,7 @@ import { knowledgeCardSchema, type KnowledgeCard } from '../domain/knowledge-car
 import { getEnv } from '../config/env.js';
 
 const execFileAsync = promisify(execFile);
+const CONTAINER_RUNTIME = getEnv().sandbox.containerRuntime;
 
 /**
  * Pre-pulls every distinct image the fixtures need, with a generous timeout.
@@ -56,7 +59,8 @@ function validateFixtureShape(fixtures: SeedFixtureDefinition[]): string[] {
     if (fixture.brokenCode.trim() === fixture.fixedCode.trim()) {
       errors.push(`${fixture.id}: brokenCode and fixedCode are identical`);
     }
-    if (!fixture.testCommand.trim()) {
+    const method = fixture.verificationMethod ?? 'sandbox';
+    if (method === 'sandbox' && !fixture.testCommand.trim()) {
       errors.push(`${fixture.id}: missing testCommand`);
     }
   }
@@ -64,30 +68,101 @@ function validateFixtureShape(fixtures: SeedFixtureDefinition[]): string[] {
   return errors;
 }
 
+interface RunResult {
+  status: 'PASS' | 'FAIL';
+  exitCode: number;
+  stdout: string;
+  stderr: string;
+  executionTimeMs: number;
+}
+
+/**
+ * Runs a Dockerfile/compose file directly against the host container runtime
+ * — never nested inside a SandboxClient-spawned container. This is the same
+ * trust level `verify-seeds.ts` already uses to pull images; it never mounts
+ * the Docker socket into an untrusted container.
+ */
+async function runHostVerification(
+  fixture: SeedFixtureDefinition,
+  content: string,
+  method: 'docker-build' | 'compose-config'
+): Promise<RunResult> {
+  const startTime = Date.now();
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hm-docker-fixture-'));
+  const fileName = method === 'docker-build' ? 'Dockerfile' : 'compose.yml';
+  const filePath = path.join(tempDir, fileName);
+  fs.writeFileSync(filePath, content);
+
+  const tag = `hm-seed-verify-${crypto.randomBytes(6).toString('hex')}`;
+
+  try {
+    const args =
+      method === 'docker-build'
+        ? ['build', '--no-cache', '-t', tag, '-f', filePath, tempDir]
+        : ['compose', '-f', filePath, 'config'];
+
+    const { exitCode, stdout, stderr } = await new Promise<{ exitCode: number; stdout: string; stderr: string }>(
+      (resolve) => {
+        execFile(
+          CONTAINER_RUNTIME,
+          args,
+          { timeout: 60000, cwd: tempDir, encoding: 'utf8' },
+          (error, stdout, stderr) => {
+            const exitCode = typeof error?.code === 'number' ? error.code : error ? 1 : 0;
+            resolve({ exitCode, stdout, stderr });
+          }
+        );
+      }
+    );
+
+    return {
+      status: exitCode === 0 ? 'PASS' : 'FAIL',
+      exitCode,
+      stdout,
+      stderr,
+      executionTimeMs: Date.now() - startTime,
+    };
+  } finally {
+    if (method === 'docker-build') {
+      await execFileAsync(CONTAINER_RUNTIME, ['rmi', '-f', tag]).catch(() => {});
+    }
+    fs.rmSync(tempDir, { recursive: true, force: true });
+  }
+}
+
 interface VerifyOutcome {
   card?: KnowledgeCard;
   errors: string[];
 }
 
-/** Actually runs the fixture through the real sandbox: broken must FAIL, fixed must PASS. */
+/** Actually reproduces the fixture: broken must FAIL, fixed must PASS. */
 async function verifyFixture(fixture: SeedFixtureDefinition): Promise<VerifyOutcome> {
-  const client = new SandboxClient();
+  const method = fixture.verificationMethod ?? 'sandbox';
   const errors: string[] = [];
 
-  const failRun = await client.runVerification({
-    code: fixture.brokenCode,
-    testCommand: fixture.testCommand,
-    environment: fixture.environment,
-  });
+  let failRun: RunResult;
+  let passRun: RunResult;
+
+  if (method === 'sandbox') {
+    const client = new SandboxClient();
+    failRun = await client.runVerification({
+      code: fixture.brokenCode,
+      testCommand: fixture.testCommand,
+      environment: fixture.environment,
+    });
+    passRun = await client.runVerification({
+      code: fixture.fixedCode,
+      testCommand: fixture.testCommand,
+      environment: fixture.environment,
+    });
+  } else {
+    failRun = await runHostVerification(fixture, fixture.brokenCode, method);
+    passRun = await runHostVerification(fixture, fixture.fixedCode, method);
+  }
+
   if (failRun.status !== 'FAIL') {
     errors.push(`${fixture.id}: brokenCode unexpectedly PASSED — the fixture does not actually reproduce a bug.`);
   }
-
-  const passRun = await client.runVerification({
-    code: fixture.fixedCode,
-    testCommand: fixture.testCommand,
-    environment: fixture.environment,
-  });
   if (passRun.status !== 'PASS') {
     errors.push(`${fixture.id}: fixedCode did not PASS. exitCode=${passRun.exitCode} stderr=${passRun.stderr}`);
   }
@@ -96,12 +171,8 @@ async function verifyFixture(fixture: SeedFixtureDefinition): Promise<VerifyOutc
     return { errors };
   }
 
-  const patch = createTwoFilesPatch(
-    `a/main.${fixture.fileExtension}`,
-    `b/main.${fixture.fileExtension}`,
-    fixture.brokenCode,
-    fixture.fixedCode
-  );
+  const patchFileName = method === 'docker-build' ? 'Dockerfile' : method === 'compose-config' ? 'docker-compose.yml' : `main.${fixture.fileExtension}`;
+  const patch = createTwoFilesPatch(`a/${patchFileName}`, `b/${patchFileName}`, fixture.brokenCode, fixture.fixedCode);
 
   const candidate = {
     id: fixture.id,
