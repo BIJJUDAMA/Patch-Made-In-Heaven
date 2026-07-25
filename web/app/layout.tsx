@@ -1,25 +1,38 @@
 import type { Metadata } from 'next';
 import React from 'react';
+import './globals.css';
+
 
 export const metadata: Metadata = {
-  title: 'HAcksMyMachine — Verified Agent Memory Platform',
-  description: 'Shared, execution-verified knowledge cards for AI agents exposed via MCP.',
+  title: 'Hacks On My Machine',
+
+
+  description:
+    'Execution-Verified Agent Memory Platform exposed via MCP. Browse live Knowledge Cards, unified patch diffs, and sandbox verification run logs.',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body style={{
-        margin: 0,
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-        backgroundColor: '#090d16',
-        color: '#e2e8f0',
-        minHeight: '100vh',
-      }}>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300..800;1,300..800&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body
+        style={{
+          margin: 0,
+          fontFamily: "'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif",
+          backgroundColor: '#030712',
+          color: '#f8fafc',
+          minHeight: '100vh',
+          WebkitFontSmoothing: 'antialiased',
+          MozOsxFontSmoothing: 'grayscale',
+        }}
+      >
         {children}
       </body>
     </html>

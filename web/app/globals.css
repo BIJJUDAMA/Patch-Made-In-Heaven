@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Apple Minimal Monochrome Palette (Eye-Comfortable Warm Off-Black/Off-White) */
+  --bg-app: #0e0e10;
+  --surface-subtle: #16161a;
+  --surface-panel: #1e1e24;
+  --surface-hover: #262630;
+  --surface-active: #2e2e3a;
+
+  /* Status Accents (Functional, Low-Saturation Monochrome-Aligned) */
+  --status-pass: #34d399;
+  --status-pass-subtle: rgba(52, 211, 153, 0.1);
+  --status-pass-border: rgba(52, 211, 153, 0.25);
+
+  --status-fail: #f87171;
+  --status-fail-subtle: rgba(248, 113, 113, 0.1);
+  --status-fail-border: rgba(248, 113, 113, 0.25);
+
+  /* Precise Subtle Borders */
+  --border-muted: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.15);
+
+  /* Typography Scale */
+  --text-high: #f1f5f9;
+  --text-medium: #94a3b8;
+  --text-low: #64748b;
+
+  /* Strict 10px Border Radius Standard */
+  --radius-standard: 10px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-high);
+  overflow-x: hidden;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+/* Custom Minimal Scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-app);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #3f3f46;
+}
+
+/* Apple Fluid Active Press Scale */
+.active-press {
+  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease, border-color 150ms ease;
+}
+
+.active-press:active {
+  transform: scale(0.985);
+}
+
+/* Ultra-Smooth Custom Dropdown & Input Styling */
+.smooth-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1rem;
+  padding-right: 2.75rem !important;
+  transition: border-color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
+}
+
+.smooth-select:hover {
+  background-color: var(--surface-panel);
+  border-color: var(--border-strong);
+}
+
+.smooth-select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05);
+}
