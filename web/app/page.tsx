@@ -345,13 +345,17 @@ export default function Dashboard() {
               className="endpoint-text"
               style={{
                 flex: 1,
+                minWidth: 0,
                 textAlign: 'left',
-                wordBreak: 'break-all',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
                 fontSize: '0.78rem',
                 color: '#ffffff',
                 fontFamily: 'var(--font-mono)',
                 letterSpacing: '0.02em',
               }}
+              title={MCP_URL}
             >
               {MCP_URL}
             </div>
@@ -360,11 +364,14 @@ export default function Dashboard() {
               className="active-press"
               style={{
                 flexShrink: 0,
+                width: '155px',
+                minWidth: '155px',
                 display: 'flex',
                 alignItems: 'center',
+                justifyContent: 'center',
                 gap: '0.5rem',
                 borderRadius: '100px',
-                padding: '0.625rem 1.25rem',
+                padding: '0.625rem 1rem',
                 backgroundColor: copied ? '#ffffff' : 'rgba(255, 255, 255, 0.1)',
                 color: copied ? '#000000' : '#ffffff',
                 border: '1px solid rgba(255, 255, 255, 0.25)',
