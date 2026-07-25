@@ -19,7 +19,6 @@ import {
   Hash,
   Activity,
   Box,
-  ChevronRight,
 } from 'lucide-react';
 
 export interface KnowledgeCardView {
@@ -583,7 +582,7 @@ export default function Dashboard() {
               }}
             >
               {copied ? <Check style={{ width: '0.875rem', height: '0.875rem' }} /> : <Copy style={{ width: '0.875rem', height: '0.875rem' }} />}
-              {copied ? 'Copied' : 'Copy Endpoint'}
+              {copied ? 'Copied' : 'Copy'}
             </button>
           </div>
         </div>
@@ -650,40 +649,6 @@ export default function Dashboard() {
             <DiamondGallery tools={TOOLS} />
           </div>
 
-          {/* Footer attribution */}
-          <div
-            style={{
-              marginTop: '3rem',
-              paddingTop: '2rem',
-              borderTop: '1px solid var(--border-muted)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-
-            <a
-              href="#inspector"
-              className="active-press"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.375rem',
-                padding: '0.5rem 1rem',
-                borderRadius: '6px',
-                backgroundColor: 'var(--surface-panel)',
-                border: '1px solid var(--border-strong)',
-                color: 'var(--text-medium)',
-                fontSize: '0.8125rem',
-                fontFamily: 'var(--font-body)',
-                textDecoration: 'none',
-                transition: 'color 160ms ease, border-color 160ms ease',
-              }}
-            >
-              Open Live Inspector
-              <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
-            </a>
-          </div>
         </div>
       </section>
 

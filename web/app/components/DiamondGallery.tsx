@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import * as THREE from "three";
 import gsap from "gsap";
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
@@ -325,29 +326,38 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
   const [openProgress, setOpenProgress] = useState(0);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
+  const [suppressCardControls, setSuppressCardControls] = useState(false);
+  const showSchemaModalRef = useRef(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
+
+  useEffect(() => {
+    showSchemaModalRef.current = showSchemaModal;
+  }, [showSchemaModal]);
 
   const openSchemaModal = () => {
     setShowSchemaModal(true);
   };
 
+  const stopCarouselPointerEvent = (event: React.PointerEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+  };
+
   const closeSchemaModal = () => {
+    setSuppressCardControls(true);
     if (modalOverlayRef.current && modalCardRef.current) {
       gsap.to(modalOverlayRef.current, {
         opacity: 0,
-        duration: 0.24,
+        duration: 0.55,
         ease: "power2.in",
       });
       gsap.to(modalCardRef.current, {
         opacity: 0,
         scale: 0.92,
         y: 16,
-        duration: 0.24,
+        duration: 0.55,
         ease: "power2.in",
-        onComplete: () => {
-          stateRef.current.closeCard();
-        },
+        onComplete: () => stateRef.current.closeCard(),
       });
     } else {
       stateRef.current.closeCard();
@@ -359,15 +369,28 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       gsap.fromTo(
         modalOverlayRef.current,
         { opacity: 0 },
-        { opacity: 1, duration: 0.32, ease: "power2.out" }
+        { opacity: 1, duration: 0.65, ease: "power2.out" }
       );
       gsap.fromTo(
         modalCardRef.current,
         { opacity: 0, scale: 0.88, y: 24 },
-        { opacity: 1, scale: 1, y: 0, duration: 0.38, ease: "back.out(1.2)" }
+        { opacity: 1, scale: 1, y: 0, duration: 0.7, ease: "back.out(1.2)" }
       );
     }
   }, [showSchemaModal]);
+
+  // Lock background page scroll whenever a card is expanded — inside the card/modal still scrolls
+  useEffect(() => {
+    if (!expandedTool) return;
+    const previousHtmlOverflow = document.documentElement.style.overflow;
+    const previousBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.documentElement.style.overflow = previousHtmlOverflow;
+      document.body.style.overflow = previousBodyOverflow;
+    };
+  }, [expandedTool]);
 
   // Dynamic screen bounds for interactive overlay tracking
   const [cardScreenBounds, setCardScreenBounds] = useState<{
@@ -390,6 +413,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     currentFront: null as THREE.Mesh | null,
     stepCard: (_dir: number) => {},
     goToCard: (_idx: number) => {},
+    openFrontCard: () => {},
     openCard: (_card: THREE.Mesh) => {},
     closeCard: () => {},
   });
@@ -458,6 +482,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     const cardGeometry = new THREE.PlaneGeometry(CARD_HEIGHT, CARD_HEIGHT);
     const cards: THREE.Mesh[] = [];
     const pointerSmooth = new THREE.Vector2();
+    const overlayCorner = new THREE.Vector3();
+    const overlayCorners = [
+      new THREE.Vector3(-CARD_HEIGHT / 2, -CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(CARD_HEIGHT / 2, -CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(-CARD_HEIGHT / 2, CARD_HEIGHT / 2, 0),
+      new THREE.Vector3(CARD_HEIGHT / 2, CARD_HEIGHT / 2, 0),
+    ];
 
     for (let i = 0; i < CARD_COUNT; i++) {
       const angle = (i / CARD_COUNT) * Math.PI * 2;
@@ -645,6 +676,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       stateRef.current.velocity = 0;
       setExpandedTool(card.userData.tool);
       setShowSchemaModal(false);
+      setSuppressCardControls(false);
       if (onSelectTool) onSelectTool(card.userData.tool);
 
       const thetaTarget =
@@ -739,12 +771,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     const closeCard = () => {
       setShowSchemaModal(false);
-      setExpandedTool(null);
-      setOpenProgress(0);
-      stateRef.current.openProgressVal = 0;
-      setCardScreenBounds(null);
       const card = stateRef.current.openedCard;
       if (!card) {
+        setExpandedTool(null);
+        setOpenProgress(0);
+        stateRef.current.openProgressVal = 0;
+        setCardScreenBounds(null);
         stateRef.current.state = "closed";
         return;
       }
@@ -758,6 +790,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         onComplete: () => {
           stateRef.current.state = "closed";
           stateRef.current.openedCard = null;
+          stateRef.current.openProgressVal = 0;
+          setOpenProgress(0);
+          setCardScreenBounds(null);
+          setExpandedTool(null);
         },
       });
       tl.to(
@@ -829,6 +865,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     stateRef.current.goToCard = goToCard;
     stateRef.current.stepCard = stepCard;
+    stateRef.current.openFrontCard = () => openCard(getFrontCard());
     stateRef.current.openCard = openCard;
     stateRef.current.closeCard = closeCard;
 
@@ -893,7 +930,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (showSchemaModal) closeSchemaModal();
+        if (showSchemaModalRef.current) closeSchemaModal();
         else if (stateRef.current.state === "open") closeCard();
       } else if (e.key === "ArrowRight") stepCard(1);
       else if (e.key === "ArrowLeft") stepCard(-1);
@@ -993,12 +1030,37 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           (rotY - stateRef.current.openedCard.rotation.y) * Math.min(1, dt * 4);
         stateRef.current.openedCard.rotation.x +=
           (0 - stateRef.current.openedCard.rotation.x) * Math.min(1, dt * 4);
+      }
 
-        if (overlayRef.current) {
-          const scaleVal = 0.45 + 0.55 * stateRef.current.openProgressVal;
-          overlayRef.current.style.transform = `translate(-50%, -50%) scale(${scaleVal})`;
-          overlayRef.current.style.opacity = `${Math.min(1, stateRef.current.openProgressVal * 1.6)}`;
+      if (overlayRef.current && stateRef.current.openedCard && stateRef.current.state !== "closed") {
+        const card = stateRef.current.openedCard;
+        const overlay = overlayRef.current;
+        card.updateWorldMatrix(true, false);
+
+        let minX = Infinity;
+        let maxX = -Infinity;
+        let minY = Infinity;
+        let maxY = -Infinity;
+
+        for (const corner of overlayCorners) {
+          overlayCorner.copy(corner);
+          card.localToWorld(overlayCorner);
+          overlayCorner.project(camera);
+          const x = (overlayCorner.x * 0.5 + 0.5) * container.clientWidth;
+          const y = (-overlayCorner.y * 0.5 + 0.5) * container.clientHeight;
+          minX = Math.min(minX, x);
+          maxX = Math.max(maxX, x);
+          minY = Math.min(minY, y);
+          maxY = Math.max(maxY, y);
         }
+
+        const visualSize = Math.max(maxX - minX, maxY - minY);
+        const overlaySize = overlay.offsetWidth || 410;
+        const scale = Math.max(0.01, visualSize / overlaySize);
+        overlay.style.left = `${(minX + maxX) / 2}px`;
+        overlay.style.top = `${(minY + maxY) / 2}px`;
+        overlay.style.transform = `translate(-50%, -50%) scale(${scale})`;
+        overlay.style.opacity = "1";
       }
 
       pointerSmooth.x += (pointer.x - pointerSmooth.x) * Math.min(1, dt * 2.2);
@@ -1037,7 +1099,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       cards.forEach((c) => (c.material as THREE.Material).dispose());
       renderer.dispose();
     };
-  }, [tools, onSelectTool, showSchemaModal]);
+  }, [tools, onSelectTool]);
 
   const copySchemaToClipboard = (schemaObj: object) => {
     navigator.clipboard.writeText(JSON.stringify(schemaObj, null, 2));
@@ -1103,6 +1165,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             <button
               className="dg-circle-btn"
               onClick={() => stateRef.current.stepCard(-1)}
+              onPointerDown={stopCarouselPointerEvent}
+              onPointerUp={stopCarouselPointerEvent}
               title="Previous tool"
             >
               <ArrowLeft style={{ width: "14px", height: "14px" }} />
@@ -1110,6 +1174,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             <button
               className="dg-circle-btn"
               onClick={() => stateRef.current.stepCard(1)}
+              onPointerDown={stopCarouselPointerEvent}
+              onPointerUp={stopCarouselPointerEvent}
               title="Next tool"
             >
               <ArrowRight style={{ width: "14px", height: "14px" }} />
@@ -1125,6 +1191,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             className="dg-circle-btn"
             style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(-1)}
+            onPointerDown={stopCarouselPointerEvent}
+            onPointerUp={stopCarouselPointerEvent}
           >
             <ArrowLeft style={{ width: "13px", height: "13px" }} />
           </button>
@@ -1134,6 +1202,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               <button
                 key={t.num}
                 onClick={() => stateRef.current.goToCard(idx)}
+                onPointerDown={stopCarouselPointerEvent}
+                onPointerUp={stopCarouselPointerEvent}
                 className={`dg-thumb-pill${idx === activeIndex ? " active" : ""}`}
               >
                 {t.num} {t.name.split("_")[0]}
@@ -1145,6 +1215,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             className="dg-circle-btn"
             style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(1)}
+            onPointerDown={stopCarouselPointerEvent}
+            onPointerUp={stopCarouselPointerEvent}
+            title="Next tool"
           >
             <ArrowRight style={{ width: "13px", height: "13px" }} />
           </button>
@@ -1152,15 +1225,15 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       )}
 
       {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Animated & 3D Tilting 1:1 with Card Mesh) */}
-      {expandedTool && !showSchemaModal && (stateRef.current.state === "open" || stateRef.current.state === "opening") && openProgress > 0.05 && (
+      {expandedTool && !showSchemaModal && !suppressCardControls && (stateRef.current.state === "open" || stateRef.current.state === "opening" || stateRef.current.state === "closing") && (stateRef.current.state === "closing" || openProgress > 0.05) && (
         <div
           ref={overlayRef}
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: `translate(-50%, -50%) scale(${0.45 + 0.55 * openProgress})`,
-            opacity: Math.min(1, openProgress * 1.6),
+            transform: "translate(-50%, -50%) scale(0.01)",
+            opacity: 0,
             width: "min(76vw, 410px)",
             height: "min(76vw, 410px)",
             zIndex: 100,
@@ -1178,8 +1251,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             aria-label="Close Card"
             style={{
               position: "absolute",
-              top: "8px",
-              right: "8px",
+              top: "32px",
+              right: "32px",
               width: "44px",
               height: "44px",
               borderRadius: "50%",
@@ -1194,6 +1267,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               cursor: "pointer",
               boxShadow: "0 10px 30px rgba(0, 0, 0, 0.65)",
               pointerEvents: "auto",
+              transform: "scale(0.7)",
+              transformOrigin: "top right",
             }}
           >
             <X style={{ width: "22px", height: "22px", strokeWidth: 2.5 }} />
@@ -1205,9 +1280,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             className="active-press"
             style={{
               position: "absolute",
-              bottom: "16px",
+              bottom: "40px",
               left: "50%",
-              transform: "translateX(-50%)",
+              transform: "translateX(-50%) scale(0.7)",
+              transformOrigin: "bottom center",
               whiteSpace: "nowrap",
               display: "flex",
               alignItems: "center",
@@ -1237,6 +1313,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
       {/* JSON Schema Popup Inspector - 60FPS GSAP LIQUID SPRING ANIMATIONS */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
+        createPortal(
         <div
           ref={modalOverlayRef}
           style={{
@@ -1251,11 +1328,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             WebkitBackdropFilter: "blur(16px)",
             padding: "1.5rem",
             pointerEvents: "auto",
+            overscrollBehavior: "contain",
             willChange: "opacity",
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeSchemaModal();
           }}
+          onWheel={(e) => e.stopPropagation()}
         >
           <div
             ref={modalCardRef}
@@ -1263,7 +1342,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               position: "relative",
               width: "100%",
               maxWidth: "760px",
-              height: "620px",
+              height: "min(620px, calc(100vh - 3rem))",
               maxHeight: "85vh",
               display: "flex",
               flexDirection: "column",
@@ -1523,7 +1602,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               position: "relative",
               zIndex: 1,
               flex: 1,
+              minHeight: 0,
               overflowY: "auto",
+              overscrollBehavior: "contain",
               paddingRight: "0.5rem",
             }}
           >
@@ -1700,6 +1781,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           </div>
         </div>
       </div>
+      , document.body)
       )}
     </div>
   );
