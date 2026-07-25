@@ -245,31 +245,6 @@ export default function Dashboard() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.375rem 0.875rem',
-              borderRadius: '10px',
-              backgroundColor: isLiveElastic ? 'var(--status-pass-subtle)' : 'var(--surface-panel)',
-              border: isLiveElastic ? '1px solid var(--status-pass-border)' : '1px solid var(--border-muted)',
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              color: isLiveElastic ? 'var(--status-pass)' : 'var(--text-medium)',
-            }}
-          >
-            <span
-              style={{
-                width: '0.5rem',
-                height: '0.5rem',
-                borderRadius: '50%',
-                backgroundColor: isLiveElastic ? 'var(--status-pass)' : 'var(--text-low)',
-              }}
-            />
-            {isLiveElastic ? 'Live Index' : 'Seed Corpus (60 Fixes)'}
-          </div>
-
           <button
             onClick={fetchCards}
             disabled={loading}
@@ -298,6 +273,7 @@ export default function Dashboard() {
             Refresh
           </button>
         </div>
+
       </header>
 
       {/* Main Container */}
