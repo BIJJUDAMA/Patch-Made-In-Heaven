@@ -898,7 +898,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       {/* Radial Glow Overlay matching monochrome Apple minimal theme */}
       <div className="dg-glow" />
 
-      {/* Top Left Click-to-Expand Reminder Pill */}
+      {/* Integrated Click-to-Expand Hint */}
       <div
         style={{
           position: "absolute",
@@ -907,29 +907,23 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           zIndex: 10,
           display: "flex",
           alignItems: "center",
-          gap: "0.625rem",
-          padding: "0.5rem 0.875rem",
-          borderRadius: "100px",
-          border: "1px solid var(--border-strong)",
-          backgroundColor: "rgba(10, 10, 10, 0.75)",
-          backdropFilter: "blur(12px)",
-          WebkitBackdropFilter: "blur(12px)",
-          color: "var(--text-high)",
+          gap: "0.5rem",
+          color: "var(--text-low)",
           fontFamily: "var(--font-mono)",
           fontSize: "0.6875rem",
-          letterSpacing: "0.12em",
+          letterSpacing: "0.16em",
           textTransform: "uppercase",
           pointerEvents: "none",
+          opacity: 0.8,
         }}
       >
         <span
           style={{
-            width: "6px",
-            height: "6px",
+            width: "5px",
+            height: "5px",
             borderRadius: "50%",
-            backgroundColor: "#ffffff",
+            backgroundColor: "var(--text-low)",
             display: "inline-block",
-            boxShadow: "0 0 8px rgba(255, 255, 255, 0.8)",
           }}
         />
         Click card to expand ↗

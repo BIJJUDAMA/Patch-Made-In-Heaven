@@ -320,7 +320,7 @@ export default function Dashboard() {
               marginBottom: '3rem',
             }}
           >
-            Self-Healing Knowledge Base for Autonomous Agents
+            Powered by NitroStack — TypeScript MCP Framework
           </p>
 
           {/* Restrained Hairline Glass Endpoint Card */}
