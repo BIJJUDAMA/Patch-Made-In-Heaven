@@ -698,6 +698,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       if (!card) return;
       stateRef.current.state = "closing";
       setShowSchemaModal(false);
+      setExpandedTool(null);
+      setOpenProgress(0);
+      stateRef.current.openProgressVal = 0;
       setCardScreenBounds(null);
       const { basePos, angle } = card.userData;
 
@@ -708,9 +711,6 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         onComplete: () => {
           stateRef.current.state = "closed";
           stateRef.current.openedCard = null;
-          stateRef.current.openProgressVal = 0;
-          setExpandedTool(null);
-          setOpenProgress(0);
         },
       });
       tl.to(
