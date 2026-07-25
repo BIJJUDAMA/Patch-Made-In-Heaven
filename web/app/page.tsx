@@ -274,59 +274,7 @@ export default function Dashboard() {
         {/* Cinematic WebGL Raymarching Volumetric Background */}
         <HeroShader />
 
-        {/* Top bar */}
-        <header
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '1.5rem 3rem',
-            borderBottom: '1px solid var(--border-muted)',
-            position: 'relative',
-            zIndex: 2,
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div
-              style={{
-                width: '1.75rem',
-                height: '1.75rem',
-                borderRadius: '4px',
-                backgroundColor: 'var(--accent-primary)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
-            >
-              <span style={{ color: '#0e0e0e', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.75rem', lineHeight: 1 }}>P</span>
-            </div>
-            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9375rem', letterSpacing: '-0.01em', color: 'var(--text-high)' }}>
-              Patch Made In Heaven
-            </span>
-          </div>
 
-          <button
-            onClick={fetchCards}
-            disabled={loading}
-            className="active-press"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.375rem',
-              padding: '0.5rem 0.875rem',
-              borderRadius: '6px',
-              backgroundColor: 'var(--surface-panel)',
-              border: '1px solid var(--border-muted)',
-              color: 'var(--text-medium)',
-              fontSize: '0.8125rem',
-              fontFamily: 'var(--font-body)',
-              cursor: loading ? 'not-allowed' : 'pointer',
-            }}
-          >
-            <RefreshCw style={{ width: '0.875rem', height: '0.875rem', animation: loading ? 'spin 1s linear infinite' : 'none' }} />
-            Refresh
-          </button>
-        </header>
 
         {/* Main hero content — centered */}
         <div
@@ -558,6 +506,27 @@ export default function Dashboard() {
               >
                 Knowledge Base
               </h2>
+              <button
+                onClick={fetchCards}
+                disabled={loading}
+                className="active-press"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.375rem',
+                  padding: '0.5rem 0.875rem',
+                  borderRadius: '6px',
+                  backgroundColor: 'var(--surface-panel)',
+                  border: '1px solid var(--border-strong)',
+                  color: 'var(--text-high)',
+                  fontSize: '0.8125rem',
+                  fontFamily: 'var(--font-mono)',
+                  cursor: loading ? 'not-allowed' : 'pointer',
+                }}
+              >
+                <RefreshCw style={{ width: '0.875rem', height: '0.875rem', animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+                Refresh
+              </button>
             </div>
           </div>
 
