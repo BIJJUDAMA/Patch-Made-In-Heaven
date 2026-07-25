@@ -1099,27 +1099,23 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Flexbox Layout) */}
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face */}
       {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "min(82%, 490px)",
-            height: "min(82%, 490px)",
-            zIndex: 30,
+            inset: 0,
+            zIndex: 35,
             pointerEvents: "none",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
-            padding: "0.75rem",
+            padding: "1.5rem 2rem",
             boxSizing: "border-box",
             animation: "fadeUp 220ms cubic-bezier(0.16, 1, 0.3, 1) both",
           }}
         >
-          {/* Top Row: Close Button [✕] at Upper Right Corner */}
+          {/* Top Row: Close Button [✕] at Upper Right Corner inside Card */}
           <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
             <button
               onClick={() => stateRef.current.closeCard()}
@@ -1145,7 +1141,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             </button>
           </div>
 
-          {/* Bottom Row: View JSON Schema Button Centered at Bottom */}
+          {/* Bottom Row: View JSON Schema Button Centered at Bottom inside Card */}
           <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
             <button
               onClick={() => setShowSchemaModal(true)}
@@ -1176,31 +1172,44 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* JSON Schema Popup Inspector - STYLED IN THE EXACT 1:1 AESTHETIC & BRANDING OF THE 3D CARD */}
+      {/* JSON Schema Popup Inspector - FIXED 100% IN THE DEAD CENTER OF THE VIEWPORT */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
           style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "calc(100% - 3.5rem)",
-            maxWidth: "760px",
-            maxHeight: "85vh",
-            zIndex: 40,
+            position: "fixed",
+            inset: 0,
+            zIndex: 99999,
             display: "flex",
-            flexDirection: "column",
-            background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 40%, #030303 100%)",
-            border: "2.2px solid rgba(255, 255, 255, 0.45)",
-            borderRadius: "20px",
-            padding: "2rem 2.25rem",
-            color: "#ffffff",
-            overflow: "hidden",
-            boxShadow: "0 40px 90px rgba(0, 0, 0, 0.98), inset 0 0 0 1px rgba(255,255,255,0.15)",
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            padding: "1.5rem",
             pointerEvents: "auto",
-            animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
+          }}
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowSchemaModal(false);
           }}
         >
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: "760px",
+              maxHeight: "85vh",
+              display: "flex",
+              flexDirection: "column",
+              background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 40%, #030303 100%)",
+              border: "2.2px solid rgba(255, 255, 255, 0.45)",
+              borderRadius: "20px",
+              padding: "2rem 2.25rem",
+              color: "#ffffff",
+              overflow: "hidden",
+              boxShadow: "0 40px 90px rgba(0, 0, 0, 0.98), inset 0 0 0 1px rgba(255,255,255,0.15)",
+              animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
+            }}
+          >
           {/* Subtle Linear Grid Pattern matching Card Texture 1:1 */}
           <div
             style={{
@@ -1577,6 +1586,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             )}
           </div>
         </div>
+      </div>
       )}
     </div>
   );
