@@ -905,6 +905,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
       if (!containerRef.current) return;
       const rect = containerRef.current.getBoundingClientRect();
+      const isInsideContainer =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+      if (!isInsideContainer) return;
+
       pointer.set(
         ((e.clientX - rect.left) / rect.width) * 2 - 1,
         -((e.clientY - rect.top) / rect.height) * 2 + 1
