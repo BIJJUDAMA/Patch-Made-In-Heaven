@@ -13,9 +13,13 @@
     "typecheck": "npm --prefix mcp run typecheck",
     "deploy": "cd mcp && npx @nitrostack/cli deploy"
   },
+  "devDependencies": {
+    "@nitrostack/cli": "^1"
+  },
   "engines": {
     "node": ">=20"
   },
+
   "author": "",
   "license": "Apache-2.0"
 }
