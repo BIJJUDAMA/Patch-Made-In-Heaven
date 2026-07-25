@@ -143,6 +143,35 @@ describe('SubmitTools.submitFix', () => {
     expect(esClient.index).not.toHaveBeenCalled();
   });
 
+  it('rejects a submission whose environment does not match the verified run', async () => {
+    const { tools, esClient, verificationRunClient } = makeTools();
+    const run = await verificationRunClient.create(baseVerifyInput({ environment: { language: 'python' } }));
+
+    const result = await tools.submitFix({
+      ...baseSubmitInput(run.verificationRunId),
+      environment: { language: 'node' },
+    });
+
+    expect(result.status).toBe('REJECTED');
+    expect((result as Record<string, unknown>).indexed).toBe(false);
+    expect(esClient.index).not.toHaveBeenCalled();
+  });
+
+  it('accepts environments that differ only in packageVersions key order', async () => {
+    const { tools, verificationRunClient } = makeTools();
+    const run = await verificationRunClient.create(
+      baseVerifyInput({ environment: { language: 'python', packageVersions: { pydantic: '2.4.2', fastapi: '0.104.0' } } })
+    );
+
+    const result = await tools.submitFix({
+      ...baseSubmitInput(run.verificationRunId),
+      environment: { language: 'python', packageVersions: { fastapi: '0.104.0', pydantic: '2.4.2' } },
+    });
+
+    expect(result.ok).toBe(true);
+    expect(result.status).toBe('STORED');
+  });
+
   it('rejects an unknown verificationRunId', async () => {
     const { tools, esClient } = makeTools();
     const result = await tools.submitFix(baseSubmitInput('00000000-0000-0000-0000-000000000000'));

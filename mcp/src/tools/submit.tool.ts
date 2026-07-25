@@ -2,7 +2,12 @@ import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitro
 import { z } from 'zod';
 import { ElasticService, type KnowledgeCard } from '../services/elastic.client.js';
 import { VerificationRunClient, computePatchDigest } from '../services/verification-run.client.js';
-import { environmentMetaSchema, knowledgeCardSchema, isTrustedForIndexing } from '../domain/knowledge-card.js';
+import {
+  environmentMetaSchema,
+  knowledgeCardSchema,
+  isTrustedForIndexing,
+  type EnvironmentMeta,
+} from '../domain/knowledge-card.js';
 import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
 
 const submitFixSchema = z.object({
@@ -26,6 +31,18 @@ const ERROR_TYPE_PATTERN = /\b([A-Z][A-Za-z0-9]*(?:Error|Exception))\b/;
 /** Best-effort extraction since submit_fix's V1 input contract (PRD §6.1) has no separate errorType field. */
 function deriveErrorType(errorLog: string): string {
   return errorLog.match(ERROR_TYPE_PATTERN)?.[1] ?? 'UnknownError';
+}
+
+/** Order-independent comparison — a caller re-serializing packageVersions in a different key order must still match. */
+function normalizeEnvironment(env: EnvironmentMeta): string {
+  const packageVersions = env.packageVersions
+    ? Object.fromEntries(Object.entries(env.packageVersions).sort(([a], [b]) => a.localeCompare(b)))
+    : undefined;
+  return JSON.stringify({ language: env.language, version: env.version, framework: env.framework, packageVersions });
+}
+
+function environmentsMatch(a: EnvironmentMeta, b: EnvironmentMeta): boolean {
+  return normalizeEnvironment(a) === normalizeEnvironment(b);
 }
 
 function rejected(code: string, message: string) {
@@ -77,6 +94,13 @@ export class SubmitTools {
       return rejected(
         'VERIFICATION_NOT_PASSED',
         `The matched Verification Run has status "${run.status}", not PASS. A fix can only be submitted after a passing verification.`
+      );
+    }
+
+    if (!environmentsMatch(run.environment, params.environment)) {
+      return rejected(
+        'ENVIRONMENT_MISMATCH',
+        'The submitted environment does not match the environment the Verification Run actually ran against.'
       );
     }
 
