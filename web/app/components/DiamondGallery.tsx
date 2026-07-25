@@ -956,10 +956,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </button>
       </div>
 
-      {/* Bottom Hint */}
-      <div className="dg-hint">
-        DRAG OR USE ARROWS TO EXPLORE &nbsp;·&nbsp; CLICK TO ZOOM
-      </div>
+
     </div>
   );
 }
