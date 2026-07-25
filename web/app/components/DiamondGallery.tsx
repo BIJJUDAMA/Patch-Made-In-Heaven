@@ -1099,80 +1099,84 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face */}
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Exact Card Mesh Bounds) */}
       {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            inset: 0,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "min(85vw, 440px)",
+            height: "min(85vw, 440px)",
             zIndex: 35,
             pointerEvents: "none",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "1.5rem 2rem",
             boxSizing: "border-box",
             animation: "fadeUp 220ms cubic-bezier(0.16, 1, 0.3, 1) both",
           }}
         >
-          {/* Top Row: Close Button [✕] at Upper Right Corner inside Card */}
-          <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
-            <button
-              onClick={() => stateRef.current.closeCard()}
-              className="active-press"
-              title="Close Card"
-              aria-label="Close Card"
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "50%",
-                border: "2px solid #ffffff",
-                background: "#000000",
-                color: "#ffffff",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.95)",
-                pointerEvents: "auto",
-              }}
-            >
-              <X style={{ width: "22px", height: "22px", strokeWidth: 2.5 }} />
-            </button>
-          </div>
+          {/* Upper Right Close Button [✕] strictly inside the 3D Card Top-Right Corner */}
+          <button
+            onClick={() => stateRef.current.closeCard()}
+            className="active-press"
+            title="Close Card"
+            aria-label="Close Card"
+            style={{
+              position: "absolute",
+              top: "16px",
+              right: "16px",
+              width: "42px",
+              height: "42px",
+              borderRadius: "50%",
+              border: "2px solid #ffffff",
+              background: "#000000",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              boxShadow: "0 8px 25px rgba(0, 0, 0, 0.95)",
+              pointerEvents: "auto",
+            }}
+          >
+            <X style={{ width: "22px", height: "22px", strokeWidth: 2.5 }} />
+          </button>
 
-          {/* Bottom Row: View JSON Schema Button Centered at Bottom inside Card */}
-          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
-            <button
-              onClick={() => setShowSchemaModal(true)}
-              className="active-press"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "0.625rem",
-                padding: "0.9rem 1.75rem",
-                borderRadius: "100px",
-                border: "2px solid #ffffff",
-                background: "#000000",
-                color: "#ffffff",
-                fontFamily: 'var(--font-mono), "Geist Mono", monospace',
-                fontSize: "0.8125rem",
-                fontWeight: 700,
-                letterSpacing: "0.09em",
-                textTransform: "uppercase",
-                cursor: "pointer",
-                boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
-                pointerEvents: "auto",
-              }}
-            >
-              <Settings style={{ width: "16px", height: "16px" }} /> View JSON Schema & Parameters
-            </button>
-          </div>
+          {/* Bottom Center View JSON Schema Button strictly inside the 3D Card Bottom-Center */}
+          <button
+            onClick={() => setShowSchemaModal(true)}
+            className="active-press"
+            style={{
+              position: "absolute",
+              bottom: "16px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              whiteSpace: "nowrap",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.625rem",
+              padding: "0.85rem 1.65rem",
+              borderRadius: "100px",
+              border: "2px solid #ffffff",
+              background: "#000000",
+              color: "#ffffff",
+              fontFamily: 'var(--font-mono), "Geist Mono", monospace',
+              fontSize: "0.8125rem",
+              fontWeight: 700,
+              letterSpacing: "0.09em",
+              textTransform: "uppercase",
+              cursor: "pointer",
+              boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
+              pointerEvents: "auto",
+            }}
+          >
+            <Settings style={{ width: "16px", height: "16px" }} /> View JSON Schema & Parameters
+          </button>
         </div>
       )}
 
-      {/* JSON Schema Popup Inspector - FIXED 100% IN THE DEAD CENTER OF THE VIEWPORT */}
+      {/* JSON Schema Popup Inspector - FIXED HEIGHT & GLOSSY HOLOGRAPHIC GLITCH CARD STYLE */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
           style={{
@@ -1183,8 +1187,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: "rgba(0, 0, 0, 0.85)",
-            backdropFilter: "blur(14px)",
-            WebkitBackdropFilter: "blur(14px)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
             padding: "1.5rem",
             pointerEvents: "auto",
           }}
@@ -1197,32 +1201,45 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               position: "relative",
               width: "100%",
               maxWidth: "760px",
+              height: "620px",
               maxHeight: "85vh",
               display: "flex",
               flexDirection: "column",
-              background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 40%, #030303 100%)",
-              border: "2.2px solid rgba(255, 255, 255, 0.45)",
-              borderRadius: "20px",
+              background: "linear-gradient(135deg, rgba(24, 24, 28, 0.98) 0%, rgba(12, 12, 15, 0.98) 45%, rgba(4, 4, 6, 0.99) 100%)",
+              border: "2.5px solid rgba(255, 255, 255, 0.75)",
+              borderRadius: "22px",
               padding: "2rem 2.25rem",
               color: "#ffffff",
               overflow: "hidden",
-              boxShadow: "0 40px 90px rgba(0, 0, 0, 0.98), inset 0 0 0 1px rgba(255,255,255,0.15)",
+              boxShadow: "0 40px 100px rgba(0, 0, 0, 0.98), 0 0 40px rgba(255, 255, 255, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.08)",
               animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
             }}
           >
-          {/* Subtle Linear Grid Pattern matching Card Texture 1:1 */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              pointerEvents: "none",
-              backgroundImage:
-                "linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px)",
-              backgroundSize: "45px 45px",
-              opacity: 0.7,
-              zIndex: 0,
-            }}
-          />
+            {/* Subtle Glossy Holographic Sweeping Shimmer Overlay */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.03) 60%, transparent 100%)",
+                opacity: 0.8,
+                zIndex: 0,
+              }}
+            />
+
+            {/* Subtle Linear Faceted Diamond Grid Pattern matching Card Texture 1:1 */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                backgroundImage:
+                  "linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px)",
+                backgroundSize: "45px 45px",
+                opacity: 0.7,
+                zIndex: 0,
+              }}
+            />
 
           {/* Modal Header matching Card Texture typography & badges 1:1 */}
           <div
