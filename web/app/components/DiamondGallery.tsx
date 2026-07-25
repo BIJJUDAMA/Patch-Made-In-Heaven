@@ -1099,7 +1099,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (1:1 Ratio Square) */}
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Flexbox Layout) */}
       {expandedTool && !showSchemaModal && (
         <div
           style={{
@@ -1107,62 +1107,58 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "min(68vw, 68vh, 520px)",
-            height: "min(68vw, 68vh, 520px)",
-            zIndex: 25,
+            width: "min(82%, 490px)",
+            height: "min(82%, 490px)",
+            zIndex: 30,
             pointerEvents: "none",
-            animation: "fadeUp 220ms ease both",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+            padding: "0.75rem",
+            boxSizing: "border-box",
+            animation: "fadeUp 220ms cubic-bezier(0.16, 1, 0.3, 1) both",
           }}
         >
-          {/* Upper Right Close Button [✕] inside the Card Top-Right Corner */}
-          <button
-            onClick={() => stateRef.current.closeCard()}
-            className="active-press"
-            title="Close Card"
-            aria-label="Close Card"
-            style={{
-              position: "absolute",
-              top: "16px",
-              right: "16px",
-              width: "42px",
-              height: "42px",
-              borderRadius: "50%",
-              border: "2px solid rgba(255, 255, 255, 0.75)",
-              background: "rgba(10, 10, 10, 0.92)",
-              backdropFilter: "blur(12px)",
-              WebkitBackdropFilter: "blur(12px)",
-              color: "#ffffff",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.85)",
-              pointerEvents: "auto",
-            }}
-          >
-            <X style={{ width: "20px", height: "20px" }} />
-          </button>
+          {/* Top Row: Close Button [✕] at Upper Right Corner */}
+          <div style={{ display: "flex", justifyContent: "flex-end", width: "100%" }}>
+            <button
+              onClick={() => stateRef.current.closeCard()}
+              className="active-press"
+              title="Close Card"
+              aria-label="Close Card"
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "50%",
+                border: "2px solid #ffffff",
+                background: "#000000",
+                color: "#ffffff",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                boxShadow: "0 8px 25px rgba(0, 0, 0, 0.95)",
+                pointerEvents: "auto",
+              }}
+            >
+              <X style={{ width: "22px", height: "22px", strokeWidth: 2.5 }} />
+            </button>
+          </div>
 
-          {/* Bottom Center View JSON Schema Button inside the Card Bottom */}
-          {expandedTool.schema && (
+          {/* Bottom Row: View JSON Schema Button Centered at Bottom */}
+          <div style={{ display: "flex", justifyContent: "center", width: "100%" }}>
             <button
               onClick={() => setShowSchemaModal(true)}
               className="active-press"
               style={{
-                position: "absolute",
-                bottom: "20px",
-                left: "50%",
-                transform: "translateX(-50%)",
-                whiteSpace: "nowrap",
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 gap: "0.625rem",
-                padding: "0.85rem 1.65rem",
+                padding: "0.9rem 1.75rem",
                 borderRadius: "100px",
-                border: "2px solid rgba(255, 255, 255, 0.8)",
-                background: "linear-gradient(135deg, rgba(35, 35, 35, 0.95) 0%, rgba(12, 12, 12, 0.95) 100%)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                border: "2px solid #ffffff",
+                background: "#000000",
                 color: "#ffffff",
                 fontFamily: 'var(--font-mono), "Geist Mono", monospace',
                 fontSize: "0.8125rem",
@@ -1170,13 +1166,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 letterSpacing: "0.09em",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                boxShadow: "0 16px 45px rgba(0, 0, 0, 0.95)",
+                boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
                 pointerEvents: "auto",
               }}
             >
               <Settings style={{ width: "16px", height: "16px" }} /> View JSON Schema & Parameters
             </button>
-          )}
+          </div>
         </div>
       )}
 
