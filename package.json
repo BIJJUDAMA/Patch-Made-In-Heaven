@@ -14,16 +14,17 @@
     "deploy": "cd mcp && npx @nitrostack/cli deploy"
   },
   "devDependencies": {
-    "@nitrostack/cli": "^1",
-    "@types/node": "^22.10.0",
-    "typescript": "^5.3.3"
+    "@nitrostack/cli": "^1.0.15",
+    "@types/node": "^22.20.1",
+    "typescript": "^5.9.3"
   },
-
-
+  "workspaces": [
+    "mcp",
+    "web"
+  ],
   "engines": {
     "node": ">=20"
   },
-
   "author": "",
   "license": "Apache-2.0"
 }
