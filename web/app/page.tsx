@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import {
   Search,
   Terminal,
@@ -13,6 +13,7 @@ import {
   Clock,
   Copy,
   Check,
+  ChevronDown,
 } from 'lucide-react';
 
 export interface KnowledgeCardView {
@@ -59,6 +60,13 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'diff' | 'logs' | 'trace'>('diff');
   const [copied, setCopied] = useState<boolean>(false);
 
+  // Custom Apple Dropdown Open States
+  const [langDropdownOpen, setLangDropdownOpen] = useState<boolean>(false);
+  const [errorDropdownOpen, setErrorDropdownOpen] = useState<boolean>(false);
+
+  const langRef = useRef<HTMLDivElement>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
+
   const fetchCards = async () => {
     setLoading(true);
     setError(null);
@@ -87,6 +95,20 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchCards();
+  }, []);
+
+  // Outside click listener for custom floating menus
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setLangDropdownOpen(false);
+      }
+      if (errorRef.current && !errorRef.current.contains(event.target as Node)) {
+        setErrorDropdownOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const languages = useMemo(() => {
@@ -298,7 +320,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* Ultra-Smooth Dropdowns & Search Controls */}
+        {/* Custom Apple Smooth Floating Dropdowns & Search Controls */}
         <div
           style={{
             display: 'grid',
@@ -341,53 +363,231 @@ export default function Dashboard() {
             />
           </div>
 
-          {/* Smooth Language Selector */}
-          <select
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            className="smooth-select"
-            style={{
-              padding: '0.875rem 1.25rem',
-              borderRadius: '10px',
-              backgroundColor: 'var(--surface-subtle)',
-              border: '1px solid var(--border-muted)',
-              color: 'var(--text-high)',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-            }}
-          >
-            <option value="all">All Runtimes ({cards.length})</option>
-            {languages.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang.toUpperCase()}
-              </option>
-            ))}
-          </select>
+          {/* Custom Apple Floating Language Dropdown */}
+          <div ref={langRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => {
+                setLangDropdownOpen(!langDropdownOpen);
+                setErrorDropdownOpen(false);
+              }}
+              className="active-press"
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.875rem 1.25rem',
+                borderRadius: '10px',
+                backgroundColor: 'var(--surface-subtle)',
+                border: langDropdownOpen ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-muted)',
+                color: 'var(--text-high)',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              <span>
+                {selectedLanguage === 'all'
+                  ? `All Runtimes (${cards.length})`
+                  : selectedLanguage.toUpperCase()}
+              </span>
+              <ChevronDown
+                style={{
+                  width: '1rem',
+                  height: '1rem',
+                  color: 'var(--text-medium)',
+                  transform: langDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              />
+            </button>
 
-          {/* Smooth Error Type Selector */}
-          <select
-            value={selectedErrorType}
-            onChange={(e) => setSelectedErrorType(e.target.value)}
-            className="smooth-select"
-            style={{
-              padding: '0.875rem 1.25rem',
-              borderRadius: '10px',
-              backgroundColor: 'var(--surface-subtle)',
-              border: '1px solid var(--border-muted)',
-              color: 'var(--text-high)',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-            }}
-          >
-            <option value="all">All Error Classes</option>
-            {errorTypes.map((err) => (
-              <option key={err} value={err}>
-                {err}
-              </option>
-            ))}
-          </select>
+            {langDropdownOpen && (
+              <div
+                className="apple-menu-anim"
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  right: 0,
+                  zIndex: 50,
+                  backgroundColor: 'rgba(22, 22, 26, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-strong)',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+                  padding: '0.375rem',
+                  maxHeight: '260px',
+                  overflowY: 'auto',
+                }}
+              >
+                <div
+                  onClick={() => {
+                    setSelectedLanguage('all');
+                    setLangDropdownOpen(false);
+                  }}
+                  style={{
+                    padding: '0.625rem 0.875rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8125rem',
+                    color: selectedLanguage === 'all' ? 'var(--text-high)' : 'var(--text-medium)',
+                    backgroundColor: selectedLanguage === 'all' ? 'var(--surface-hover)' : 'transparent',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    transition: 'background-color 120ms ease',
+                  }}
+                >
+                  <span>All Runtimes</span>
+                  {selectedLanguage === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                </div>
+
+                {languages.map((lang) => {
+                  const isSel = selectedLanguage === lang;
+                  return (
+                    <div
+                      key={lang}
+                      onClick={() => {
+                        setSelectedLanguage(lang);
+                        setLangDropdownOpen(false);
+                      }}
+                      style={{
+                        padding: '0.625rem 0.875rem',
+                        borderRadius: '6px',
+                        fontSize: '0.8125rem',
+                        color: isSel ? 'var(--text-high)' : 'var(--text-medium)',
+                        backgroundColor: isSel ? 'var(--surface-hover)' : 'transparent',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        transition: 'background-color 120ms ease',
+                      }}
+                    >
+                      <span>{lang.toUpperCase()}</span>
+                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Custom Apple Floating Error Type Dropdown */}
+          <div ref={errorRef} style={{ position: 'relative' }}>
+            <button
+              onClick={() => {
+                setErrorDropdownOpen(!errorDropdownOpen);
+                setLangDropdownOpen(false);
+              }}
+              className="active-press"
+              style={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                padding: '0.875rem 1.25rem',
+                borderRadius: '10px',
+                backgroundColor: 'var(--surface-subtle)',
+                border: errorDropdownOpen ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-muted)',
+                color: 'var(--text-high)',
+                fontSize: '0.875rem',
+                fontWeight: 500,
+                cursor: 'pointer',
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+              }}
+            >
+              <span>
+                {selectedErrorType === 'all'
+                  ? 'All Error Classes'
+                  : selectedErrorType}
+              </span>
+              <ChevronDown
+                style={{
+                  width: '1rem',
+                  height: '1rem',
+                  color: 'var(--text-medium)',
+                  transform: errorDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
+              />
+            </button>
+
+            {errorDropdownOpen && (
+              <div
+                className="apple-menu-anim"
+                style={{
+                  position: 'absolute',
+                  top: 'calc(100% + 6px)',
+                  left: 0,
+                  right: 0,
+                  zIndex: 50,
+                  backgroundColor: 'rgba(22, 22, 26, 0.95)',
+                  backdropFilter: 'blur(20px)',
+                  WebkitBackdropFilter: 'blur(20px)',
+                  borderRadius: '10px',
+                  border: '1px solid var(--border-strong)',
+                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
+                  padding: '0.375rem',
+                  maxHeight: '260px',
+                  overflowY: 'auto',
+                }}
+              >
+                <div
+                  onClick={() => {
+                    setSelectedErrorType('all');
+                    setErrorDropdownOpen(false);
+                  }}
+                  style={{
+                    padding: '0.625rem 0.875rem',
+                    borderRadius: '6px',
+                    fontSize: '0.8125rem',
+                    color: selectedErrorType === 'all' ? 'var(--text-high)' : 'var(--text-medium)',
+                    backgroundColor: selectedErrorType === 'all' ? 'var(--surface-hover)' : 'transparent',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    transition: 'background-color 120ms ease',
+                  }}
+                >
+                  <span>All Error Classes</span>
+                  {selectedErrorType === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                </div>
+
+                {errorTypes.map((err) => {
+                  const isSel = selectedErrorType === err;
+                  return (
+                    <div
+                      key={err}
+                      onClick={() => {
+                        setSelectedErrorType(err);
+                        setErrorDropdownOpen(false);
+                      }}
+                      style={{
+                        padding: '0.625rem 0.875rem',
+                        borderRadius: '6px',
+                        fontSize: '0.8125rem',
+                        color: isSel ? 'var(--text-high)' : 'var(--text-medium)',
+                        backgroundColor: isSel ? 'var(--surface-hover)' : 'transparent',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        transition: 'background-color 120ms ease',
+                      }}
+                    >
+                      <span>{err}</span>
+                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Master / Detail Split View */}
