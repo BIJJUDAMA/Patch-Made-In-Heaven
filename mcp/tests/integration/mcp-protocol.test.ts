@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 import { spawn, type ChildProcessWithoutNullStreams } from 'child_process';
+import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -20,7 +21,23 @@ import { fileURLToPath } from 'url';
 
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const projectRoot = path.join(currentDir, '../..');
-const tsxBin = path.join(projectRoot, 'node_modules/.bin/tsx');
+
+// npm workspaces (the monorepo root package.json added for NitroCloud's build)
+// can hoist tsx's binary to either mcp/node_modules/.bin or the repo root's,
+// depending on what else is installed — check both rather than hardcode one.
+function resolveTsxBin(): string {
+  const candidates = [
+    path.join(projectRoot, 'node_modules/.bin/tsx'),
+    path.join(projectRoot, '../node_modules/.bin/tsx'),
+  ];
+  const found = candidates.find((candidate) => fs.existsSync(candidate));
+  if (!found) {
+    throw new Error(`Could not resolve the tsx binary; checked: ${candidates.join(', ')}`);
+  }
+  return found;
+}
+
+const tsxBin = resolveTsxBin();
 const entryPoint = path.join(projectRoot, 'src/index.ts');
 
 interface JsonRpcMessage {

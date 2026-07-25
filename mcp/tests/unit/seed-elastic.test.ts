@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
+import * as fs from 'fs';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 import { validateCardsForSeeding } from '../../src/scripts/seed-elastic.js';
@@ -10,7 +11,24 @@ import type { KnowledgeCard } from '../../src/domain/knowledge-card.js';
 const execFileAsync = promisify(execFile);
 const currentDir = path.dirname(fileURLToPath(import.meta.url));
 const scriptPath = path.join(currentDir, '../../src/scripts/seed-elastic.ts');
-const tsxBin = path.join(currentDir, '../../node_modules/.bin/tsx');
+const projectRoot = path.join(currentDir, '../..');
+
+// npm workspaces (the monorepo root package.json added for NitroCloud's build)
+// can hoist tsx's binary to either mcp/node_modules/.bin or the repo root's,
+// depending on what else is installed — check both rather than hardcode one.
+function resolveTsxBin(): string {
+  const candidates = [
+    path.join(projectRoot, 'node_modules/.bin/tsx'),
+    path.join(projectRoot, '../node_modules/.bin/tsx'),
+  ];
+  const found = candidates.find((candidate) => fs.existsSync(candidate));
+  if (!found) {
+    throw new Error(`Could not resolve the tsx binary; checked: ${candidates.join(', ')}`);
+  }
+  return found;
+}
+
+const tsxBin = resolveTsxBin();
 
 function evidencedPassCard(overrides: Partial<KnowledgeCard> = {}): unknown {
   return {
