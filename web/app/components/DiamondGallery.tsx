@@ -949,12 +949,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
         if (overlayRef.current) {
           const mesh = stateRef.current.openedCard;
-          const tiltX = THREE.MathUtils.radToDeg(mesh.rotation.x);
+          const tiltX = -THREE.MathUtils.radToDeg(mesh.rotation.x);
           const deltaY = mesh.rotation.y - (-stateRef.current.theta);
           const tiltY = THREE.MathUtils.radToDeg(deltaY);
           const scaleVal = 0.45 + 0.55 * stateRef.current.openProgressVal;
 
-          overlayRef.current.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scaleVal})`;
+          overlayRef.current.style.transform = `translate(-50%, -50%) perspective(800px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scaleVal})`;
           overlayRef.current.style.opacity = `${Math.min(1, stateRef.current.openProgressVal * 1.6)}`;
         }
       }
@@ -1136,8 +1136,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             aria-label="Close Card"
             style={{
               position: "absolute",
-              top: "14px",
-              right: "14px",
+              top: "8px",
+              right: "8px",
               width: "44px",
               height: "44px",
               borderRadius: "50%",
@@ -1161,7 +1161,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             className="active-press"
             style={{
               position: "absolute",
-              bottom: "40px",
+              bottom: "16px",
               left: "50%",
               transform: "translateX(-50%)",
               whiteSpace: "nowrap",
