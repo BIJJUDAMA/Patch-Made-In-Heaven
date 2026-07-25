@@ -2,122 +2,140 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Geist+Mono:wght@300;400;500;600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+
 :root {
-  /* Deep Midnight Indigo & Electric Violet Palette */
-  --bg-app: #0b0f19;
-  --surface-subtle: #111827;
-  --surface-panel: #1f2937;
-  --surface-hover: #374151;
-  --surface-active: #4b5563;
+  /* Warm Charcoal — Raw Editorial Dark */
+  --bg-app: #0e0e0e;
+  --surface-subtle: #161616;
+  --surface-panel: #1e1e1e;
+  --surface-hover: #282828;
+  --surface-active: #333333;
 
-  /* Electric Violet & Cyan Accents */
-  --accent-primary: #8b5cf6; /* Electric Violet */
-  --accent-primary-subtle: rgba(139, 92, 246, 0.15);
+  /* Amber / Warm Gold Accent — singular focus */
+  --accent-primary: #e8a020;
+  --accent-primary-subtle: rgba(232, 160, 32, 0.1);
+  --accent-primary-border: rgba(232, 160, 32, 0.25);
 
-  --accent-cyan: #06b6d4; /* Vivid Cyan */
+  /* Status — muted, intentional */
+  --status-pass: #6ee7b7;
+  --status-pass-subtle: rgba(110, 231, 183, 0.1);
+  --status-pass-border: rgba(110, 231, 183, 0.2);
 
-  --status-pass: #10b981; /* Emerald Green */
-  --status-pass-subtle: rgba(16, 185, 129, 0.14);
-  --status-pass-border: rgba(16, 185, 129, 0.3);
+  --status-fail: #fca5a5;
+  --status-fail-subtle: rgba(252, 165, 165, 0.1);
+  --status-fail-border: rgba(252, 165, 165, 0.2);
 
-  --status-fail: #f43f5e; /* Bright Rose */
-  --status-fail-subtle: rgba(244, 63, 94, 0.14);
-  --status-fail-border: rgba(244, 63, 94, 0.3);
+  /* Hairline Borders — barely there */
+  --border-muted: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
 
-  /* Muted Glass Borders */
-  --border-muted: #1f2937;
-  --border-strong: #374151;
+  /* Typography — warm, never pure white */
+  --text-high: #f0ede8;
+  --text-medium: #a09a90;
+  --text-low: #5a5550;
 
-  /* Crisp Typography */
-  --text-high: #f9fafb;
-  --text-medium: #d1d5db;
-  --text-low: #9ca3af;
+  /* Font Stacks */
+  --font-display: 'Syne', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'JetBrains Mono', monospace;
 
-  /* Strict 10px Border Radius Standard */
-  --radius-standard: 10px;
+  --radius-standard: 8px;
 }
 
-
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--bg-app);
   color: var(--text-high);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
   overflow-x: hidden;
-  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Subtle grain overlay for depth */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
 }
 
-/* Custom Minimal Scrollbar */
-::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
-}
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.14); }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-app);
-}
+/* ─── Type Scale ─────────────────────────────── */
+.display-font { font-family: var(--font-display); }
+.mono-font    { font-family: var(--font-mono); }
 
-::-webkit-scrollbar-thumb {
-  background: #38445e;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #4d5c7a;
-}
-
-/* Apple Fluid Active Scale Feedback */
+/* ─── Micro-interaction: press scale ─────────── */
 .active-press {
-  transition: transform 140ms cubic-bezier(0.16, 1, 0.3, 1), background-color 150ms ease, border-color 150ms ease;
+  transition: transform 140ms cubic-bezier(0.23, 1, 0.32, 1),
+              background-color 160ms ease,
+              border-color 160ms ease,
+              opacity 160ms ease;
+}
+.active-press:active { transform: scale(0.97); }
+
+/* ─── Dropdown menu fade ─────────────────────── */
+@keyframes menuReveal {
+  from { opacity: 0; transform: translateY(-6px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+.apple-menu-anim { animation: menuReveal 160ms cubic-bezier(0.23, 1, 0.32, 1) both; }
+
+/* ─── Spin ───────────────────────────────────── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.active-press:active {
-  transform: scale(0.985);
+/* ─── Hero stagger reveals ───────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Custom Apple Floating Menu Dropdown Animations */
-@keyframes appleMenuFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
+.stagger-1 { animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 100ms both; }
+.stagger-2 { animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 220ms both; }
+.stagger-3 { animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 340ms both; }
+.stagger-4 { animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 460ms both; }
+.stagger-5 { animation: fadeUp 600ms cubic-bezier(0.23, 1, 0.32, 1) 560ms both; }
 
-/* Custom Diff Text & Scrollbar Wrappers */
+/* ─── Diff lines ─────────────────────────────── */
 .diff-container pre {
   word-break: break-word;
   white-space: pre-wrap;
   overflow-x: auto;
 }
-
 .diff-line {
   word-break: break-all;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
+  min-width: 0;
 }
 
-/* Glassmorphism ambient glow cards */
-.hero-glow {
-  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.18) 0%, rgba(11, 15, 25, 0) 75%);
+/* ─── Tool card hover ────────────────────────── */
+.tool-card {
+  transition: border-color 200ms ease, background-color 200ms ease, transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.tool-card:hover {
+  border-color: var(--border-strong) !important;
+  background-color: var(--surface-panel) !important;
+  transform: translateY(-1px);
 }
 
-
-.card-glow {
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
-}
-
-.code-block {
-  font-family: 'JetBrains Mono', monospace;
+/* ─── Endpoint URL color ─────────────────────── */
+.endpoint-text {
+  color: var(--accent-primary);
+  font-family: var(--font-mono);
   font-size: 0.8125rem;
-  line-height: 1.5;
-  background-color: #141a24;
-  border: 1px solid var(--border-muted);
-  border-radius: 10px;
+  letter-spacing: -0.01em;
 }
-

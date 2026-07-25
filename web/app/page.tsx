@@ -19,6 +19,7 @@ import {
   Hash,
   Activity,
   Box,
+  ChevronRight,
 } from 'lucide-react';
 
 export interface KnowledgeCardView {
@@ -53,6 +54,37 @@ export interface KnowledgeCardView {
   };
 }
 
+const MCP_URL = 'https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp';
+
+const TOOLS = [
+  {
+    name: 'search_fix',
+    description: 'Finds verified patches and fixes matching a given stack trace or error log.',
+  },
+  {
+    name: 'find_similar',
+    description: 'Performs semantic vector search across the knowledge store to find related engineering fixes.',
+  },
+  {
+    name: 'get_patch',
+    description: 'Returns the raw unified git diff patch for a verified solution.',
+  },
+  {
+    name: 'get_execution_log',
+    description: 'Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.',
+  },
+  {
+    name: 'verify_fix',
+    description:
+      'Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome as a server-owned Verification Run, later matched (never trusted) by submit_fix.',
+  },
+  {
+    name: 'submit_fix',
+    description:
+      'Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run — never trusts a caller-supplied verification status.',
+  },
+];
+
 export default function Dashboard() {
   const [cards, setCards] = useState<KnowledgeCardView[]>([]);
   const [selectedCard, setSelectedCard] = useState<KnowledgeCardView | null>(null);
@@ -64,8 +96,6 @@ export default function Dashboard() {
   const [selectedErrorType, setSelectedErrorType] = useState<string>('all');
   const [activeTab, setActiveTab] = useState<'diff' | 'logs' | 'trace'>('diff');
   const [copied, setCopied] = useState<boolean>(false);
-
-  // Custom Apple Dropdown Open States
   const [langDropdownOpen, setLangDropdownOpen] = useState<boolean>(false);
   const [errorDropdownOpen, setErrorDropdownOpen] = useState<boolean>(false);
 
@@ -78,9 +108,7 @@ export default function Dashboard() {
     try {
       const res = await fetch('/api/cards');
       const data = await res.json();
-      if (!data.ok) {
-        throw new Error(data.error?.message || 'Failed to fetch cards');
-      }
+      if (!data.ok) throw new Error(data.error?.message || 'Failed to fetch cards');
       setCards(data.cards || []);
       setIsLiveElastic(data.isLiveElastic ?? false);
       if (data.cards?.length > 0) {
@@ -91,26 +119,18 @@ export default function Dashboard() {
         setSelectedCard(null);
       }
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Connection failed';
-      setError(msg);
+      setError(err instanceof Error ? err.message : 'Connection failed');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchCards();
-  }, []);
+  useEffect(() => { fetchCards(); }, []);
 
-  // Outside click listener for custom floating menus
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (langRef.current && !langRef.current.contains(event.target as Node)) {
-        setLangDropdownOpen(false);
-      }
-      if (errorRef.current && !errorRef.current.contains(event.target as Node)) {
-        setErrorDropdownOpen(false);
-      }
+      if (langRef.current && !langRef.current.contains(event.target as Node)) setLangDropdownOpen(false);
+      if (errorRef.current && !errorRef.current.contains(event.target as Node)) setErrorDropdownOpen(false);
     }
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
@@ -118,17 +138,13 @@ export default function Dashboard() {
 
   const languages = useMemo(() => {
     const set = new Set<string>();
-    cards.forEach((c) => {
-      if (c.environment?.language) set.add(c.environment.language);
-    });
+    cards.forEach((c) => { if (c.environment?.language) set.add(c.environment.language); });
     return Array.from(set).sort();
   }, [cards]);
 
   const errorTypes = useMemo(() => {
     const set = new Set<string>();
-    cards.forEach((c) => {
-      if (c.errorType) set.add(c.errorType);
-    });
+    cards.forEach((c) => { if (c.errorType) set.add(c.errorType); });
     return Array.from(set).sort();
   }, [cards]);
 
@@ -140,13 +156,8 @@ export default function Dashboard() {
         card.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
         card.errorType.toLowerCase().includes(searchQuery.toLowerCase()) ||
         card.stacktrace.toLowerCase().includes(searchQuery.toLowerCase());
-
-      const matchesLang =
-        selectedLanguage === 'all' || card.environment?.language?.toLowerCase() === selectedLanguage.toLowerCase();
-
-      const matchesError =
-        selectedErrorType === 'all' || card.errorType?.toLowerCase() === selectedErrorType.toLowerCase();
-
+      const matchesLang = selectedLanguage === 'all' || card.environment?.language?.toLowerCase() === selectedLanguage.toLowerCase();
+      const matchesError = selectedErrorType === 'all' || card.errorType?.toLowerCase() === selectedErrorType.toLowerCase();
       return matchesSearch && matchesLang && matchesError;
     });
   }, [cards, searchQuery, selectedLanguage, selectedErrorType]);
@@ -158,129 +169,117 @@ export default function Dashboard() {
   };
 
   const renderFormattedDiff = (patch: string) => {
-    if (!patch)
-      return (
-        <div style={{ color: 'var(--text-low)', fontStyle: 'italic', fontFamily: "'JetBrains Mono', monospace", padding: '1.25rem' }}>
-          No patch diff available for this entry.
-        </div>
-      );
+    if (!patch) return (
+      <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-low)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
+        No patch available.
+      </div>
+    );
     const lines = patch.split('\n');
-
     return (
-      <pre
-        style={{
-          fontFamily: "'JetBrains Mono', monospace",
-          fontSize: '0.8125rem',
-          lineHeight: 1.6,
-          margin: 0,
-          overflowX: 'auto',
-        }}
-      >
-        {lines.map((line, idx) => {
-          let bgColor = 'transparent';
-          let textColor = 'var(--text-high)';
-
-          if (line.startsWith('+') && !line.startsWith('+++')) {
-            bgColor = 'var(--status-pass-subtle)';
-            textColor = 'var(--status-pass)';
-          } else if (line.startsWith('-') && !line.startsWith('---')) {
-            bgColor = 'var(--status-fail-subtle)';
-            textColor = 'var(--status-fail)';
-          } else if (line.startsWith('@@') || line.startsWith('===')) {
-            textColor = 'var(--text-medium)';
-          }
-
+      <div className="diff-container" style={{ padding: '0.5rem 0' }}>
+        {lines.map((line, i) => {
+          let bg = 'transparent';
+          let color = 'var(--text-medium)';
+          if (line.startsWith('+') && !line.startsWith('+++')) { bg = 'rgba(110, 231, 183, 0.07)'; color = 'var(--status-pass)'; }
+          else if (line.startsWith('-') && !line.startsWith('---')) { bg = 'rgba(252, 165, 165, 0.07)'; color = 'var(--status-fail)'; }
+          else if (line.startsWith('@@')) { bg = 'rgba(232, 160, 32, 0.07)'; color = 'var(--accent-primary)'; }
+          else if (line.startsWith('diff') || line.startsWith('---') || line.startsWith('+++')) { color = 'var(--text-low)'; }
           return (
             <div
-              key={idx}
+              key={i}
+              className="diff-line"
               style={{
-                backgroundColor: bgColor,
-                color: textColor,
-                padding: '0.125rem 1rem',
-                display: 'flex',
-                gap: '1rem',
-                whiteSpace: 'pre-wrap',
-                wordBreak: 'break-all',
-                minWidth: 0,
-                maxWidth: '100%',
+                backgroundColor: bg,
+                color,
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.75rem',
+                lineHeight: 1.6,
+                padding: '0.0625rem 1rem',
               }}
             >
-              <span
-                style={{
-                  color: 'var(--text-low)',
-                  userSelect: 'none',
-                  fontSize: '0.75rem',
-                  width: '32px',
-                  textAlign: 'right',
-                  flexShrink: 0,
-                }}
-              >
-                {idx + 1}
-              </span>
-              <span style={{ minWidth: 0, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>{line}</span>
+              {line || ' '}
             </div>
           );
         })}
-      </pre>
+      </div>
     );
   };
 
+  /* ── Shared input/button styles ── */
+  const inputBase: React.CSSProperties = {
+    width: '100%',
+    padding: '0.75rem 1rem',
+    borderRadius: '6px',
+    backgroundColor: 'var(--surface-subtle)',
+    border: '1px solid var(--border-muted)',
+    color: 'var(--text-high)',
+    fontSize: '0.875rem',
+    fontFamily: 'var(--font-body)',
+    outline: 'none',
+    transition: 'border-color 160ms ease',
+  };
 
+  const dropdownItemStyle = (active: boolean): React.CSSProperties => ({
+    padding: '0.5rem 0.75rem',
+    borderRadius: '4px',
+    fontSize: '0.8125rem',
+    fontFamily: 'var(--font-body)',
+    color: active ? 'var(--text-high)' : 'var(--text-medium)',
+    backgroundColor: active ? 'var(--surface-hover)' : 'transparent',
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    transition: 'background-color 120ms ease',
+  });
+
+  /* ────────────────────────────────────────────────
+     RENDER
+  ──────────────────────────────────────────────── */
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)', color: 'var(--text-high)' }}>
-      {/* Sleek Header */}
-      <header
+
+      {/* ══════════════════════════════════════════
+          HERO — full viewport, only thing visible on load
+      ══════════════════════════════════════════ */}
+      <section
         style={{
-          borderBottom: '1px solid var(--border-muted)',
-          backgroundColor: 'var(--surface-subtle)',
-          padding: '1rem 2.5rem',
+          minHeight: '100vh',
           display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          position: 'sticky',
-          top: 0,
-          zIndex: 40,
+          flexDirection: 'column',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              width: '2rem',
-              height: '2rem',
-              borderRadius: '8px',
-              backgroundColor: 'var(--accent-primary-subtle)',
-              border: '1px solid var(--accent-primary)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: 'var(--accent-primary)',
-              fontWeight: 800,
-            }}
-          >
-            P
+        {/* Top bar */}
+        <header
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '1.5rem 3rem',
+            borderBottom: '1px solid var(--border-muted)',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div
+              style={{
+                width: '1.75rem',
+                height: '1.75rem',
+                borderRadius: '4px',
+                backgroundColor: 'var(--accent-primary)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{ color: '#0e0e0e', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: '0.75rem', lineHeight: 1 }}>P</span>
+            </div>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: '0.9375rem', letterSpacing: '-0.01em', color: 'var(--text-high)' }}>
+              Patch Made In Heaven
+            </span>
           </div>
-          <div>
-            <h1 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--text-high)' }}>
-              Patch Made In Heaven MCP
-            </h1>
-          </div>
-        </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <span
-            style={{
-              fontSize: '0.75rem',
-              fontWeight: 600,
-              padding: '0.25rem 0.625rem',
-              borderRadius: '12px',
-              backgroundColor: 'var(--surface-panel)',
-              border: '1px solid var(--border-muted)',
-              color: 'var(--accent-primary)',
-              fontFamily: "'JetBrains Mono', monospace",
-            }}
-          >
-            v1.0.0
-          </span>
           <button
             onClick={fetchCards}
             disabled={loading}
@@ -288,1012 +287,692 @@ export default function Dashboard() {
             style={{
               display: 'flex',
               alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.5rem 1rem',
-              borderRadius: '10px',
+              gap: '0.375rem',
+              padding: '0.5rem 0.875rem',
+              borderRadius: '6px',
               backgroundColor: 'var(--surface-panel)',
               border: '1px solid var(--border-muted)',
-              color: 'var(--text-high)',
+              color: 'var(--text-medium)',
               fontSize: '0.8125rem',
-              fontWeight: 600,
+              fontFamily: 'var(--font-body)',
               cursor: loading ? 'not-allowed' : 'pointer',
             }}
           >
-            <RefreshCw
-              style={{
-                width: '0.875rem',
-                height: '0.875rem',
-                animation: loading ? 'spin 1s linear infinite' : 'none',
-              }}
-            />
-            Refresh Base
+            <RefreshCw style={{ width: '0.875rem', height: '0.875rem', animation: loading ? 'spin 1s linear infinite' : 'none' }} />
+            Refresh
           </button>
-        </div>
-      </header>
+        </header>
 
-      {/* Main Hero & Connection Setup */}
-      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '5rem 2.5rem 4rem', textAlign: 'center' }}>
-        <div style={{ maxWidth: '880px', margin: '0 auto' }}>
-          {/* Logo Badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '4.5rem', height: '4.5rem', borderRadius: '18px', backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', color: 'var(--accent-primary)', boxShadow: '0 12px 32px rgba(139, 92, 246, 0.25)', marginBottom: '1.5rem' }}>
-            <Cpu style={{ width: '2.25rem', height: '2.25rem' }} />
+        {/* Main hero content — centered */}
+        <div
+          style={{
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '4rem 2rem',
+            textAlign: 'center',
+            maxWidth: '760px',
+            margin: '0 auto',
+            width: '100%',
+          }}
+        >
+          {/* Eyebrow */}
+          <div
+            className="stagger-1"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              padding: '0.25rem 0.875rem',
+              borderRadius: '100px',
+              border: '1px solid var(--border-strong)',
+              backgroundColor: 'var(--surface-subtle)',
+              color: 'var(--text-low)',
+              fontSize: '0.75rem',
+              fontFamily: 'var(--font-mono)',
+              letterSpacing: '0.04em',
+              marginBottom: '2.5rem',
+            }}
+          >
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', display: 'inline-block' }} />
+            MCP Server
           </div>
 
-          <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.1, margin: '0 0 0.75rem', color: 'var(--text-high)' }}>
-            Patch Made In Heaven MCP
+          {/* Title */}
+          <h1
+            className="stagger-2 display-font"
+            style={{
+              fontSize: 'clamp(2.5rem, 7vw, 4.5rem)',
+              fontWeight: 800,
+              letterSpacing: '-0.04em',
+              lineHeight: 1.0,
+              color: 'var(--text-high)',
+              marginBottom: '1.5rem',
+            }}
+          >
+            Patch Made<br />
+            <span style={{ color: 'var(--accent-primary)' }}>In Heaven</span>
           </h1>
 
-          <div style={{ display: 'inline-block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(139, 92, 246, 0.3)', padding: '0.25rem 0.875rem', borderRadius: '20px', marginBottom: '1.25rem' }}>
-            v1.0.0
-          </div>
-
-          <p style={{ fontSize: '1.25rem', color: 'var(--text-medium)', fontWeight: 500, lineHeight: 1.5, margin: '0 0 2.5rem' }}>
-            A powerful MCP server built with NitroStack
+          {/* Subtitle */}
+          <p
+            className="stagger-3"
+            style={{
+              fontSize: '1.0625rem',
+              color: 'var(--text-medium)',
+              lineHeight: 1.7,
+              fontWeight: 300,
+              maxWidth: '520px',
+              marginBottom: '3rem',
+            }}
+          >
+            A powerful MCP server built with NitroStack. Connect directly using the Server-Sent Events endpoint:
           </p>
 
-          {/* Connection Setup Box */}
-          <div style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-strong)', borderRadius: '14px', padding: '2rem 2.25rem', textAlign: 'left', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', marginBottom: '2.5rem' }}>
-            <h3 style={{ margin: '0 0 0.75rem', fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-high)' }}>
-              Connection Setup
-            </h3>
-            <p style={{ margin: '0 0 1.25rem', fontSize: '0.875rem', color: 'var(--text-medium)' }}>
-              Connect directly using the Server-Sent Events endpoint:
-            </p>
-
-            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <div
-                style={{
-                  flex: 1,
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: '0.8125rem',
-                  backgroundColor: 'var(--bg-app)',
-                  border: '1px solid var(--border-muted)',
-                  borderRadius: '8px',
-                  padding: '0.875rem 1.125rem',
-                  color: 'var(--accent-cyan)',
-                  wordBreak: 'break-all',
-                }}
-              >
-                https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp
-              </div>
-              <button
-                onClick={() => copyToClipboard('https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp')}
-                className="active-press"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  padding: '0.875rem 1.25rem',
-                  borderRadius: '8px',
-                  backgroundColor: 'var(--accent-primary)',
-                  color: '#ffffff',
-                  fontWeight: 700,
-                  fontSize: '0.875rem',
-                  border: 'none',
-                  cursor: 'pointer',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {copied ? <Check style={{ width: '1rem', height: '1rem' }} /> : <Copy style={{ width: '1rem', height: '1rem' }} />}
-                {copied ? 'Copied' : 'Copy Endpoint'}
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Available Tools Grid */}
-      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '4rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text-high)', marginBottom: '2.5rem', textAlign: 'center' }}>
-            Available Tools
-          </h2>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
-            {/* Tool 1 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                search_fix
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Finds verified patches and fixes matching a given stack trace or error log.
-              </p>
-            </div>
-
-            {/* Tool 2 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                find_similar
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Performs semantic vector search across the knowledge store to find related engineering fixes.
-              </p>
-            </div>
-
-            {/* Tool 3 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                get_patch
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Returns the raw unified git diff patch for a verified solution.
-              </p>
-            </div>
-
-            {/* Tool 4 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                get_execution_log
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.
-              </p>
-            </div>
-
-            {/* Tool 5 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                verify_fix
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome as a server-owned Verification Run, later matched (never trusted) by submit_fix.
-              </p>
-            </div>
-
-            {/* Tool 6 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
-                submit_fix
-              </div>
-              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
-                Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run created by a prior verify_fix call — never trusts a caller-supplied verification status.
-              </p>
-            </div>
-          </div>
-
-          <div style={{ marginTop: '3.5rem', textAlign: 'center', color: 'var(--text-low)', fontSize: '0.875rem' }}>
-            Powered by NitroStack - The TypeScript MCP Framework
-          </div>
-        </div>
-      </section>
-
-      {/* Optional Live Knowledge Base Inspection Drawer */}
-      <main id="inspector" style={{ maxWidth: '100%', padding: '3rem 2.5rem 4rem' }}>
-
-
-
-        {/* Error Alert */}
-        {error && (
+          {/* Endpoint card */}
           <div
+            className="stagger-4"
             style={{
-              marginBottom: '2rem',
-              padding: '1.25rem 1.5rem',
+              width: '100%',
+              maxWidth: '600px',
+              backgroundColor: 'var(--surface-subtle)',
+              border: '1px solid var(--border-strong)',
               borderRadius: '10px',
-              backgroundColor: 'var(--status-fail-subtle)',
-              border: '1px solid var(--status-fail-border)',
-              color: 'var(--status-fail)',
+              padding: '1.25rem 1.5rem',
+              marginBottom: '1.5rem',
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
             }}
           >
-            <AlertTriangle style={{ width: '1.375rem', height: '1.375rem', flexShrink: 0 }} />
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '0.875rem' }}>Service Warning</div>
-              <div style={{ fontSize: '0.8125rem', color: '#fca5a5' }}>{error}</div>
+            <div
+              className="endpoint-text"
+              style={{ flex: 1, textAlign: 'left', wordBreak: 'break-all', lineHeight: 1.5 }}
+            >
+              {MCP_URL}
             </div>
-          </div>
-        )}
-
-        {/* Custom Apple Floating Dropdowns & Search Controls */}
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '2fr 1fr 1fr',
-            gap: '1.25rem',
-            marginBottom: '2rem',
-          }}
-        >
-          {/* Search Bar */}
-          <div style={{ position: 'relative' }}>
-            <Search
-              style={{
-                position: 'absolute',
-                left: '1.25rem',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                width: '1.125rem',
-                height: '1.125rem',
-                color: 'var(--text-low)',
-              }}
-            />
-            <input
-              type="text"
-              placeholder="Search stacktrace, error class, or problem..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.875rem 1.25rem 0.875rem 3.25rem',
-                borderRadius: '10px',
-                backgroundColor: 'var(--surface-subtle)',
-                border: '1px solid var(--border-muted)',
-                color: 'var(--text-high)',
-                fontSize: '0.875rem',
-                outline: 'none',
-                boxSizing: 'border-box',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-                transition: 'border-color 180ms ease, background-color 180ms ease',
-              }}
-            />
-          </div>
-
-          {/* Custom Apple Floating Language Dropdown */}
-          <div ref={langRef} style={{ position: 'relative' }}>
             <button
-              onClick={() => {
-                setLangDropdownOpen(!langDropdownOpen);
-                setErrorDropdownOpen(false);
-              }}
+              onClick={() => copyToClipboard(MCP_URL)}
               className="active-press"
               style={{
-                width: '100%',
+                flexShrink: 0,
                 display: 'flex',
-                justifyContent: 'space-between',
                 alignItems: 'center',
-                padding: '0.875rem 1.25rem',
-                borderRadius: '10px',
-                backgroundColor: 'var(--surface-subtle)',
-                border: langDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
-                color: 'var(--text-high)',
-                fontSize: '0.875rem',
-                fontWeight: 500,
+                gap: '0.375rem',
+                padding: '0.5rem 0.875rem',
+                borderRadius: '6px',
+                backgroundColor: copied ? 'var(--status-pass-subtle)' : 'var(--accent-primary)',
+                color: copied ? 'var(--status-pass)' : '#0e0e0e',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 600,
+                fontSize: '0.8125rem',
+                border: 'none',
                 cursor: 'pointer',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                whiteSpace: 'nowrap',
+                transition: 'background-color 200ms ease, color 200ms ease',
               }}
             >
-              <span>
-                {selectedLanguage === 'all'
-                  ? `All Runtimes (${cards.length})`
-                  : selectedLanguage.toUpperCase()}
-              </span>
-              <ChevronDown
-                style={{
-                  width: '1rem',
-                  height: '1rem',
-                  color: 'var(--text-medium)',
-                  transform: langDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-              />
+              {copied ? <Check style={{ width: '0.875rem', height: '0.875rem' }} /> : <Copy style={{ width: '0.875rem', height: '0.875rem' }} />}
+              {copied ? 'Copied' : 'Copy'}
             </button>
-
-            {langDropdownOpen && (
-              <div
-                className="apple-menu-anim"
-                style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 6px)',
-                  left: 0,
-                  right: 0,
-                  zIndex: 50,
-                  backgroundColor: 'var(--surface-panel)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-strong)',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
-                  padding: '0.375rem',
-                  maxHeight: '260px',
-                  overflowY: 'auto',
-                }}
-              >
-                <div
-                  onClick={() => {
-                    setSelectedLanguage('all');
-                    setLangDropdownOpen(false);
-                  }}
-                  style={{
-                    padding: '0.625rem 0.875rem',
-                    borderRadius: '6px',
-                    fontSize: '0.8125rem',
-                    color: selectedLanguage === 'all' ? 'var(--text-high)' : 'var(--text-medium)',
-                    backgroundColor: selectedLanguage === 'all' ? 'var(--surface-hover)' : 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    transition: 'background-color 120ms ease',
-                  }}
-                >
-                  <span>All Runtimes</span>
-                  {selectedLanguage === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
-                </div>
-
-                {languages.map((lang) => {
-                  const isSel = selectedLanguage === lang;
-                  return (
-                    <div
-                      key={lang}
-                      onClick={() => {
-                        setSelectedLanguage(lang);
-                        setLangDropdownOpen(false);
-                      }}
-                      style={{
-                        padding: '0.625rem 0.875rem',
-                        borderRadius: '6px',
-                        fontSize: '0.8125rem',
-                        color: isSel ? 'var(--text-high)' : 'var(--text-medium)',
-                        backgroundColor: isSel ? 'var(--surface-hover)' : 'transparent',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        transition: 'background-color 120ms ease',
-                      }}
-                    >
-                      <span>{lang.toUpperCase()}</span>
-                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
           </div>
 
-          {/* Custom Apple Floating Error Type Dropdown */}
-          <div ref={errorRef} style={{ position: 'relative' }}>
-            <button
-              onClick={() => {
-                setErrorDropdownOpen(!errorDropdownOpen);
-                setLangDropdownOpen(false);
-              }}
-              className="active-press"
-              style={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '0.875rem 1.25rem',
-                borderRadius: '10px',
-                backgroundColor: 'var(--surface-subtle)',
-                border: errorDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
-                color: 'var(--text-high)',
-                fontSize: '0.875rem',
-                fontWeight: 500,
-                cursor: 'pointer',
-                fontFamily: "'Plus Jakarta Sans', sans-serif",
-              }}
-            >
-              <span>
-                {selectedErrorType === 'all'
-                  ? 'All Error Classes'
-                  : selectedErrorType}
-              </span>
-              <ChevronDown
-                style={{
-                  width: '1rem',
-                  height: '1rem',
-                  color: 'var(--text-medium)',
-                  transform: errorDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                  transition: 'transform 200ms cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-              />
-            </button>
-
-            {errorDropdownOpen && (
-              <div
-                className="apple-menu-anim"
-                style={{
-                  position: 'absolute',
-                  top: 'calc(100% + 6px)',
-                  left: 0,
-                  right: 0,
-                  zIndex: 50,
-                  backgroundColor: 'var(--surface-panel)',
-                  backdropFilter: 'blur(20px)',
-                  WebkitBackdropFilter: 'blur(20px)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-strong)',
-                  boxShadow: '0 12px 32px rgba(0, 0, 0, 0.5)',
-                  padding: '0.375rem',
-                  maxHeight: '260px',
-                  overflowY: 'auto',
-                }}
-              >
-                <div
-                  onClick={() => {
-                    setSelectedErrorType('all');
-                    setErrorDropdownOpen(false);
-                  }}
-                  style={{
-                    padding: '0.625rem 0.875rem',
-                    borderRadius: '6px',
-                    fontSize: '0.8125rem',
-                    color: selectedErrorType === 'all' ? 'var(--text-high)' : 'var(--text-medium)',
-                    backgroundColor: selectedErrorType === 'all' ? 'var(--surface-hover)' : 'transparent',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    transition: 'background-color 120ms ease',
-                  }}
-                >
-                  <span>All Error Classes</span>
-                  {selectedErrorType === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
-                </div>
-
-                {errorTypes.map((err) => {
-                  const isSel = selectedErrorType === err;
-                  return (
-                    <div
-                      key={err}
-                      onClick={() => {
-                        setSelectedErrorType(err);
-                        setErrorDropdownOpen(false);
-                      }}
-                      style={{
-                        padding: '0.625rem 0.875rem',
-                        borderRadius: '6px',
-                        fontSize: '0.8125rem',
-                        color: isSel ? 'var(--text-high)' : 'var(--text-medium)',
-                        backgroundColor: isSel ? 'var(--surface-hover)' : 'transparent',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        transition: 'background-color 120ms ease',
-                      }}
-                    >
-                      <span>{err}</span>
-                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
+          {/* CTA scroll hint */}
+          <a
+            className="stagger-5 active-press"
+            href="#tools"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: 'var(--text-low)',
+              fontSize: '0.8125rem',
+              fontFamily: 'var(--font-mono)',
+              textDecoration: 'none',
+              letterSpacing: '0.03em',
+              transition: 'color 200ms ease',
+            }}
+          >
+            View available tools
+            <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
+          </a>
         </div>
 
-        {/* 3-Pane Equal Height Architecture (Items Align Flex Stretch) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr 340px', gap: '1.5rem', width: '100%', alignItems: 'stretch' }}>
-          {/* Pane 1: Master Card List */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h2 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
-                Knowledge Base ({filteredCards.length})
-              </h2>
-              {searchQuery && (
-                <button
-                  onClick={() => {
-                    setSearchQuery('');
-                    setSelectedLanguage('all');
-                    setSelectedErrorType('all');
-                  }}
+        {/* Ambient glow — behind the title */}
+        <div
+          aria-hidden
+          style={{
+            position: 'absolute',
+            top: '30%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: '600px',
+            height: '400px',
+            background: 'radial-gradient(ellipse at center, rgba(232, 160, 32, 0.07) 0%, transparent 70%)',
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        />
+      </section>
+
+      {/* ══════════════════════════════════════════
+          AVAILABLE TOOLS
+      ══════════════════════════════════════════ */}
+      <section
+        id="tools"
+        style={{
+          borderTop: '1px solid var(--border-muted)',
+          padding: '5rem 3rem',
+          backgroundColor: 'var(--bg-app)',
+        }}
+      >
+        <div style={{ maxWidth: '1080px', margin: '0 auto' }}>
+          {/* Section heading */}
+          <div style={{ marginBottom: '3rem' }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6875rem',
+                letterSpacing: '0.12em',
+                color: 'var(--text-low)',
+                textTransform: 'uppercase',
+                marginBottom: '0.75rem',
+              }}
+            >
+              01 — Tools
+            </div>
+            <h2
+              className="display-font"
+              style={{
+                fontSize: 'clamp(1.75rem, 3.5vw, 2.5rem)',
+                fontWeight: 700,
+                letterSpacing: '-0.03em',
+                lineHeight: 1.1,
+                color: 'var(--text-high)',
+              }}
+            >
+              Available Tools
+            </h2>
+          </div>
+
+          {/* Tool grid */}
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '1px',
+              backgroundColor: 'var(--border-muted)',
+              border: '1px solid var(--border-muted)',
+              borderRadius: '10px',
+              overflow: 'hidden',
+            }}
+          >
+            {TOOLS.map((tool, i) => (
+              <div
+                key={tool.name}
+                className="tool-card"
+                style={{
+                  backgroundColor: 'var(--surface-subtle)',
+                  padding: '2rem',
+                }}
+              >
+                <div
                   style={{
-                    background: 'none',
-                    border: 'none',
-                    color: 'var(--text-medium)',
-                    fontSize: '0.75rem',
-                    cursor: 'pointer',
-                    fontWeight: 600,
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.875rem',
+                    fontWeight: 500,
+                    color: 'var(--accent-primary)',
+                    marginBottom: '0.875rem',
+                    letterSpacing: '-0.01em',
                   }}
                 >
-                  Clear Filters
-                </button>
+                  {tool.name}
+                </div>
+                <p
+                  style={{
+                    fontSize: '0.875rem',
+                    color: 'var(--text-medium)',
+                    lineHeight: 1.65,
+                    fontWeight: 300,
+                    margin: 0,
+                  }}
+                >
+                  {tool.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer attribution */}
+          <div
+            style={{
+              marginTop: '3rem',
+              paddingTop: '2rem',
+              borderTop: '1px solid var(--border-muted)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+            }}
+          >
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-low)', letterSpacing: '0.02em' }}>
+              Powered by NitroStack — TypeScript MCP Framework
+            </span>
+            <a
+              href="#inspector"
+              className="active-press"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.375rem',
+                padding: '0.5rem 1rem',
+                borderRadius: '6px',
+                backgroundColor: 'var(--surface-panel)',
+                border: '1px solid var(--border-strong)',
+                color: 'var(--text-medium)',
+                fontSize: '0.8125rem',
+                fontFamily: 'var(--font-body)',
+                textDecoration: 'none',
+                transition: 'color 160ms ease, border-color 160ms ease',
+              }}
+            >
+              Open Live Inspector
+              <ChevronRight style={{ width: '0.875rem', height: '0.875rem' }} />
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════
+          LIVE KNOWLEDGE BASE INSPECTOR
+      ══════════════════════════════════════════ */}
+      <section
+        id="inspector"
+        style={{
+          borderTop: '1px solid var(--border-muted)',
+          padding: '5rem 3rem 6rem',
+          backgroundColor: 'var(--surface-subtle)',
+        }}
+      >
+        <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
+
+          {/* Section heading */}
+          <div style={{ marginBottom: '2.5rem' }}>
+            <div
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6875rem',
+                letterSpacing: '0.12em',
+                color: 'var(--text-low)',
+                textTransform: 'uppercase',
+                marginBottom: '0.75rem',
+              }}
+            >
+              02 — Inspector
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+              <h2
+                className="display-font"
+                style={{ fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 700, letterSpacing: '-0.03em', color: 'var(--text-high)' }}
+              >
+                Knowledge Base
+              </h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div
+                  style={{
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    backgroundColor: isLiveElastic ? 'var(--status-pass)' : 'var(--text-low)',
+                  }}
+                />
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-low)', letterSpacing: '0.02em' }}>
+                  {isLiveElastic ? 'Elasticsearch · Live' : 'Seed Data'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Error state */}
+          {error && (
+            <div
+              style={{
+                marginBottom: '2rem',
+                padding: '1rem 1.25rem',
+                borderRadius: '8px',
+                backgroundColor: 'var(--status-fail-subtle)',
+                border: '1px solid var(--status-fail-border)',
+                color: 'var(--status-fail)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.75rem',
+                fontSize: '0.875rem',
+              }}
+            >
+              <AlertTriangle style={{ width: '1.125rem', height: '1.125rem', flexShrink: 0 }} />
+              {error}
+            </div>
+          )}
+
+          {/* Filters */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: '0.75rem', marginBottom: '2rem' }}>
+            {/* Search */}
+            <div style={{ position: 'relative' }}>
+              <Search
+                style={{
+                  position: 'absolute', left: '0.875rem', top: '50%', transform: 'translateY(-50%)',
+                  width: '1rem', height: '1rem', color: 'var(--text-low)',
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Search errors, stack traces..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                style={{ ...inputBase, paddingLeft: '2.75rem' }}
+              />
+            </div>
+
+            {/* Language dropdown */}
+            <div ref={langRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => { setLangDropdownOpen(!langDropdownOpen); setErrorDropdownOpen(false); }}
+                className="active-press"
+                style={{
+                  ...inputBase,
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  border: langDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
+                }}
+              >
+                <span style={{ color: selectedLanguage === 'all' ? 'var(--text-low)' : 'var(--text-high)' }}>
+                  {selectedLanguage === 'all' ? `All Runtimes (${cards.length})` : selectedLanguage.toUpperCase()}
+                </span>
+                <ChevronDown style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-low)', transform: langDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms ease' }} />
+              </button>
+              {langDropdownOpen && (
+                <div className="apple-menu-anim" style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 50, backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', borderRadius: '8px', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', padding: '0.25rem', maxHeight: '220px', overflowY: 'auto' }}>
+                  <div onClick={() => { setSelectedLanguage('all'); setLangDropdownOpen(false); }} style={dropdownItemStyle(selectedLanguage === 'all')}>
+                    <span>All Runtimes</span>
+                    {selectedLanguage === 'all' && <Check style={{ width: '0.75rem', height: '0.75rem', color: 'var(--accent-primary)' }} />}
+                  </div>
+                  {languages.map((lang) => (
+                    <div key={lang} onClick={() => { setSelectedLanguage(lang); setLangDropdownOpen(false); }} style={dropdownItemStyle(selectedLanguage === lang)}>
+                      <span>{lang.toUpperCase()}</span>
+                      {selectedLanguage === lang && <Check style={{ width: '0.75rem', height: '0.75rem', color: 'var(--accent-primary)' }} />}
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
 
-            {loading ? (
-              <div
+            {/* Error type dropdown */}
+            <div ref={errorRef} style={{ position: 'relative' }}>
+              <button
+                onClick={() => { setErrorDropdownOpen(!errorDropdownOpen); setLangDropdownOpen(false); }}
+                className="active-press"
                 style={{
-                  padding: '5rem 2rem',
-                  textAlign: 'center',
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  color: 'var(--text-low)',
-                  flex: 1,
-                }}
-              >
-                <RefreshCw style={{ width: '1.75rem', height: '1.75rem', margin: '0 auto 1rem', animation: 'spin 1s linear infinite', color: 'var(--text-medium)' }} />
-                <div style={{ fontSize: '0.875rem', fontWeight: 600 }}>Loading Knowledge Cards...</div>
-              </div>
-            ) : filteredCards.length === 0 ? (
-              <div
-                style={{
-                  padding: '5rem 2rem',
-                  textAlign: 'center',
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  color: 'var(--text-low)',
-                  flex: 1,
-                }}
-              >
-                <Search style={{ width: '2rem', height: '2rem', margin: '0 auto 1rem', opacity: 0.3 }} />
-                <div style={{ fontWeight: 700, color: 'var(--text-medium)', marginBottom: '0.25rem' }}>No Matches Found</div>
-                <div style={{ fontSize: '0.8125rem' }}>Adjust your search query or runtime filters.</div>
-              </div>
-            ) : (
-              <div
-                style={{
+                  ...inputBase,
                   display: 'flex',
-                  flexDirection: 'column',
-                  gap: '0.875rem',
-                  maxHeight: 'calc(100vh - 260px)',
-                  overflowY: 'auto',
-                  paddingRight: '0.375rem',
-                  flex: 1,
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  border: errorDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
                 }}
               >
-                {filteredCards.map((card) => {
-                  const isSelected = selectedCard?.id === card.id;
-                  const isPass = card.verification?.status === 'PASS';
-
-                  return (
-                    <div
-                      key={card.id}
-                      onClick={() => setSelectedCard(card)}
-                      className="active-press"
-                      style={{
-                        height: '140px',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        justifyContent: 'space-between',
-                        padding: '1.125rem',
-                        borderRadius: '10px',
-                        backgroundColor: isSelected ? 'var(--surface-panel)' : 'var(--surface-subtle)',
-                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
-                        cursor: 'pointer',
-                        boxSizing: 'border-box',
-                      }}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span
-                          style={{
-                            fontSize: '0.7rem',
-                            fontWeight: 600,
-                            padding: '0.2rem 0.5rem',
-                            borderRadius: '10px',
-                            backgroundColor: 'var(--surface-panel)',
-                            border: '1px solid var(--border-muted)',
-                            color: 'var(--text-medium)',
-                            fontFamily: "'JetBrains Mono', monospace",
-                          }}
-                        >
-                          {card.errorType}
-                        </span>
-
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
-                          {isPass ? (
-                            <CheckCircle2 style={{ width: '0.875rem', height: '0.875rem', color: 'var(--status-pass)' }} />
-                          ) : (
-                            <XCircle style={{ width: '0.875rem', height: '0.875rem', color: 'var(--status-fail)' }} />
-                          )}
-                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isPass ? 'var(--status-pass)' : 'var(--status-fail)' }}>
-                            {card.verification?.status || 'PASS'}
-                          </span>
-                        </div>
-                      </div>
-
-                      <h3
-                        style={{
-                          margin: 0,
-                          fontSize: '0.875rem',
-                          fontWeight: 600,
-                          color: 'var(--text-high)',
-                          lineHeight: 1.4,
-                          display: '-webkit-box',
-                          WebkitLineClamp: 2,
-                          WebkitBoxOrient: 'vertical',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {card.problem}
-                      </h3>
-
-                      <div
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                          fontSize: '0.75rem',
-                          color: 'var(--text-low)',
-                          paddingTop: '0.5rem',
-                          borderTop: '1px solid var(--border-muted)',
-                        }}
-                      >
-                        <span>
-                          Lang: <strong style={{ color: 'var(--text-medium)' }}>{card.environment?.language}</strong>
-                        </span>
-                        <span>
-                          Sandbox: <strong style={{ color: 'var(--text-medium)' }}>{card.verification?.sandbox || 'docker'}</strong>
-                        </span>
-                      </div>
+                <span style={{ color: selectedErrorType === 'all' ? 'var(--text-low)' : 'var(--text-high)' }}>
+                  {selectedErrorType === 'all' ? 'All Error Classes' : selectedErrorType}
+                </span>
+                <ChevronDown style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-low)', transform: errorDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 200ms ease' }} />
+              </button>
+              {errorDropdownOpen && (
+                <div className="apple-menu-anim" style={{ position: 'absolute', top: 'calc(100% + 4px)', left: 0, right: 0, zIndex: 50, backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', borderRadius: '8px', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', padding: '0.25rem', maxHeight: '220px', overflowY: 'auto' }}>
+                  <div onClick={() => { setSelectedErrorType('all'); setErrorDropdownOpen(false); }} style={dropdownItemStyle(selectedErrorType === 'all')}>
+                    <span>All Error Classes</span>
+                    {selectedErrorType === 'all' && <Check style={{ width: '0.75rem', height: '0.75rem', color: 'var(--accent-primary)' }} />}
+                  </div>
+                  {errorTypes.map((err) => (
+                    <div key={err} onClick={() => { setSelectedErrorType(err); setErrorDropdownOpen(false); }} style={dropdownItemStyle(selectedErrorType === err)}>
+                      <span>{err}</span>
+                      {selectedErrorType === err && <Check style={{ width: '0.75rem', height: '0.75rem', color: 'var(--accent-primary)' }} />}
                     </div>
-                  );
-                })}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* Pane 2: Middle Diff & Execution Evidence Inspector (Equal Height Stretch) */}
-          <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
-            {selectedCard ? (
-              <div
-                style={{
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  padding: '1.75rem',
-                  boxSizing: 'border-box',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  flex: 1,
-                  height: '100%',
-                }}
-              >
-                {/* Header Metadata */}
-                <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
-                    <div
-                      style={{
-                        fontFamily: "'JetBrains Mono', monospace",
-                        fontSize: '0.8125rem',
-                        color: 'var(--accent-primary)',
-                        backgroundColor: 'var(--accent-primary-subtle)',
-                        border: '1px solid var(--border-muted)',
-                        padding: '0.25rem 0.625rem',
-                        borderRadius: '10px',
-                      }}
-                    >
-                      {selectedCard.id}
-                    </div>
+          {/* 3-Pane Inspector Grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 300px', gap: '1rem', alignItems: 'stretch' }}>
 
-                    <span
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.375rem',
-                        fontSize: '0.75rem',
-                        fontWeight: 600,
-                        color: 'var(--status-pass)',
-                        backgroundColor: 'var(--status-pass-subtle)',
-                        padding: '0.375rem 0.875rem',
-                        borderRadius: '10px',
-                        border: '1px solid var(--status-pass-border)',
-                      }}
-                    >
-                      <CheckCircle2 style={{ width: '0.875rem', height: '0.875rem' }} />
-                      VERIFIED {selectedCard.verification?.status}
-                    </span>
-                  </div>
+            {/* ── Pane 1: Card List ── */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.1em', color: 'var(--text-low)', textTransform: 'uppercase' }}>
+                  Entries ({filteredCards.length})
+                </span>
+                {searchQuery && (
+                  <button onClick={() => { setSearchQuery(''); setSelectedLanguage('all'); setSelectedErrorType('all'); }}
+                    style={{ background: 'none', border: 'none', color: 'var(--text-low)', fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'var(--font-body)' }}>
+                    Clear
+                  </button>
+                )}
+              </div>
 
-                  <h2 style={{ margin: '0.75rem 0 0.5rem', fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-high)', lineHeight: 1.4 }}>
-                    {selectedCard.problem}
-                  </h2>
+              {loading ? (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', color: 'var(--text-low)', gap: '0.75rem' }}>
+                  <RefreshCw style={{ width: '1.25rem', height: '1.25rem', animation: 'spin 1s linear infinite' }} />
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem' }}>Loading…</span>
                 </div>
-
-                {/* Tab Switcher */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-muted)', marginBottom: '1.25rem', paddingBottom: '0.75rem' }}>
-                  <div style={{ display: 'flex', gap: '0.75rem' }}>
-                    <button
-                      onClick={() => setActiveTab('diff')}
-                      className="active-press"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem 1.125rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        backgroundColor: activeTab === 'diff' ? 'var(--surface-panel)' : 'transparent',
-                        color: activeTab === 'diff' ? 'var(--text-high)' : 'var(--text-medium)',
-                        fontWeight: activeTab === 'diff' ? 600 : 500,
-                        fontSize: '0.875rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Code2 style={{ width: '1rem', height: '1rem' }} />
-                      Patch Diff
-                    </button>
-
-                    <button
-                      onClick={() => setActiveTab('logs')}
-                      className="active-press"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem 1.125rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        backgroundColor: activeTab === 'logs' ? 'var(--surface-panel)' : 'transparent',
-                        color: activeTab === 'logs' ? 'var(--text-high)' : 'var(--text-medium)',
-                        fontWeight: activeTab === 'logs' ? 600 : 500,
-                        fontSize: '0.875rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Terminal style={{ width: '1rem', height: '1rem' }} />
-                      Verification Logs
-                    </button>
-
-                    <button
-                      onClick={() => setActiveTab('trace')}
-                      className="active-press"
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        padding: '0.5rem 1.125rem',
-                        borderRadius: '10px',
-                        border: 'none',
-                        backgroundColor: activeTab === 'trace' ? 'var(--surface-panel)' : 'transparent',
-                        color: activeTab === 'trace' ? 'var(--text-high)' : 'var(--text-medium)',
-                        fontWeight: activeTab === 'trace' ? 600 : 500,
-                        fontSize: '0.875rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      <Layers style={{ width: '1rem', height: '1rem' }} />
-                      Stacktrace
-                    </button>
-                  </div>
-
-                  {activeTab === 'diff' && (
-                    <button
-                      onClick={() => copyToClipboard(selectedCard.patch)}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.375rem',
-                        padding: '0.375rem 0.875rem',
-                        borderRadius: '10px',
-                        backgroundColor: 'var(--bg-app)',
-                        border: '1px solid var(--border-muted)',
-                        color: copied ? 'var(--status-pass)' : 'var(--text-medium)',
-                        fontSize: '0.75rem',
-                        cursor: 'pointer',
-                      }}
-                    >
-                      {copied ? <Check style={{ width: '0.875rem', height: '0.875rem' }} /> : <Copy style={{ width: '0.875rem', height: '0.875rem' }} />}
-                      {copied ? 'Copied' : 'Copy Diff'}
-                    </button>
-                  )}
+              ) : filteredCards.length === 0 ? (
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '4rem 1rem', backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', color: 'var(--text-low)', gap: '0.5rem', textAlign: 'center' }}>
+                  <Search style={{ width: '1.25rem', height: '1.25rem', opacity: 0.4 }} />
+                  <span style={{ fontSize: '0.8125rem' }}>No matches</span>
                 </div>
-
-                {/* Tab Views (Fills Available Height) */}
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-                  {activeTab === 'diff' && (
-                    <div
-                      style={{
-                        backgroundColor: 'var(--bg-app)',
-                        border: '1px solid var(--border-muted)',
-                        borderRadius: '10px',
-                        padding: '1rem 0',
-                        flex: 1,
-                        overflowY: 'auto',
-                      }}
-                    >
-                      {renderFormattedDiff(selectedCard.patch)}
-                    </div>
-                  )}
-
-                  {activeTab === 'logs' && (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', flex: 1, overflowY: 'auto' }}>
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                          Captured STDOUT Output
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxHeight: 'calc(100vh - 320px)', overflowY: 'auto', paddingRight: '0.25rem', flex: 1 }}>
+                  {filteredCards.map((card) => {
+                    const isSelected = selectedCard?.id === card.id;
+                    const isPass = card.verification?.status === 'PASS';
+                    return (
+                      <div
+                        key={card.id}
+                        onClick={() => setSelectedCard(card)}
+                        className="active-press"
+                        style={{
+                          padding: '1rem',
+                          borderRadius: '8px',
+                          backgroundColor: isSelected ? 'var(--surface-panel)' : 'var(--bg-app)',
+                          border: isSelected ? '1px solid var(--accent-primary-border)' : '1px solid var(--border-muted)',
+                          cursor: 'pointer',
+                          transition: 'border-color 160ms ease, background-color 160ms ease',
+                        }}
+                      >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-low)', letterSpacing: '0.02em' }}>{card.errorType}</span>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                            {isPass
+                              ? <CheckCircle2 style={{ width: '0.75rem', height: '0.75rem', color: 'var(--status-pass)' }} />
+                              : <XCircle style={{ width: '0.75rem', height: '0.75rem', color: 'var(--status-fail)' }} />}
+                            <span style={{ fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: isPass ? 'var(--status-pass)' : 'var(--status-fail)' }}>
+                              {card.verification?.status || 'PASS'}
+                            </span>
+                          </div>
                         </div>
-                        <pre
+                        <p style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 400, color: isSelected ? 'var(--text-high)' : 'var(--text-medium)', lineHeight: 1.45, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+                          {card.problem}
+                        </p>
+                        <div style={{ marginTop: '0.625rem', display: 'flex', gap: '0.75rem', fontSize: '0.6875rem', color: 'var(--text-low)', fontFamily: 'var(--font-mono)' }}>
+                          <span>{card.environment?.language}</span>
+                          <span>·</span>
+                          <span>{card.verification?.sandbox || 'docker'}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* ── Pane 2: Diff / Logs / Trace ── */}
+            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+              {selectedCard ? (
+                <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '1.5rem', display: 'flex', flexDirection: 'column', flex: 1, height: '100%' }}>
+                  {/* Header */}
+                  <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '1rem', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.625rem' }}>
+                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--accent-primary)', letterSpacing: '-0.01em' }}>{selectedCard.id}</span>
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.6875rem', fontFamily: 'var(--font-mono)', color: 'var(--status-pass)', backgroundColor: 'var(--status-pass-subtle)', padding: '0.25rem 0.625rem', borderRadius: '100px', border: '1px solid var(--status-pass-border)' }}>
+                        <CheckCircle2 style={{ width: '0.75rem', height: '0.75rem' }} />
+                        VERIFIED
+                      </span>
+                    </div>
+                    <h3 style={{ margin: 0, fontSize: '1rem', fontWeight: 500, color: 'var(--text-high)', lineHeight: 1.4, fontFamily: 'var(--font-body)' }}>
+                      {selectedCard.problem}
+                    </h3>
+                  </div>
+
+                  {/* Tab bar */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '0.125rem', backgroundColor: 'var(--surface-subtle)', padding: '0.25rem', borderRadius: '6px' }}>
+                      {(['diff', 'logs', 'trace'] as const).map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setActiveTab(tab)}
+                          className="active-press"
                           style={{
-                            backgroundColor: 'var(--bg-app)',
-                            border: '1px solid var(--border-muted)',
-                            borderRadius: '10px',
-                            padding: '1.25rem',
-                            fontSize: '0.8125rem',
-                            fontFamily: "'JetBrains Mono', monospace",
-                            color: 'var(--status-pass)',
-                            margin: 0,
-                            whiteSpace: 'pre-wrap',
-                            lineHeight: 1.5,
+                            display: 'flex', alignItems: 'center', gap: '0.375rem',
+                            padding: '0.375rem 0.75rem', borderRadius: '4px', border: 'none',
+                            backgroundColor: activeTab === tab ? 'var(--surface-panel)' : 'transparent',
+                            color: activeTab === tab ? 'var(--text-high)' : 'var(--text-low)',
+                            fontSize: '0.8125rem', fontFamily: 'var(--font-body)', cursor: 'pointer',
+                            transition: 'background-color 150ms ease, color 150ms ease',
                           }}
                         >
-                          {selectedCard.verification?.stdout || '(empty stdout)'}
-                        </pre>
-                      </div>
+                          {tab === 'diff' && <Code2 style={{ width: '0.875rem', height: '0.875rem' }} />}
+                          {tab === 'logs' && <Terminal style={{ width: '0.875rem', height: '0.875rem' }} />}
+                          {tab === 'trace' && <Layers style={{ width: '0.875rem', height: '0.875rem' }} />}
+                          {tab === 'diff' ? 'Patch' : tab === 'logs' ? 'Logs' : 'Trace'}
+                        </button>
+                      ))}
+                    </div>
+                    {activeTab === 'diff' && (
+                      <button onClick={() => copyToClipboard(selectedCard.patch)} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', padding: '0.375rem 0.625rem', borderRadius: '4px', backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', color: copied ? 'var(--status-pass)' : 'var(--text-low)', fontSize: '0.75rem', fontFamily: 'var(--font-body)', cursor: 'pointer' }}>
+                        {copied ? <Check style={{ width: '0.75rem', height: '0.75rem' }} /> : <Copy style={{ width: '0.75rem', height: '0.75rem' }} />}
+                        {copied ? 'Copied' : 'Copy'}
+                      </button>
+                    )}
+                  </div>
 
-                      {selectedCard.verification?.stderr && (
+                  {/* Tab content */}
+                  <div style={{ flex: 1, overflowY: 'auto', minHeight: 0 }}>
+                    {activeTab === 'diff' && (
+                      <div style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', borderRadius: '6px', overflow: 'hidden' }}>
+                        {renderFormattedDiff(selectedCard.patch)}
+                      </div>
+                    )}
+                    {activeTab === 'logs' && (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div>
-                          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--status-fail)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                            STDERR Error Log Output
-                          </div>
-                          <pre
-                            style={{
-                              backgroundColor: 'var(--bg-app)',
-                              border: '1px solid var(--status-fail-border)',
-                              borderRadius: '10px',
-                              padding: '1.25rem',
-                              fontSize: '0.8125rem',
-                              fontFamily: "'JetBrains Mono', monospace",
-                              color: 'var(--status-fail)',
-                              margin: 0,
-                              whiteSpace: 'pre-wrap',
-                              lineHeight: 1.5,
-                            }}
-                          >
-                            {selectedCard.verification.stderr}
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--status-pass)', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDOUT</div>
+                          <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-pass)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                            {selectedCard.verification?.stdout || '(empty)'}
                           </pre>
                         </div>
-                      )}
-                    </div>
-                  )}
-
-                  {activeTab === 'trace' && (
-                    <div style={{ flex: 1, overflowY: 'auto' }}>
-                      <pre
-                        style={{
-                          backgroundColor: 'var(--bg-app)',
-                          border: '1px solid var(--border-muted)',
-                          borderRadius: '10px',
-                          padding: '1.25rem',
-                          fontSize: '0.8125rem',
-                          fontFamily: "'JetBrains Mono', monospace",
-                          color: 'var(--status-fail)',
-                          margin: 0,
-                          whiteSpace: 'pre-wrap',
-                          lineHeight: 1.6,
-                        }}
-                      >
-                        {selectedCard.stacktrace || 'No full stacktrace provided for this fixture.'}
-                      </pre>
-                    </div>
-                  )}
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  padding: '6rem 2rem',
-                  textAlign: 'center',
-                  color: 'var(--text-low)',
-                  flex: 1,
-                }}
-              >
-                Select a Knowledge Entry on the left to inspect execution evidence.
-              </div>
-            )}
-          </div>
-
-          {/* Pane 3: Right Context & Provenance Drawer (Equal Height Stretch) */}
-          <div style={{ minWidth: 0, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
-            {selectedCard ? (
-              <div
-                style={{
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  padding: '1.5rem',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '1.25rem',
-                  boxSizing: 'border-box',
-                  flex: 1,
-                  height: '100%',
-                }}
-              >
-                <h3 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
-                  Entry Metadata & Context
-                </h3>
-
-                {/* Runtime & Class info */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Language Runtime</div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {selectedCard.environment?.language} {selectedCard.environment?.version ? `(${selectedCard.environment.version})` : ''}
+                        {selectedCard.verification?.stderr && (
+                          <div>
+                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--status-fail)', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDERR</div>
+                            <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--status-fail-border)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-fail)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                              {selectedCard.verification.stderr}
+                            </pre>
+                          </div>
+                        )}
                       </div>
-                    </div>
+                    )}
+                    {activeTab === 'trace' && (
+                      <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-fail)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                        {selectedCard.stacktrace || 'No stacktrace provided.'}
+                      </pre>
+                    )}
                   </div>
+                </div>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', color: 'var(--text-low)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
+                  Select an entry to inspect
+                </div>
+              )}
+            </div>
 
-                  {selectedCard.environment?.framework && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                      <div style={{ minWidth: 0 }}>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Framework</div>
-                        <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                          {selectedCard.environment.framework}
+            {/* ── Pane 3: Metadata Drawer ── */}
+            <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+              {selectedCard ? (
+                <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.25rem', flex: 1, height: '100%' }}>
+                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--text-low)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Context</span>
+
+                  {/* Runtime info */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {[
+                      { label: 'Runtime', value: `${selectedCard.environment?.language}${selectedCard.environment?.version ? ` ${selectedCard.environment.version}` : ''}`, icon: <Cpu style={{ width: '0.875rem', height: '0.875rem' }} /> },
+                      ...(selectedCard.environment?.framework ? [{ label: 'Framework', value: selectedCard.environment.framework, icon: <Box style={{ width: '0.875rem', height: '0.875rem' }} /> }] : []),
+                      { label: 'Error Class', value: selectedCard.errorType, icon: <Hash style={{ width: '0.875rem', height: '0.875rem' }} /> },
+                    ].map((row) => (
+                      <div key={row.label} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
+                        <span style={{ color: 'var(--text-low)', marginTop: '0.125rem', flexShrink: 0 }}>{row.icon}</span>
+                        <div>
+                          <div style={{ fontSize: '0.6875rem', color: 'var(--text-low)', marginBottom: '0.125rem' }}>{row.label}</div>
+                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-high)', fontFamily: 'var(--font-mono)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{row.value}</div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    ))}
+                  </div>
 
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Error Class</div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {selectedCard.errorType}
+                  <div style={{ height: '1px', backgroundColor: 'var(--border-muted)' }} />
+
+                  {/* Sandbox evidence */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {[
+                      { label: 'Duration', value: `${selectedCard.verification?.durationMs ?? 0} ms`, icon: <Activity style={{ width: '0.875rem', height: '0.875rem' }} /> },
+                      { label: 'Sandbox', value: selectedCard.verification?.sandbox || 'docker', icon: <Database style={{ width: '0.875rem', height: '0.875rem' }} /> },
+                      { label: 'Verified', value: new Date(selectedCard.verification?.lastVerified || Date.now()).toLocaleDateString(), icon: <Clock style={{ width: '0.875rem', height: '0.875rem' }} /> },
+                    ].map((row) => (
+                      <div key={row.label} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
+                        <span style={{ color: 'var(--text-low)', marginTop: '0.125rem', flexShrink: 0 }}>{row.icon}</span>
+                        <div>
+                          <div style={{ fontSize: '0.6875rem', color: 'var(--text-low)', marginBottom: '0.125rem' }}>{row.label}</div>
+                          <div style={{ fontSize: '0.8125rem', color: 'var(--text-high)', fontFamily: 'var(--font-mono)' }}>{row.value}</div>
+                        </div>
                       </div>
-                    </div>
+                    ))}
+                  </div>
+
+                  <div style={{ height: '1px', backgroundColor: 'var(--border-muted)' }} />
+
+                  {/* Metrics */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                    {[
+                      { k: 'Reuse Hits', v: String(selectedCard.metrics?.reuseCount || 0) },
+                      { k: 'Source', v: selectedCard.provenance?.source || 'seed' },
+                      { k: 'Confidence', v: `${((selectedCard.verification?.score || 0) * 100).toFixed(0)}%` },
+                    ].map(({ k, v }) => (
+                      <div key={k} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8125rem' }}>
+                        <span style={{ color: 'var(--text-low)' }}>{k}</span>
+                        <span style={{ color: 'var(--text-high)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>{v}</span>
+                      </div>
+                    ))}
                   </div>
                 </div>
-
-                {/* Sandbox Run Evidence */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Execution Duration</div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
-                        {selectedCard.verification?.durationMs ?? 100} ms
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Sandbox Provider</div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
-                        {selectedCard.verification?.sandbox || 'docker'}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
-                    <div style={{ minWidth: 0 }}>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Last Verified</div>
-                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
-                        {new Date(selectedCard.verification?.lastVerified || Date.now()).toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
+              ) : (
+                <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', color: 'var(--text-low)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
+                  No selection
                 </div>
-
-                {/* Provenance & Metrics */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)', marginTop: 'auto' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
-                    <span style={{ color: 'var(--text-low)' }}>Reuse Hits</span>
-                    <strong style={{ color: 'var(--text-high)' }}>{selectedCard.metrics?.reuseCount || 0}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
-                    <span style={{ color: 'var(--text-low)' }}>Source</span>
-                    <strong style={{ color: 'var(--text-high)' }}>{selectedCard.provenance?.source || 'seed'}</strong>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
-                    <span style={{ color: 'var(--text-low)' }}>Confidence Score</span>
-                    <strong style={{ color: 'var(--status-pass)' }}>{(selectedCard.verification?.score * 100).toFixed(0)}%</strong>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div
-                style={{
-                  backgroundColor: 'var(--surface-subtle)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border-muted)',
-                  padding: '4rem 1.5rem',
-                  textAlign: 'center',
-                  color: 'var(--text-low)',
-                  fontSize: '0.8125rem',
-                  flex: 1,
-                }}
-              >
-                No active selection
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
-      </main>
+      </section>
     </div>
   );
 }
