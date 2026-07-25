@@ -345,27 +345,7 @@ export default function Dashboard() {
             zIndex: 2,
           }}
         >
-          {/* Eyebrow */}
-          <div
-            className="stagger-1"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              padding: '0.25rem 0.875rem',
-              borderRadius: '100px',
-              border: '1px solid var(--border-strong)',
-              backgroundColor: 'var(--surface-subtle)',
-              color: 'var(--text-low)',
-              fontSize: '0.75rem',
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.04em',
-              marginBottom: '2.5rem',
-            }}
-          >
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', display: 'inline-block' }} />
-            MCP Server
-          </div>
+
 
           {/* Title */}
           <h1

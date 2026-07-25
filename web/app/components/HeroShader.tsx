@@ -113,8 +113,7 @@ const fragmentShader = `
           
           float colorPhase = (iter * u_stepPrecision) - 0.4;
           float wavePhase = colorPhase + length(rayOrigin.xz * 0.1) + 2.0;
-          vec3 spectrumShift = vec3(0.5, 2.2, 3.8);
-          vec3 spectralGlow = 1.0 + 1.5 * sin(wavePhase + spectrumShift);
+          vec3 spectralGlow = vec3(1.2 + 0.8 * sin(wavePhase));
           
           float rawDensity = 1.0 / stepDistance;
           float sharpDensity = pow(rawDensity, u_surfaceSolidity) * 0.15; 
