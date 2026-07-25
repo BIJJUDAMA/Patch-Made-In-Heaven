@@ -29,17 +29,17 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   canvas.height = 600;
   const ctx = canvas.getContext("2d")!;
 
-  // Deep Obsidian Monochrome Gradient (--surface-panel #121212 to --bg-app #000000)
+  // Deep Obsidian High-Contrast Background
   const bg = ctx.createLinearGradient(0, 0, 600, 600);
-  bg.addColorStop(0, "#1c1c1c");
-  bg.addColorStop(0.5, "#101010");
-  bg.addColorStop(1, "#000000");
+  bg.addColorStop(0, "#1a1a1a");
+  bg.addColorStop(0.4, "#0f0f0f");
+  bg.addColorStop(1, "#030303");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 600, 600);
 
-  // Subtle Linear Grid Overlay
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-  ctx.lineWidth = 1.2;
+  // Crisp Linear Grid Overlay
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.07)";
+  ctx.lineWidth = 1.5;
   for (let i = 0; i < 600; i += 45) {
     ctx.beginPath();
     ctx.moveTo(i, 0);
@@ -47,68 +47,70 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
     ctx.stroke();
   }
 
-  // Card Inner Silver Border Line
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-  ctx.lineWidth = 1.8;
-  ctx.strokeRect(22, 22, 556, 556);
+  // Sharp Inner Silver Border Frame
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.45)";
+  ctx.lineWidth = 2.2;
+  ctx.strokeRect(20, 20, 560, 560);
 
   // Number Badge (#ffffff White)
-  ctx.font = '600 28px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '700 32px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(`/ ${tool.num}`, 52, 82);
+  ctx.fillText(`/ ${tool.num}`, 50, 80);
 
-  // Tag Pill (#a1a1aa Gray)
-  ctx.font = '500 17px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#a1a1aa";
+  // Tag Pill (#d4d4d8 Bright Silver-Gray)
+  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.fillStyle = "#d4d4d8";
   const tagWidth = ctx.measureText(tool.tag).width;
-  ctx.fillText(tool.tag, 548 - tagWidth, 78);
+  ctx.fillText(tool.tag, 550 - tagWidth, 76);
 
-  // Tool Title (Syne Display Font --font-display, #ffffff White)
-  ctx.font = '700 42px "Syne", system-ui, sans-serif';
+  // Tool Title (Syne Display Font, #ffffff Crisp White)
+  ctx.font = '800 48px "Syne", system-ui, sans-serif';
   ctx.fillStyle = "#ffffff";
 
   const titleWords = tool.name.split("_");
   let y = 195;
   for (const word of titleWords) {
-    ctx.fillText(word, 52, y);
-    y += 50;
+    ctx.fillText(word, 50, y);
+    y += 54;
   }
 
   // White Accent Line
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(52, y + 8, 85, 3.0);
+  ctx.fillRect(50, y + 8, 95, 3.5);
 
-  // Description (DM Sans Body Font --font-body, #a1a1aa Gray)
-  y += 52;
-  ctx.font = '300 20px "DM Sans", system-ui, sans-serif';
-  ctx.fillStyle = "#a1a1aa";
+  // Description (DM Sans Body Font, #e4e4e7 High-Contrast Light Gray)
+  y += 54;
+  ctx.font = '400 23px "DM Sans", system-ui, sans-serif';
+  ctx.fillStyle = "#e4e4e7";
 
   const words = tool.desc.split(" ");
   let line = "";
-  const maxWidth = 495;
-  const lineHeight = 32;
+  const maxWidth = 500;
+  const lineHeight = 34;
 
   for (const word of words) {
     const testLine = line + word + " ";
     const metrics = ctx.measureText(testLine);
     if (metrics.width > maxWidth && line !== "") {
-      ctx.fillText(line, 52, y);
+      ctx.fillText(line, 50, y);
       line = word + " ";
       y += lineHeight;
     } else {
       line = testLine;
     }
   }
-  ctx.fillText(line, 52, y);
+  ctx.fillText(line, 50, y);
 
-  // Footer (#ffffff White)
-  ctx.font = '600 15px "Geist Mono", "JetBrains Mono", monospace';
+  // Footer (#ffffff Pure White)
+  ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("NITROCLOUD MCP TOOL →", 52, 536);
+  ctx.fillText("NITROCLOUD MCP TOOL →", 50, 538);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
-  texture.generateMipmaps = true;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
+  texture.generateMipmaps = false;
   return texture;
 }
 
