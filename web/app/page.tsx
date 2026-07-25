@@ -497,19 +497,7 @@ export default function Dashboard() {
       >
         <div style={{ maxWidth: '1080px', margin: '0 auto' }}>
           {/* Section heading */}
-          <div style={{ marginBottom: '3rem' }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.6875rem',
-                letterSpacing: '0.12em',
-                color: 'var(--text-low)',
-                textTransform: 'uppercase',
-                marginBottom: '0.75rem',
-              }}
-            >
-              01 — Tools
-            </div>
+          <div style={{ marginBottom: '2rem' }}>
             <h2
               className="display-font"
               style={{
@@ -583,18 +571,6 @@ export default function Dashboard() {
 
           {/* Section heading */}
           <div style={{ marginBottom: '2.5rem' }}>
-            <div
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.6875rem',
-                letterSpacing: '0.12em',
-                color: 'var(--text-low)',
-                textTransform: 'uppercase',
-                marginBottom: '0.75rem',
-              }}
-            >
-              02 — Inspector
-            </div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
               <h2
                 className="display-font"
@@ -602,19 +578,6 @@ export default function Dashboard() {
               >
                 Knowledge Base
               </h2>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <div
-                  style={{
-                    width: '6px',
-                    height: '6px',
-                    borderRadius: '50%',
-                    backgroundColor: isLiveElastic ? 'var(--status-pass)' : 'var(--text-low)',
-                  }}
-                />
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-low)', letterSpacing: '0.02em' }}>
-                  {isLiveElastic ? 'Elasticsearch · Live' : 'Seed Data'}
-                </span>
-              </div>
             </div>
           </div>
 
