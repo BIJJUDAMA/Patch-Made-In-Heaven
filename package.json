@@ -1,0 +1,21 @@
+{
+  "name": "patch-made-in-heaven",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Patch Made In Heaven - Execution-Verified AI Agent Memory & Search Platform",
+  "main": "mcp/dist/index.js",
+  "scripts": {
+    "dev": "npm --prefix mcp run dev",
+    "build": "npm --prefix mcp run build && npm --prefix web run build",
+    "start": "npm --prefix mcp run start",
+    "test": "npm --prefix mcp run test",
+    "typecheck": "npm --prefix mcp run typecheck",
+    "deploy": "cd mcp && npx @nitrostack/cli deploy"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "author": "",
+  "license": "Apache-2.0"
+}
