@@ -25,9 +25,18 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          # package-lock.json is written by npm 12.0.1, which requires Node
+          # ^22.22.2 || ^24.15.0 || >=26.0.0 and cannot be read correctly by
+          # the older npm bundled with Node 20 (`npm ci` fails with spurious
+          # "Missing: ... from lock file" errors). Pin to the exact toolchain
+          # that produced the lockfile until a lower-Node-compatible lockfile
+          # is validated.
+          node-version: "26.4.0"
           cache: "npm"
           cache-dependency-path: mcp/package-lock.json
+
+      - name: Pin npm to the version that generated the lockfile
+        run: npm install -g npm@12.0.1
 
       - name: Install dependencies (locked)
         run: npm ci
