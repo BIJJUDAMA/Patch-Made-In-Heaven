@@ -38,6 +38,8 @@ export interface SandboxResult {
   sandboxType: 'docker';
   /** True if stdout and/or stderr were cut off at the configured byte cap. */
   truncated: boolean;
+  /** True if execution was killed for exceeding the configured timeout — distinct from an ordinary non-zero exit (`status` stays 'FAIL' either way for backward compatibility; callers needing a three-way PASS/FAIL/TIMEOUT split read this field). */
+  timedOut: boolean;
 }
 
 export class SandboxImageNotAllowedError extends Error {
@@ -187,6 +189,7 @@ export class SandboxClient {
         executionTimeMs,
         sandboxType: 'docker',
         truncated: result.truncated,
+        timedOut: result.timedOut,
       };
     } finally {
       this.cleanupTempDir(tempDir);

@@ -1,38 +1,98 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
+import { createTwoFilesPatch } from 'diff';
 import { SandboxClient } from '../services/sandbox.client.js';
+import { VerificationRunClient } from '../services/verification-run.client.js';
+import { environmentMetaSchema } from '../domain/knowledge-card.js';
+import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
 
 const verifyFixSchema = z.object({
-  code: z.string().describe('The source code snippet or fix candidate to execute.'),
+  code: z.string().describe('The candidate fix source code to execute.'),
   testCommand: z.string().describe('The command to run verification (e.g. python main.py or node index.js).'),
-  environment: z.object({
-    language: z.string().describe('Programming language environment (e.g. python, javascript).'),
-    version: z.string().optional().describe('Version of runtime environment.'),
-  }),
+  environment: environmentMetaSchema,
+  baselineCode: z
+    .string()
+    .optional()
+    .describe('The original/broken code before the fix, used to compute a real diff. Omit to diff against an empty file.'),
+  filePath: z.string().optional().describe('Logical file path used to label the generated unified diff.'),
 });
+
+type VerifyStatus = 'PASS' | 'FAIL' | 'TIMEOUT';
+
+export interface VerifyToolsOptions {
+  sandboxClient?: SandboxClient;
+  verificationRunClient?: VerificationRunClient;
+}
 
 @Controller()
 export class VerifyTools {
-  private sandboxClient = new SandboxClient();
+  private sandboxClient: SandboxClient;
+  private verificationRunClient: VerificationRunClient;
+
+  constructor(options: VerifyToolsOptions = {}) {
+    this.sandboxClient = options.sandboxClient ?? new SandboxClient();
+    this.verificationRunClient = options.verificationRunClient ?? new VerificationRunClient();
+  }
 
   @Tool({
     name: 'verify_fix',
-    description: 'Triggers an isolated sandbox run to execute a proposed fix against a test command and capture run logs.',
+    description:
+      'Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome as a server-owned Verification Run, later matched (never trusted) by submit_fix.',
     inputSchema: verifyFixSchema,
   })
   async verifyFix(params: z.infer<typeof verifyFixSchema>) {
+    if (!this.verificationRunClient.isConnected()) {
+      return dependencyUnavailableEnvelope(
+        'Elasticsearch is not configured; verify_fix cannot persist verification evidence.'
+      );
+    }
+
+    const filePath = params.filePath ?? 'file';
+    const diff = createTwoFilesPatch(`a/${filePath}`, `b/${filePath}`, params.baselineCode ?? '', params.code);
+
     const result = await this.sandboxClient.runVerification({
       code: params.code,
       testCommand: params.testCommand,
       environment: params.environment,
     });
 
-    return {
-      status: result.status,
+    const status: VerifyStatus = result.timedOut ? 'TIMEOUT' : result.status;
+
+    const run = await this.verificationRunClient.create({
+      status,
+      patch: diff,
+      testCommand: params.testCommand,
+      environment: params.environment,
+      diff,
+      stdout: result.stdout,
+      stderr: result.stderr,
       exitCode: result.exitCode,
-      executionLog: `STDOUT:\n${result.stdout}\n\nSTDERR:\n${result.stderr}`,
-      executionTimeMs: result.executionTimeMs,
+      durationMs: result.executionTimeMs,
       sandbox: result.sandboxType,
-    };
+    });
+
+    const warnings = result.truncated ? ['Execution output was truncated at the configured byte cap.'] : [];
+
+    return buildSuccessEnvelope(
+      status,
+      {
+        verificationRunId: run.verificationRunId,
+        diff,
+        executionLog: `STDOUT:\n${result.stdout}\n\nSTDERR:\n${result.stderr}`,
+        evidence: {
+          verificationRunId: run.verificationRunId,
+          verificationStatus: status,
+          patchDigest: run.patchDigest,
+          stdout: result.stdout,
+          stderr: result.stderr,
+          exitCode: result.exitCode,
+          durationMs: result.executionTimeMs,
+          sandbox: result.sandboxType,
+          truncated: result.truncated,
+          timestamp: run.createdAt,
+        },
+      },
+      warnings
+    );
   }
 }
