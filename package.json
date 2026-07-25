@@ -14,8 +14,10 @@
     "deploy": "cd mcp && npx @nitrostack/cli deploy"
   },
   "devDependencies": {
-    "@nitrostack/cli": "^1"
+    "@nitrostack/cli": "^1",
+    "typescript": "^5.3.3"
   },
+
   "engines": {
     "node": ">=20"
   },
