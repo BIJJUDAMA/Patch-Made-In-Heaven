@@ -329,6 +329,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
+  const [openProgress, setOpenProgress] = useState(0);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
@@ -676,6 +677,18 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         0.1
       );
       tl.to(
+        { p: 0 },
+        {
+          p: 1,
+          duration: 1.2,
+          ease: "power3.inOut",
+          onUpdate() {
+            setOpenProgress((this as any).targets()[0].p);
+          },
+        },
+        0.1
+      );
+      tl.to(
         (card.material as THREE.ShaderMaterial).uniforms.uOpen,
         {
           value: 1,
@@ -691,7 +704,6 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       if (!card) return;
       stateRef.current.state = "closing";
       setShowSchemaModal(false);
-      setExpandedTool(null);
       setCardScreenBounds(null);
       const { basePos, angle } = card.userData;
 
@@ -702,8 +714,22 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         onComplete: () => {
           stateRef.current.state = "closed";
           stateRef.current.openedCard = null;
+          setExpandedTool(null);
+          setOpenProgress(0);
         },
       });
+      tl.to(
+        { p: 1 },
+        {
+          p: 0,
+          duration: 1.1,
+          ease: "power3.inOut",
+          onUpdate() {
+            setOpenProgress((this as any).targets()[0].p);
+          },
+        },
+        0
+      );
       tl.to(
         (card.material as THREE.ShaderMaterial).uniforms.uOpen,
         {
@@ -1091,23 +1117,23 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Exact Card Mesh Bounds) */}
-      {expandedTool && !showSchemaModal && (
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Animated 1:1 with GSAP Card Expansion) */}
+      {expandedTool && !showSchemaModal && openProgress > 0.05 && (
         <div
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "min(85vw, 440px)",
-            height: "min(85vw, 440px)",
-            zIndex: 35,
+            transform: `translate(-50%, -50%) scale(${0.45 + 0.55 * openProgress})`,
+            opacity: Math.min(1, openProgress * 1.6),
+            width: "min(76vw, 410px)",
+            height: "min(76vw, 410px)",
+            zIndex: 100,
             pointerEvents: "none",
             boxSizing: "border-box",
-            animation: "fadeUp 220ms cubic-bezier(0.16, 1, 0.3, 1) both",
           }}
         >
-          {/* Upper Right Close Button [✕] strictly inside the 3D Card Top-Right Corner */}
+          {/* Upper Right Close Button [✕] strictly inside 3D Card Top-Right Corner */}
           <button
             onClick={() => stateRef.current.closeCard()}
             className="active-press"
@@ -1115,10 +1141,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             aria-label="Close Card"
             style={{
               position: "absolute",
-              top: "16px",
-              right: "16px",
-              width: "42px",
-              height: "42px",
+              top: "14px",
+              right: "14px",
+              width: "44px",
+              height: "44px",
               borderRadius: "50%",
               border: "2px solid #ffffff",
               background: "#000000",
@@ -1127,20 +1153,20 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              boxShadow: "0 8px 25px rgba(0, 0, 0, 0.95)",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.95)",
               pointerEvents: "auto",
             }}
           >
             <X style={{ width: "22px", height: "22px", strokeWidth: 2.5 }} />
           </button>
 
-          {/* Bottom Center View JSON Schema Button strictly inside the 3D Card Bottom-Center */}
+          {/* Bottom Center View JSON Schema Button strictly inside 3D Card Bottom-Center */}
           <button
             onClick={() => setShowSchemaModal(true)}
             className="active-press"
             style={{
               position: "absolute",
-              bottom: "16px",
+              bottom: "40px",
               left: "50%",
               transform: "translateX(-50%)",
               whiteSpace: "nowrap",
@@ -1148,18 +1174,18 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               alignItems: "center",
               justifyContent: "center",
               gap: "0.625rem",
-              padding: "0.85rem 1.65rem",
+              padding: "0.95rem 1.85rem",
               borderRadius: "100px",
-              border: "2px solid #ffffff",
+              border: "2.5px solid #ffffff",
               background: "#000000",
               color: "#ffffff",
               fontFamily: 'var(--font-mono), "Geist Mono", monospace',
-              fontSize: "0.8125rem",
+              fontSize: "0.85rem",
               fontWeight: 700,
               letterSpacing: "0.09em",
               textTransform: "uppercase",
               cursor: "pointer",
-              boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
+              boxShadow: "0 14px 40px rgba(0, 0, 0, 0.98)",
               pointerEvents: "auto",
             }}
           >
