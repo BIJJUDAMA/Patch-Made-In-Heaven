@@ -1,0 +1,58 @@
+name: mcp-phase1
+
+on:
+  push:
+    branches:
+      - feat/phase-01-core-search
+    paths:
+      - "mcp/**"
+      - ".github/workflows/mcp-phase1.yml"
+  pull_request:
+    paths:
+      - "mcp/**"
+      - ".github/workflows/mcp-phase1.yml"
+
+defaults:
+  run:
+    working-directory: mcp
+
+jobs:
+  fast-checks:
+    name: typecheck, unit tests, sandbox tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # package-lock.json is written by npm 12.0.1, which requires Node
+          # ^22.22.2 || ^24.15.0 || >=26.0.0 and cannot be read correctly by
+          # the older npm bundled with Node 20 (`npm ci` fails with spurious
+          # "Missing: ... from lock file" errors). Pin to the exact toolchain
+          # that produced the lockfile until a lower-Node-compatible lockfile
+          # is validated.
+          node-version: "26.4.0"
+          cache: "npm"
+          cache-dependency-path: mcp/package-lock.json
+
+      - name: Pin npm to the version that generated the lockfile
+        run: npm install -g npm@12.0.1
+
+      - name: Install dependencies (locked)
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      # GitHub-hosted ubuntu-latest runners ship a real Docker daemon, so this
+      # actually exercises SandboxClient (Checkpoint 5) end-to-end: PASS/FAIL,
+      # timeout+cleanup, output limits, network denial, and host isolation.
+      # The Elasticsearch integration suite self-skips (no ELASTICSEARCH_URL here).
+      - name: Integration tests (sandbox + credential-gated suites)
+        run: npm run test:integration
+
+      - name: Production build
+        run: npm run build
