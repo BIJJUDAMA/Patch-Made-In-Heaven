@@ -18,7 +18,7 @@ defaults:
 
 jobs:
   fast-checks:
-    name: typecheck, unit tests, build
+    name: typecheck, unit tests, sandbox tests, build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -46,6 +46,13 @@ jobs:
 
       - name: Unit tests
         run: npm run test:unit
+
+      # GitHub-hosted ubuntu-latest runners ship a real Docker daemon, so this
+      # actually exercises SandboxClient (Checkpoint 5) end-to-end: PASS/FAIL,
+      # timeout+cleanup, output limits, network denial, and host isolation.
+      # The Elasticsearch integration suite self-skips (no ELASTICSEARCH_URL here).
+      - name: Integration tests (sandbox + credential-gated suites)
+        run: npm run test:integration
 
       - name: Production build
         run: npm run build

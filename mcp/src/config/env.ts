@@ -44,6 +44,16 @@ const rawEnvSchema = z
     PORT: z.coerce.number().int().positive().optional(),
     HOST: z.string().trim().min(1).optional(),
     ENABLE_CORS: booleanFromString().optional(),
+
+    // Decision 005: Docker, not Modal. The binary name is configurable so a local
+    // dev machine without `docker` installed can substitute an OCI-compatible
+    // engine (e.g. podman) without changing the production default.
+    SANDBOX_CONTAINER_RUNTIME: z.string().trim().min(1).default('docker'),
+    SANDBOX_TIMEOUT_MS: z.coerce.number().int().positive().default(10000),
+    SANDBOX_MEMORY_LIMIT: z.string().trim().min(1).default('256m'),
+    SANDBOX_CPU_LIMIT: z.string().trim().min(1).default('1'),
+    SANDBOX_PIDS_LIMIT: z.coerce.number().int().positive().default(128),
+    SANDBOX_MAX_OUTPUT_BYTES: z.coerce.number().int().positive().default(65536),
   })
   .superRefine((value, ctx) => {
     if (value.OPENROUTER_API_KEY && !value.EMBEDDING_VECTOR_DIMENSIONS) {
@@ -95,6 +105,14 @@ export interface AppEnv {
     host?: string;
     corsEnabled?: boolean;
   };
+  sandbox: {
+    containerRuntime: string;
+    timeoutMs: number;
+    memoryLimit: string;
+    cpuLimit: string;
+    pidsLimit: number;
+    maxOutputBytes: number;
+  };
 }
 
 export class EnvironmentConfigError extends Error {
@@ -134,6 +152,14 @@ function toAppEnv(raw: RawAppEnv): AppEnv {
       port: raw.PORT,
       host: raw.HOST,
       corsEnabled: raw.ENABLE_CORS,
+    },
+    sandbox: {
+      containerRuntime: raw.SANDBOX_CONTAINER_RUNTIME,
+      timeoutMs: raw.SANDBOX_TIMEOUT_MS,
+      memoryLimit: raw.SANDBOX_MEMORY_LIMIT,
+      cpuLimit: raw.SANDBOX_CPU_LIMIT,
+      pidsLimit: raw.SANDBOX_PIDS_LIMIT,
+      maxOutputBytes: raw.SANDBOX_MAX_OUTPUT_BYTES,
     },
   };
 }
