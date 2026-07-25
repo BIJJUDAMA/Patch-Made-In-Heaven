@@ -48,7 +48,7 @@ export class SandboxImageNotAllowedError extends Error {
 }
 
 /** Small, explicit allowlist. Never derive an image name from caller input. */
-const IMAGE_ALLOWLIST: Record<string, string> = {
+export const IMAGE_ALLOWLIST: Record<string, string> = {
   python: 'python:3.11-slim',
   javascript: 'node:20-slim',
   typescript: 'node:20-slim',
@@ -65,6 +65,11 @@ const EXTENSION_BY_LANGUAGE: Record<string, string> = {
   node: 'js',
   go: 'go',
 };
+
+/** Shared with scripts (e.g. verify-seeds.ts) that need to pre-pull images before verifying. */
+export function resolveSandboxImage(language: string): string | undefined {
+  return IMAGE_ALLOWLIST[language.toLowerCase()];
+}
 
 export interface SandboxClientOptions {
   env?: AppEnv;
@@ -114,7 +119,7 @@ export class SandboxClient {
   }
 
   private resolveImage(language: string): string {
-    const image = IMAGE_ALLOWLIST[language.toLowerCase()];
+    const image = resolveSandboxImage(language);
     if (!image) {
       throw new SandboxImageNotAllowedError(language);
     }
