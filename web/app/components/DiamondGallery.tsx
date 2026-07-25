@@ -318,26 +318,56 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
+  const modalOverlayRef = useRef<HTMLDivElement>(null);
+  const modalCardRef = useRef<HTMLDivElement>(null);
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
   const [openProgress, setOpenProgress] = useState(0);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
-  const [schemaModalClosing, setSchemaModalClosing] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
 
   const openSchemaModal = () => {
-    setSchemaModalClosing(false);
     setShowSchemaModal(true);
   };
 
   const closeSchemaModal = () => {
-    setSchemaModalClosing(true);
-    setTimeout(() => {
+    if (modalOverlayRef.current && modalCardRef.current) {
+      gsap.to(modalOverlayRef.current, {
+        opacity: 0,
+        duration: 0.24,
+        ease: "power2.in",
+      });
+      gsap.to(modalCardRef.current, {
+        opacity: 0,
+        scale: 0.92,
+        y: 16,
+        duration: 0.24,
+        ease: "power2.in",
+        onComplete: () => {
+          setShowSchemaModal(false);
+        },
+      });
+    } else {
       setShowSchemaModal(false);
-      setSchemaModalClosing(false);
-    }, 220);
+    }
   };
+
+  useEffect(() => {
+    if (showSchemaModal && modalOverlayRef.current && modalCardRef.current) {
+      gsap.fromTo(
+        modalOverlayRef.current,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.32, ease: "power2.out" }
+      );
+      gsap.fromTo(
+        modalCardRef.current,
+        { opacity: 0, scale: 0.88, y: 24 },
+        { opacity: 1, scale: 1, y: 0, duration: 0.38, ease: "back.out(1.2)" }
+      );
+    }
+  }, [showSchemaModal]);
 
   // Dynamic screen bounds for interactive overlay tracking
   const [cardScreenBounds, setCardScreenBounds] = useState<{
@@ -709,7 +739,6 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     const closeCard = () => {
       setShowSchemaModal(false);
-      setSchemaModalClosing(false);
       setExpandedTool(null);
       setOpenProgress(0);
       stateRef.current.openProgressVal = 0;
@@ -1206,9 +1235,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* JSON Schema Popup Inspector - LIQUID SMOOTH OPEN/CLOSE TRANSITIONS */}
+      {/* JSON Schema Popup Inspector - 60FPS GSAP LIQUID SPRING ANIMATIONS */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
+          ref={modalOverlayRef}
           style={{
             position: "fixed",
             inset: 0,
@@ -1216,18 +1246,19 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: schemaModalClosing ? "rgba(0, 0, 0, 0)" : "rgba(0, 0, 0, 0.85)",
-            backdropFilter: schemaModalClosing ? "blur(0px)" : "blur(16px)",
-            WebkitBackdropFilter: schemaModalClosing ? "blur(0px)" : "blur(16px)",
+            backgroundColor: "rgba(0, 0, 0, 0.85)",
+            backdropFilter: "blur(16px)",
+            WebkitBackdropFilter: "blur(16px)",
             padding: "1.5rem",
             pointerEvents: "auto",
-            transition: "all 220ms ease",
+            willChange: "opacity",
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) closeSchemaModal();
           }}
         >
           <div
+            ref={modalCardRef}
             style={{
               position: "relative",
               width: "100%",
@@ -1243,10 +1274,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               color: "#ffffff",
               overflow: "hidden",
               boxShadow: "0 40px 100px rgba(0, 0, 0, 0.98), 0 0 60px rgba(56, 189, 248, 0.22), 0 0 90px rgba(168, 85, 247, 0.18), inset 0 0 40px rgba(255, 255, 255, 0.08)",
-              opacity: schemaModalClosing ? 0 : 1,
-              transform: schemaModalClosing ? "scale(0.94)" : "scale(1)",
-              transition: "opacity 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
-              animation: !schemaModalClosing ? "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both" : "none",
+              willChange: "transform, opacity",
             }}
           >
             {/* Iridescent Holographic Voronoi Ambient Color Glow Layer */}
