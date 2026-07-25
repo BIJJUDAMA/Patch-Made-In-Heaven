@@ -67,79 +67,54 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   ctx.fillStyle = "#ffffff";
   ctx.fillText(`/ ${tool.num}`, 45, 75);
 
-  // Upper Right Close Icon [✕] directly inside card texture
-  ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
-  ctx.beginPath();
-  ctx.arc(535, 65, 22, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  ctx.font = '700 22px "Geist Mono", monospace';
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("✕", 527, 72);
-
   // Tag Pill (#d4d4d8 Bright Silver-Gray)
-  ctx.font = '600 18px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#d4d4d8";
   const tagWidth = ctx.measureText(tool.tag).width;
-  ctx.fillText(tool.tag, 495 - tagWidth, 71);
+  ctx.fillText(tool.tag, 550 - tagWidth, 76);
 
   // Tool Title (Syne Display Font, #ffffff Crisp White)
-  ctx.font = '800 46px "Syne", system-ui, sans-serif';
+  ctx.font = '800 48px "Syne", system-ui, sans-serif';
   ctx.fillStyle = "#ffffff";
 
   const titleWords = tool.name.split("_");
-  let y = 180;
+  let y = 195;
   for (const word of titleWords) {
-    ctx.fillText(word, 45, y);
-    y += 52;
+    ctx.fillText(word, 50, y);
+    y += 54;
   }
 
   // White Accent Line
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(45, y + 6, 90, 3.5);
+  ctx.fillRect(50, y + 8, 95, 3.5);
 
   // Description (DM Sans Body Font, #e4e4e7 High-Contrast Light Gray)
-  y += 50;
-  ctx.font = '400 22px "DM Sans", system-ui, sans-serif';
+  y += 54;
+  ctx.font = '400 23px "DM Sans", system-ui, sans-serif';
   ctx.fillStyle = "#e4e4e7";
 
   const words = tool.desc.split(" ");
   let line = "";
-  const maxWidth = 510;
-  const lineHeight = 32;
+  const maxWidth = 500;
+  const lineHeight = 34;
 
   for (const word of words) {
     const testLine = line + word + " ";
     const metrics = ctx.measureText(testLine);
     if (metrics.width > maxWidth && line !== "") {
-      ctx.fillText(line, 45, y);
+      ctx.fillText(line, 50, y);
       line = word + " ";
       y += lineHeight;
     } else {
       line = testLine;
     }
   }
-  ctx.fillText(line, 45, y);
+  ctx.fillText(line, 50, y);
 
-  // Bottom Middle View JSON Schema Pill Button directly inside card texture
-  ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
-  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
-  ctx.lineWidth = 2.5;
-
-  ctx.beginPath();
-  if (typeof (ctx as any).roundRect === "function") {
-    (ctx as any).roundRect(60, 495, 480, 58, 29);
-  } else {
-    ctx.rect(60, 495, 480, 58);
-  }
-  ctx.fill();
-  ctx.stroke();
-
-  ctx.font = '700 18px "Geist Mono", "JetBrains Mono", monospace';
+  // Footer (#ffffff Pure White)
+  ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("⚙  VIEW JSON SCHEMA & PARAMETERS", 115, 531);
+  ctx.fillText("MCP TOOL //", 50, 538);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
