@@ -22,50 +22,50 @@ interface Props {
   onSelectTool?: (tool: ToolItem) => void;
 }
 
-// ── Draw Card Canvas Texture matching Editorial Dark Zen theme ────────────────
+// ── Draw Card Canvas Texture matching Cyber Midnight theme ──
 function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 800;
   canvas.height = 800;
   const ctx = canvas.getContext("2d")!;
 
-  // Background matching site theme (--surface-subtle #161616 to --bg-app #0e0e0e)
+  // Rich Cyber Midnight Card Background (--surface-panel #162032 to --bg-app #080c14)
   const bg = ctx.createLinearGradient(0, 0, 800, 800);
-  bg.addColorStop(0, "#1c1c1c");
-  bg.addColorStop(0.5, "#141414");
-  bg.addColorStop(1, "#0e0e0e");
+  bg.addColorStop(0, "#1a273e");
+  bg.addColorStop(0.5, "#101929");
+  bg.addColorStop(1, "#080c14");
   ctx.fillStyle = bg;
   ctx.fillRect(0, 0, 800, 800);
 
-  // Geometric subtle noise pattern line
-  ctx.strokeStyle = "rgba(232, 160, 32, 0.06)";
-  ctx.lineWidth = 1;
-  for (let i = 0; i < 800; i += 70) {
+  // Geometric Cyber Grid Overlay (--accent-primary-subtle)
+  ctx.strokeStyle = "rgba(0, 242, 254, 0.08)";
+  ctx.lineWidth = 1.5;
+  for (let i = 0; i < 800; i += 60) {
     ctx.beginPath();
     ctx.moveTo(i, 0);
-    ctx.lineTo(i + 350, 800);
+    ctx.lineTo(i + 300, 800);
     ctx.stroke();
   }
 
-  // Border frame inner line (--accent-primary-border)
-  ctx.strokeStyle = "rgba(232, 160, 32, 0.35)";
+  // Card Inner Border Line (--border-strong rgba(0, 242, 254, 0.35))
+  ctx.strokeStyle = "rgba(0, 242, 254, 0.4)";
   ctx.lineWidth = 2;
   ctx.strokeRect(30, 30, 740, 740);
 
-  // Number Badge (--accent-primary #e8a020, --font-mono)
+  // Number Badge (--accent-primary #00f2fe, --font-mono)
   ctx.font = '600 36px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#e8a020";
+  ctx.fillStyle = "#00f2fe";
   ctx.fillText(`/ ${tool.num}`, 70, 110);
 
-  // Tag Pill (--text-medium #a09a90, --font-mono)
+  // Tag Pill (--text-medium #94a3b8, --font-mono)
   ctx.font = '500 22px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#a09a90";
+  ctx.fillStyle = "#94a3b8";
   const tagWidth = ctx.measureText(tool.tag).width;
   ctx.fillText(tool.tag, 730 - tagWidth, 105);
 
-  // Tool Title (Syne Display Font --font-display, --text-high #f0ede8)
+  // Tool Title (Syne Display Font --font-display, --text-high #f8fafc)
   ctx.font = '700 56px "Syne", system-ui, sans-serif';
-  ctx.fillStyle = "#f0ede8";
+  ctx.fillStyle = "#f8fafc";
 
   const titleWords = tool.name.split("_");
   let y = 260;
@@ -74,14 +74,14 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
     y += 66;
   }
 
-  // Amber Accent Line
-  ctx.fillStyle = "#e8a020";
-  ctx.fillRect(70, y + 10, 100, 3);
+  // Cyan Accent Line
+  ctx.fillStyle = "#00f2fe";
+  ctx.fillRect(70, y + 10, 110, 3.5);
 
-  // Description (DM Sans Body Font --font-body, --text-medium #a09a90)
+  // Description (DM Sans Body Font --font-body, --text-medium #94a3b8)
   y += 70;
   ctx.font = '300 26px "DM Sans", system-ui, sans-serif';
-  ctx.fillStyle = "#a09a90";
+  ctx.fillStyle = "#94a3b8";
 
   const words = tool.desc.split(" ");
   let line = "";
@@ -101,9 +101,9 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   }
   ctx.fillText(line, 70, y);
 
-  // Arrow & NitroCloud MCP Footer (--font-mono)
+  // Emerald Footer (--accent-secondary #10b981)
   ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#e8a020";
+  ctx.fillStyle = "#10b981";
   ctx.fillText("NITROCLOUD MCP TOOL →", 70, 715);
 
   const texture = new THREE.CanvasTexture(canvas);
@@ -259,11 +259,11 @@ const cardFragmentShader = /* glsl */ `
     float glass = pow(max(dot(reflect(-L, Nf), V), 0.0), 22.0);
 
     if (backFace) {
-      image = vec3(0.05, 0.04, 0.03) + iri * 0.15;
+      image = vec3(0.03, 0.06, 0.09) + iri * 0.15;
     }
 
-    vec3 crystal = mix(iri, vec3(0.91, 0.63, 0.13), 0.5); // Warm Amber Gold crystal reflection
-    vec3 iceGleam = mix(iri, vec3(0.9, 0.7, 0.3), 0.45);
+    vec3 crystal = mix(iri, vec3(0.0, 0.95, 0.99), 0.5); // Electric Cyan crystal sheen
+    vec3 iceGleam = mix(iri, vec3(0.06, 0.72, 0.5), 0.45);
     vec3 imgTint = 0.25 + 0.75 * image;
     vec3 iriChroma = iri - dot(iri, vec3(0.299, 0.587, 0.114));
     vec3 color = image * (0.98 + 0.05 * uFocus + 0.025 * sweep)
@@ -279,11 +279,11 @@ const cardFragmentShader = /* glsl */ `
     color += crystal * sheen * 0.10;
 
     float metalSheen = pow(0.5 + 0.5 * sin((vUv.x - vUv.y) * 5.0 + bandBase * 3.0 + uTime * 0.3), 8.0);
-    vec3 silver = mix(vec3(0.65, 0.52, 0.32), vec3(0.95, 0.85, 0.65), bevel); // Amber Gold Frame
+    vec3 silver = mix(vec3(0.1, 0.35, 0.45), vec3(0.0, 0.95, 0.99), bevel); // Cyber Cyan Frame
     silver *= 0.88 + 0.35 * fres;
     silver += iri * metalSheen * 0.9;
     silver += iri * 0.07;
-    silver += vec3(0.95, 0.85, 0.65) * sweepCore * 0.45 * holo;
+    silver += vec3(0.0, 0.95, 0.99) * sweepCore * 0.45 * holo;
     silver += iri * sweepFringe * 0.15 * holo;
     silver += crystal * sheen * 0.25;
     color = mix(color, silver, frame * 0.95);
@@ -344,9 +344,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       floorGlow: 0.55,
     };
 
-    // Scene setup — Dark Warm Charcoal bg matching --bg-app (#0e0e0e)
+    // Scene setup — Cyber Midnight background matching --bg-app (#080c14)
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0e0e0e);
+    scene.background = new THREE.Color(0x080c14);
 
     const camera = new THREE.PerspectiveCamera(
       55,
@@ -427,7 +427,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       clipBias: 0.003,
       textureWidth: 1024,
       textureHeight: 1024,
-      color: 0x1e1e1e,
+      color: 0x162032,
     });
     mirror.rotation.x = -Math.PI / 2;
     mirror.position.y = FLOOR_Y;
@@ -447,7 +447,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             float d = length(vUv - 0.5) * 2.0;
             float fade = smoothstep(0.12, 0.85, d);
             float alpha = 1.0 - uStrength * (1.0 - fade);
-            gl_FragColor = vec4(vec3(0.055), alpha);
+            gl_FragColor = vec4(vec3(0.03, 0.05, 0.08), alpha);
           }
         `,
       })
@@ -472,7 +472,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             float ring = exp(-pow((d - 0.92) * 55.0, 2.0));
             float front = mix(0.15, 1.0, pow(1.0 - vUv.y, 1.8));
             float glow = ring * front * uGlow;
-            gl_FragColor = vec4(vec3(0.91, 0.63, 0.13), glow);
+            gl_FragColor = vec4(vec3(0.0, 0.95, 0.99), glow);
           }
         `,
       })
