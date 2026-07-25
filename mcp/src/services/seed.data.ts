@@ -18,10 +18,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:11.269Z",
+      "lastVerified": "2026-07-25T14:15:53.840Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 97,
+      "durationMs": 99,
       "stdout": "hello world\n",
       "stderr": ""
     },
@@ -31,7 +31,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:11.269Z"
+      "addedAt": "2026-07-25T14:15:53.840Z"
     }
   },
   {
@@ -47,10 +47,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:11.460Z",
+      "lastVerified": "2026-07-25T14:15:54.029Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 93,
+      "durationMs": 91,
       "stdout": "bad value\n",
       "stderr": ""
     },
@@ -60,7 +60,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:11.460Z"
+      "addedAt": "2026-07-25T14:15:54.029Z"
     }
   },
   {
@@ -76,10 +76,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:11.678Z",
+      "lastVerified": "2026-07-25T14:15:54.229Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 102,
+      "durationMs": 98,
       "stdout": "True\n",
       "stderr": ""
     },
@@ -89,7 +89,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:11.678Z"
+      "addedAt": "2026-07-25T14:15:54.229Z"
     }
   },
   {
@@ -105,10 +105,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:11.870Z",
+      "lastVerified": "2026-07-25T14:15:54.417Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 96,
+      "durationMs": 93,
       "stdout": "Total: 5\n",
       "stderr": ""
     },
@@ -118,7 +118,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:11.870Z"
+      "addedAt": "2026-07-25T14:15:54.417Z"
     }
   },
   {
@@ -134,10 +134,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:12.065Z",
+      "lastVerified": "2026-07-25T14:15:54.617Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 95,
+      "durationMs": 96,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -147,7 +147,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:12.066Z"
+      "addedAt": "2026-07-25T14:15:54.617Z"
     }
   },
   {
@@ -163,10 +163,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:12.266Z",
+      "lastVerified": "2026-07-25T14:15:54.813Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 101,
+      "durationMs": 95,
       "stdout": "8080\n",
       "stderr": ""
     },
@@ -176,7 +176,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:12.266Z"
+      "addedAt": "2026-07-25T14:15:54.813Z"
     }
   },
   {
@@ -192,10 +192,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:12.477Z",
+      "lastVerified": "2026-07-25T14:15:55.000Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 110,
+      "durationMs": 90,
       "stdout": "30\n",
       "stderr": ""
     },
@@ -205,7 +205,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:12.477Z"
+      "addedAt": "2026-07-25T14:15:55.000Z"
     }
   },
   {
@@ -221,10 +221,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:12.682Z",
+      "lastVerified": "2026-07-25T14:15:55.196Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 104,
+      "durationMs": 95,
       "stdout": "[2, 4, 6, 4]\n",
       "stderr": ""
     },
@@ -234,7 +234,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:12.682Z"
+      "addedAt": "2026-07-25T14:15:55.196Z"
     }
   },
   {
@@ -250,10 +250,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:12.873Z",
+      "lastVerified": "2026-07-25T14:15:55.393Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 96,
+      "durationMs": 105,
       "stdout": "1\n",
       "stderr": ""
     },
@@ -263,7 +263,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:12.873Z"
+      "addedAt": "2026-07-25T14:15:55.393Z"
     }
   },
   {
@@ -279,10 +279,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:13.079Z",
+      "lastVerified": "2026-07-25T14:15:55.599Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 106,
+      "durationMs": 101,
       "stdout": "120\n",
       "stderr": ""
     },
@@ -292,7 +292,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:13.079Z"
+      "addedAt": "2026-07-25T14:15:55.599Z"
     }
   },
   {
@@ -308,10 +308,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:13.337Z",
+      "lastVerified": "2026-07-25T14:15:55.868Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 132,
+      "durationMs": 139,
       "stdout": "{}\n",
       "stderr": ""
     },
@@ -321,7 +321,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:13.337Z"
+      "addedAt": "2026-07-25T14:15:55.868Z"
     }
   },
   {
@@ -337,10 +337,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:13.529Z",
+      "lastVerified": "2026-07-25T14:15:56.075Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 98,
+      "durationMs": 103,
       "stdout": "{}\n",
       "stderr": ""
     },
@@ -350,7 +350,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:13.529Z"
+      "addedAt": "2026-07-25T14:15:56.075Z"
     }
   },
   {
@@ -366,7 +366,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:13.724Z",
+      "lastVerified": "2026-07-25T14:15:56.274Z",
       "sandbox": "docker",
       "exitCode": 0,
       "durationMs": 97,
@@ -379,7 +379,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:13.724Z"
+      "addedAt": "2026-07-25T14:15:56.274Z"
     }
   },
   {
@@ -395,10 +395,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:13.922Z",
+      "lastVerified": "2026-07-25T14:15:56.467Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 101,
+      "durationMs": 98,
       "stdout": "{'a': 1, 'c': 2}\n",
       "stderr": ""
     },
@@ -408,7 +408,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:13.922Z"
+      "addedAt": "2026-07-25T14:15:56.467Z"
     }
   },
   {
@@ -424,10 +424,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:14.120Z",
+      "lastVerified": "2026-07-25T14:15:56.663Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 94,
+      "durationMs": 97,
       "stdout": "default\n",
       "stderr": ""
     },
@@ -437,7 +437,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:14.120Z"
+      "addedAt": "2026-07-25T14:15:56.663Z"
     }
   },
   {
@@ -453,10 +453,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:14.327Z",
+      "lastVerified": "2026-07-25T14:15:56.867Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 103,
+      "durationMs": 99,
       "stdout": "Hello, World!\n",
       "stderr": ""
     },
@@ -466,7 +466,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:14.327Z"
+      "addedAt": "2026-07-25T14:15:56.867Z"
     }
   },
   {
@@ -482,10 +482,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:14.533Z",
+      "lastVerified": "2026-07-25T14:15:57.063Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 102,
+      "durationMs": 94,
       "stdout": "0\n",
       "stderr": ""
     },
@@ -495,7 +495,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:14.533Z"
+      "addedAt": "2026-07-25T14:15:57.063Z"
     }
   },
   {
@@ -511,10 +511,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:14.734Z",
+      "lastVerified": "2026-07-25T14:15:57.265Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 103,
+      "durationMs": 97,
       "stdout": "[0, 3, 5]\n",
       "stderr": ""
     },
@@ -524,7 +524,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:14.734Z"
+      "addedAt": "2026-07-25T14:15:57.265Z"
     }
   },
   {
@@ -540,10 +540,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:14.933Z",
+      "lastVerified": "2026-07-25T14:15:57.474Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 103,
+      "durationMs": 107,
       "stdout": "None\n",
       "stderr": ""
     },
@@ -553,7 +553,7 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:14.933Z"
+      "addedAt": "2026-07-25T14:15:57.474Z"
     }
   },
   {
@@ -569,10 +569,10 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "verification": {
       "status": "PASS",
       "score": 0.9,
-      "lastVerified": "2026-07-25T13:40:15.143Z",
+      "lastVerified": "2026-07-25T14:15:57.675Z",
       "sandbox": "docker",
       "exitCode": 0,
-      "durationMs": 104,
+      "durationMs": 97,
       "stdout": "[2, 3, 'a']\n",
       "stderr": ""
     },
@@ -582,7 +582,442 @@ export const SEED_KNOWLEDGE_CARDS: KnowledgeCard[] = [
     "provenance": {
       "source": "seed",
       "category": "python",
-      "addedAt": "2026-07-25T13:40:15.143Z"
+      "addedAt": "2026-07-25T14:15:57.675Z"
+    }
+  },
+  {
+    "id": "fix_node_require_in_esm",
+    "problem": "ReferenceError: require is not defined in ES module scope",
+    "errorType": "ReferenceError",
+    "stacktrace": "file:///tmp/main.mjs:1\nconst path = require('node:path');\n             ^\n\nReferenceError: require is not defined in ES module scope, you can use import instead\n    at file:///tmp/main.mjs:1:14\n    at ModuleJob.run (node:internal/modules/esm/module_job:325:25)\n    at async ModuleLoader.import (node:internal/modules/esm/loader:606:24)\n    at async asyncRunEntryPointWithESMLoader (node:internal/modules/run_main:117:5)\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,2 +1,2 @@\n-const path = require('node:path');\n+import path from 'node:path';\n console.log(path.basename('/tmp/main.mjs'));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:57.905Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 114,
+      "stdout": "main.mjs\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:57.905Z"
+    }
+  },
+  {
+    "id": "fix_node_import_in_commonjs",
+    "problem": "ES module \"import\" statement used in a file Node treats as CommonJS raises a SyntaxError",
+    "errorType": "SyntaxError",
+    "stacktrace": "(node:4) Warning: To load an ES module, set \"type\": \"module\" in the package.json or use the .mjs extension.\n(Use `node --trace-warnings ...` to show where the warning was created)\n/tmp/main.cjs:1\nimport { readFileSync } from 'node:fs';\n^^^^^^\n\nSyntaxError: Cannot use import statement outside a module\n    at wrapSafe (node:internal/modules/cjs/loader:1464:18)\n    at Module._compile (node:internal/modules/cjs/loader:1495:20)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,2 +1,2 @@\n-import { readFileSync } from 'node:fs';\n+const { readFileSync } = require('node:fs');\n console.log(typeof readFileSync);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:58.129Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 110,
+      "stdout": "function\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:58.129Z"
+    }
+  },
+  {
+    "id": "fix_node_json_parse_empty_string",
+    "problem": "JSON.parse on an empty string raises SyntaxError: Unexpected end of JSON input",
+    "errorType": "SyntaxError",
+    "stacktrace": "<anonymous_script>:1\n\n\nSyntaxError: Unexpected end of JSON input\n    at JSON.parse (<anonymous>)\n    at Object.<anonymous> (/workspace/main.js:2:19)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,3 +1,3 @@\n const raw = \"\";\n-const data = JSON.parse(raw);\n+const data = raw ? JSON.parse(raw) : {};\n console.log(data);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:58.351Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 112,
+      "stdout": "{}\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:58.351Z"
+    }
+  },
+  {
+    "id": "fix_node_undefined_property_chain",
+    "problem": "Reading a nested property through an undefined intermediate raises TypeError",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:2\n  return user.address.city;\n                      ^\n\nTypeError: Cannot read properties of undefined (reading 'city')\n    at getUserCity (/workspace/main.js:2:23)\n    at Object.<anonymous> (/workspace/main.js:4:13)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,4 +1,4 @@\n function getUserCity(user) {\n-  return user.address.city;\n+  return user.address?.city ?? 'unknown';\n }\n console.log(getUserCity({ name: 'Ada' }));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:58.580Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 116,
+      "stdout": "unknown\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:58.580Z"
+    }
+  },
+  {
+    "id": "fix_node_reduce_empty_array_no_initial",
+    "problem": "Array.prototype.reduce on an empty array with no initial value raises TypeError",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:1\nconst total = [].reduce((acc, val) => acc + val);\n                 ^\n\nTypeError: Reduce of empty array with no initial value\n    at Array.reduce (<anonymous>)\n    at Object.<anonymous> (/workspace/main.js:1:18)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,2 +1,2 @@\n-const total = [].reduce((acc, val) => acc + val);\n+const total = [].reduce((acc, val) => acc + val, 0);\n console.log(total);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:58.806Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 117,
+      "stdout": "0\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:58.806Z"
+    }
+  },
+  {
+    "id": "fix_node_circular_json_stringify",
+    "problem": "JSON.stringify on an object with a circular reference raises TypeError",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:3\nconsole.log(JSON.stringify(obj));\n                 ^\n\nTypeError: Converting circular structure to JSON\n    --> starting at object with constructor 'Object'\n    --- property 'self' closes the circle\n    at JSON.stringify (<anonymous>)\n    at Object.<anonymous> (/workspace/main.js:3:18)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,3 +1,3 @@\n const obj = { name: 'root' };\n obj.self = obj;\n-console.log(JSON.stringify(obj));\n+console.log(JSON.stringify(obj, (key, value) => (key === 'self' ? undefined : value)));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:59.018Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 104,
+      "stdout": "{\"name\":\"root\"}\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:59.018Z"
+    }
+  },
+  {
+    "id": "fix_node_map_on_null",
+    "problem": "Calling .map() on a null value instead of an array raises TypeError",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:2\n  return items.map((x) => x * 2);\n               ^\n\nTypeError: Cannot read properties of null (reading 'map')\n    at double (/workspace/main.js:2:16)\n    at Object.<anonymous> (/workspace/main.js:4:13)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,4 +1,4 @@\n function double(items) {\n-  return items.map((x) => x * 2);\n+  return (items ?? []).map((x) => x * 2);\n }\n console.log(double(null));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:59.242Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 109,
+      "stdout": "[]\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:59.242Z"
+    }
+  },
+  {
+    "id": "fix_node_unhandled_promise_rejection",
+    "problem": "Calling an async function without awaiting or catching its rejection crashes the process",
+    "errorType": "UnhandledPromiseRejection",
+    "stacktrace": "/workspace/main.js:2\n  throw new Error('config missing');\n        ^\n\nError: config missing\n    at loadConfig (/workspace/main.js:2:9)\n    at Object.<anonymous> (/workspace/main.js:5:1)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,6 +1,13 @@\n async function loadConfig() {\n   throw new Error('config missing');\n }\n \n-loadConfig();\n-console.log('this line runs before the crash is reported');\n+async function main() {\n+  try {\n+    await loadConfig();\n+  } catch (error) {\n+    console.log('handled:', error.message);\n+  }\n+}\n+\n+main();",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:59.470Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 114,
+      "stdout": "handled: config missing\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:59.470Z"
+    }
+  },
+  {
+    "id": "fix_node_max_call_stack_recursion",
+    "problem": "Recursive function without a base case raises RangeError: Maximum call stack size exceeded",
+    "errorType": "RangeError",
+    "stacktrace": "/workspace/main.js:2\n  return n * factorial(n - 1);\n  ^\n\nRangeError: Maximum call stack size exceeded\n    at factorial (/workspace/main.js:2:3)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n    at factorial (/workspace/main.js:2:14)\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,4 +1,5 @@\n function factorial(n) {\n+  if (n <= 1) return 1;\n   return n * factorial(n - 1);\n }\n console.log(factorial(5));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:59.699Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 116,
+      "stdout": "120\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:59.699Z"
+    }
+  },
+  {
+    "id": "fix_node_property_not_a_function",
+    "problem": "Calling .push() on a plain object instead of an array raises TypeError: is not a function",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:2\nqueue.push(1);\n      ^\n\nTypeError: queue.push is not a function\n    at Object.<anonymous> (/workspace/main.js:2:7)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,3 +1,3 @@\n const queue = { items: [] };\n-queue.push(1);\n+queue.items.push(1);\n console.log(queue.items);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:15:59.925Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 109,
+      "stdout": "[ 1 ]\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:15:59.925Z"
+    }
+  },
+  {
+    "id": "fix_node_cannot_find_module",
+    "problem": "require() of a relative path that does not exist raises \"Cannot find module\"",
+    "errorType": "Error",
+    "stacktrace": "node:internal/modules/cjs/loader:1210\n  throw err;\n  ^\n\nError: Cannot find module './missing-utils.js'\nRequire stack:\n- /workspace/main.js\n    at Module._resolveFilename (node:internal/modules/cjs/loader:1207:15)\n    at Module._load (node:internal/modules/cjs/loader:1038:27)\n    at Module.require (node:internal/modules/cjs/loader:1289:19)\n    at require (node:internal/modules/helpers:182:18)\n    at Object.<anonymous> (/workspace/main.js:1:15)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12) {\n  code: 'MODULE_NOT_FOUND',\n  requireStack: [ '/workspace/main.js' ]\n}\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,2 +1,5 @@\n-const utils = require('./missing-utils.js');\n+const fs = require('node:fs');\n+const path = '/tmp/utils.js';\n+fs.writeFileSync(path, 'module.exports = { greet: (name) => `hello, ${name}` };');\n+const utils = require(path);\n console.log(utils.greet('world'));",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:16:00.148Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 107,
+      "stdout": "hello, world\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:16:00.148Z"
+    }
+  },
+  {
+    "id": "fix_node_const_reassignment",
+    "problem": "Reassigning a const-declared variable raises TypeError: Assignment to constant variable",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:2\nretries = retries - 1;\n        ^\n\nTypeError: Assignment to constant variable.\n    at Object.<anonymous> (/workspace/main.js:2:9)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,3 +1,3 @@\n-const retries = 3;\n+let retries = 3;\n retries = retries - 1;\n console.log(retries);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:16:00.374Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 119,
+      "stdout": "2\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:16:00.374Z"
+    }
+  },
+  {
+    "id": "fix_node_block_scope_reference_error",
+    "problem": "Referencing a let-declared variable outside the block it was declared in raises ReferenceError",
+    "errorType": "ReferenceError",
+    "stacktrace": "/workspace/main.js:4\nconsole.log(message);\n            ^\n\nReferenceError: message is not defined\n    at Object.<anonymous> (/workspace/main.js:4:13)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,4 +1,5 @@\n+let message;\n if (true) {\n-  let message = 'hello';\n+  message = 'hello';\n }\n console.log(message);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:16:00.589Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 103,
+      "stdout": "hello\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:16:00.589Z"
+    }
+  },
+  {
+    "id": "fix_node_symbol_to_string_conversion",
+    "problem": "Implicitly converting a Symbol to a string via template literal raises TypeError",
+    "errorType": "TypeError",
+    "stacktrace": "/workspace/main.js:2\nconsole.log(`ID: ${id}`);\n                   ^\n\nTypeError: Cannot convert a Symbol value to a string\n    at Object.<anonymous> (/workspace/main.js:2:20)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,2 +1,2 @@\n const id = Symbol('user-id');\n-console.log(`ID: ${id}`);\n+console.log(`ID: ${String(id)}`);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:16:00.806Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 114,
+      "stdout": "ID: Symbol(user-id)\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:16:00.806Z"
+    }
+  },
+  {
+    "id": "fix_node_invalid_array_length",
+    "problem": "Constructing an Array with a negative length raises RangeError: Invalid array length",
+    "errorType": "RangeError",
+    "stacktrace": "/workspace/main.js:2\n  return new Array(size);\n         ^\n\nRangeError: Invalid array length\n    at createBuffer (/workspace/main.js:2:10)\n    at Object.<anonymous> (/workspace/main.js:4:13)\n    at Module._compile (node:internal/modules/cjs/loader:1521:14)\n    at Module._extensions..js (node:internal/modules/cjs/loader:1623:10)\n    at Module.load (node:internal/modules/cjs/loader:1266:32)\n    at Module._load (node:internal/modules/cjs/loader:1091:12)\n    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:164:12)\n    at node:internal/main/run_main_module:28:49\n\nNode.js v20.20.2",
+    "environment": {
+      "language": "javascript",
+      "version": "20"
+    },
+    "patch": "===================================================================\n--- a/main.js\n+++ b/main.js\n@@ -1,4 +1,4 @@\n function createBuffer(size) {\n-  return new Array(size);\n+  return new Array(Math.max(0, size));\n }\n console.log(createBuffer(-1).length);",
+    "verification": {
+      "status": "PASS",
+      "score": 0.9,
+      "lastVerified": "2026-07-25T14:16:01.010Z",
+      "sandbox": "docker",
+      "exitCode": 0,
+      "durationMs": 101,
+      "stdout": "0\n",
+      "stderr": ""
+    },
+    "metrics": {
+      "reuseCount": 0
+    },
+    "provenance": {
+      "source": "seed",
+      "category": "node",
+      "addedAt": "2026-07-25T14:16:01.010Z"
     }
   }
 ];

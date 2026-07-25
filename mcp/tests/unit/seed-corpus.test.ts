@@ -46,6 +46,11 @@ describe('seed corpus (schema, uniqueness, honesty)', () => {
     expect(pythonCards).toHaveLength(20);
   });
 
+  it('has exactly 15 Node.js/TypeScript fixtures (Checkpoint 7 deliverable)', () => {
+    const nodeCards = SEED_KNOWLEDGE_CARDS.filter((card) => card.provenance?.category === 'node');
+    expect(nodeCards).toHaveLength(15);
+  });
+
   it('every card carries real PASS verification evidence, not a placeholder', () => {
     for (const card of SEED_KNOWLEDGE_CARDS) {
       expect(card.verification.status).toBe('PASS');
