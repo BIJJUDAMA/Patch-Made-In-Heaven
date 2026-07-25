@@ -104,7 +104,7 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   // Footer (#ffffff Pure White)
   ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("NITROCLOUD MCP TOOL →", 50, 538);
+  ctx.fillText("MCP TOOL →", 50, 538);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;

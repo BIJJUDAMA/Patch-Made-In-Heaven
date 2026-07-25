@@ -456,9 +456,7 @@ export default function Dashboard() {
               justifyContent: 'space-between',
             }}
           >
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text-low)', letterSpacing: '0.02em' }}>
-              Powered by NitroStack — TypeScript MCP Framework
-            </span>
+
             <a
               href="#inspector"
               className="active-press"
