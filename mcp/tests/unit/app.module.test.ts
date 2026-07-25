@@ -21,10 +21,16 @@ describe('AppModule tool discovery', () => {
     expect(appModuleSource).not.toMatch(/^import .*SubmitTools/m);
   });
 
-  it('registers exactly the two binding search/retrieval providers', () => {
-    const providersMatch = appModuleSource.match(/providers:\s*\[([^\]]*)]/);
-    expect(providersMatch).not.toBeNull();
-    const providerNames = providersMatch![1].split(',').map((name) => name.trim()).filter(Boolean);
-    expect(providerNames).toEqual(['SearchTools', 'RetrieveTools']);
+  it('registers exactly the two binding search/retrieval classes as controllers (not providers)', () => {
+    // @nitrostack/core only scans `controllers` for @Tool/@Resource/@Prompt
+    // methods — `providers` is DI-only and is never inspected for tools. See
+    // DOUBTS.md for how this was discovered (tools/list returned empty while
+    // this project used `providers`, silently, since before Phase 1).
+    const controllersMatch = appModuleSource.match(/controllers:\s*\[([^\]]*)]/);
+    expect(controllersMatch).not.toBeNull();
+    const controllerNames = controllersMatch![1].split(',').map((name) => name.trim()).filter(Boolean);
+    expect(controllerNames).toEqual(['SearchTools', 'RetrieveTools']);
+
+    expect(appModuleSource).not.toMatch(/providers:\s*\[/);
   });
 });

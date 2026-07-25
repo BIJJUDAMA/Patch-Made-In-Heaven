@@ -18,8 +18,29 @@ const booleanFromString = () =>
 
 const optionalUrl = () => z.string().trim().url().optional();
 
-const rawEnvSchema = z
-  .object({
+/**
+ * `dotenv` parses a blank `KEY=` line (exactly what `.env.example`'s optional
+ * fields look like) as an empty string, not `undefined`. Without this, every
+ * optional field here would reject that empty string as invalid input (e.g.
+ * `ELASTICSEARCH_URL=` failing `.url()`) instead of treating it as "not
+ * configured" — meaning copying `.env.example` to `.env` exactly as
+ * documented would crash the server on startup. Blank means unset, uniformly.
+ */
+function blankStringsToUndefined(input: unknown): unknown {
+  if (typeof input !== 'object' || input === null) {
+    return input;
+  }
+  const cleaned: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    cleaned[key] = typeof value === 'string' && value.trim() === '' ? undefined : value;
+  }
+  return cleaned;
+}
+
+const rawEnvSchema = z.preprocess(
+  blankStringsToUndefined,
+  z
+    .object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     NITRO_LOG_LEVEL: z.enum(['debug', 'info', 'warn', 'error']).default('info'),
     NITROSTACK_APP_MODE: z.string().trim().min(1).default('universal'),
@@ -71,7 +92,8 @@ const rawEnvSchema = z
         message: 'SEARCH_RESULT_LIMIT_DEFAULT cannot exceed SEARCH_RESULT_LIMIT_MAX.',
       });
     }
-  });
+  })
+);
 
 export type RawAppEnv = z.infer<typeof rawEnvSchema>;
 

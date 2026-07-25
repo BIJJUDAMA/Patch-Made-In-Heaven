@@ -15,12 +15,6 @@ const findSimilarSchema = z.object({
   limit: z.number().optional().default(5).describe('Maximum number of results to return.'),
 });
 
-const searchByErrorSchema = z.object({
-  errorType: z.string().describe('Exact error class (e.g. ImportError, ReferenceError, DockerError).'),
-  message: z.string().optional().describe('Optional message snippet to refine the search.'),
-  limit: z.number().optional().default(5).describe('Maximum number of results to return.'),
-});
-
 @Controller()
 export class SearchTools {
   private elasticService = new ElasticService();
@@ -46,21 +40,6 @@ export class SearchTools {
   })
   async findSimilar(params: z.infer<typeof findSimilarSchema>) {
     const result = await this.elasticService.findSimilar(params.query, params.limit);
-    return {
-      count: result.hits.length,
-      searchMode: result.mode,
-      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
-    };
-  }
-
-  @Tool({
-    name: 'search_by_error',
-    description: 'Queries verified fixes sorted by error class and message.',
-    inputSchema: searchByErrorSchema,
-  })
-  async searchByError(params: z.infer<typeof searchByErrorSchema>) {
-    const queryStr = params.message ? `${params.errorType} ${params.message}` : params.errorType;
-    const result = await this.elasticService.findSimilar(queryStr, params.limit);
     return {
       count: result.hits.length,
       searchMode: result.mode,

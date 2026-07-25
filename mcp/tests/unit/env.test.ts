@@ -17,6 +17,22 @@ describe('loadEnv', () => {
     expect(() => loadEnv(MINIMAL_VALID_ENV)).not.toThrow();
   });
 
+  it('treats a blank KEY= value the same as unset (dotenv parses blank lines as empty strings, not undefined)', () => {
+    // Regression test: copying .env.example to .env exactly as documented
+    // produces ELASTICSEARCH_URL="" (blank), not an absent key. This must
+    // load successfully in degraded/offline mode, not throw.
+    const env = loadEnv({
+      ELASTICSEARCH_URL: '',
+      ELASTICSEARCH_API_KEY: '',
+      OPENROUTER_API_KEY: '',
+      HOST: '',
+    } as NodeJS.ProcessEnv);
+    expect(env.elasticsearch.url).toBeUndefined();
+    expect(env.elasticsearch.apiKey).toBeUndefined();
+    expect(env.embedding.apiKey).toBeUndefined();
+    expect(env.transport.host).toBeUndefined();
+  });
+
   it('accepts a fully configured production-shaped environment', () => {
     const env = loadEnv({
       ELASTICSEARCH_URL: 'https://es.example.com:9243',

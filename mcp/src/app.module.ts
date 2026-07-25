@@ -18,7 +18,10 @@ import { RetrieveTools } from './tools/retrieve.tool.js';
 })
 @Module({
   name: 'app',
-  providers: [SearchTools, RetrieveTools],
+  // `controllers` (not `providers`) is what @nitrostack/core actually scans
+  // for @Tool/@Resource/@Prompt-decorated methods — see DOUBTS.md for the
+  // full story of how this was found.
+  controllers: [SearchTools, RetrieveTools],
 })
 export class AppModule {}
 export default AppModule;
