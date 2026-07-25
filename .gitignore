@@ -1,0 +1,36 @@
+# Working documents — never committed (see AGENTS.md Documentation Commit Rules)
+HANDOFF.md
+Implementation_Plans/
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+.next/
+out/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Claude Code local settings
+.claude/settings.local.json

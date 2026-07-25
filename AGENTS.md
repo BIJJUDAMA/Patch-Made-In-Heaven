@@ -298,107 +298,9 @@ DECISIONS.md is considered a source-of-truth document.
 
 Accepted decisions must not be re-litigated during implementation without explicit human approval.
 
-## Decision 001
-
-Topic:
-
-MCP Framework & Hosting
-
-Status:
-
-Accepted
-
-Decision:
-
-The HackOverflow MCP server is written in TypeScript using NitroStack and deployed on NitroCloud.
-
-Reasoning:
-
-* Serverless auto-scaling execution via Knative
-* Strict Zod schema enforcement for tool inputs
-* Native compatibility with MCP clients (Cursor, Claude Desktop, OpenHands)
-
-Implications:
-
-All exposed agent tools (`search_fix`, `verify_fix`, `submit_fix`, etc.) must be implemented using `@nitrostack/core` tool decorators.
-
----
-
-## Decision 002
-
-Topic:
-
-Search Engine Infrastructure
-
-Status:
-
-Accepted
-
-Decision:
-
-Elasticsearch handles all knowledge indexing and retrieval (BM25 keyword + dense vectors + reranking).
-
-Reasoning:
-
-Provides optimal hybrid search for error stack traces, package versions, and semantic fix matching.
-
-Implications:
-
-Do not build custom vector search or keyword parsers; delegate search indexing strictly to Elasticsearch.
-
----
-
-## Decision 003
-
-Topic:
-
-Execution Verification Requirement
-
-Status:
-
-Accepted
-
-Decision:
-
-All submitted fixes must pass sandbox execution (Modal/Docker) before being indexed into the knowledge base.
-
-Reasoning:
-
-Guarantees high-confidence, execution-verified memory for downstream agents rather than unverified text suggestions.
-
-Implications:
-
-No fix can be marked as verified without valid sandbox execution logs.
-
----
-
-## Decision 004
-
-Topic:
-
-Deprecation of Legacy Kubernetes & Agent Frameworks
-
-Status:
-
-Accepted
-
-Decision:
-
-Previous Kubernetes manifests (`kind/`, `argocd/`, `helm-charts/`) and decentralized agent frameworks (e.g., Fetch.ai) are superseded.
-
-Reasoning:
-
-Simplifies the platform architecture and eliminates operational complexity during hackathon deployment.
-
-Implications:
-
-Do not reintroduce Kubernetes CRDs or proprietary agent protocols.
-
----
-
 # Decision Lifecycle
 
-Every decision in DECISIONS.md must contain:
+Every decision in `DECISIONS.md` must contain:
 
 * Unique ID
 * Status
@@ -554,10 +456,10 @@ Rules:
 * maximum 72 characters
 * one logical change per commit
 * NEVER COMMIT
-* AGENTS.md
 * HANDOFF.md
-* PHASES.md
-* PROJECT.md
+* Implementation_Plans/
+
+`AGENTS.md`, `PROJECT.md`, `PHASES.md`, and `DECISIONS.md` ARE committed — they are the repository's source of truth and must be readable by anyone who clones it.
 
 ---
 
