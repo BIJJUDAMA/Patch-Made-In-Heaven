@@ -346,11 +346,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         duration: 0.24,
         ease: "power2.in",
         onComplete: () => {
-          setShowSchemaModal(false);
+          stateRef.current.closeCard();
         },
       });
     } else {
-      setShowSchemaModal(false);
+      stateRef.current.closeCard();
     }
   };
 
@@ -893,7 +893,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (showSchemaModal) setShowSchemaModal(false);
+        if (showSchemaModal) closeSchemaModal();
         else if (stateRef.current.state === "open") closeCard();
       } else if (e.key === "ArrowRight") stepCard(1);
       else if (e.key === "ArrowLeft") stepCard(-1);
