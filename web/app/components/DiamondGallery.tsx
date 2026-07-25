@@ -772,10 +772,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     };
 
     const handlePointerMove = (e: PointerEvent) => {
-      pointer.set(
-        (e.clientX / window.innerWidth) * 2 - 1,
-        -(e.clientY / window.innerHeight) * 2 + 1
-      );
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        pointer.set(
+          ((e.clientX - rect.left) / rect.width) * 2 - 1,
+          -((e.clientY - rect.top) / rect.height) * 2 + 1
+        );
+      }
       if (stateRef.current.dragging) {
         const delta = e.clientX - stateRef.current.lastX;
         stateRef.current.lastX = e.clientX;
@@ -791,33 +794,22 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         e.clientX - stateRef.current.downX,
         e.clientY - stateRef.current.downY
       );
-      if (moved > 6) return;
+      if (moved > 8) return;
 
-      if (stateRef.current.state === "open") {
-        // Direct UV Raycast onto 3D Card Texture
-        const front = stateRef.current.openedCard;
-        if (front) {
-          raycaster.setFromCamera(pointer, camera);
-          const intersects = raycaster.intersectObject(front, false);
-          if (intersects.length > 0 && intersects[0].uv) {
-            const uv = intersects[0].uv;
-            // Upper Right [✕] Close Button Zone: uv.x > 0.80 && uv.y > 0.80
-            if (uv.x > 0.78 && uv.y > 0.78) {
-              closeCard();
-              return;
-            }
-            // Bottom Middle [VIEW JSON SCHEMA] Zone: uv.x > 0.08 && uv.x < 0.92 && uv.y < 0.22
-            if (uv.x > 0.08 && uv.x < 0.92 && uv.y < 0.22) {
-              setShowSchemaModal(true);
-              return;
-            }
-          }
-        }
-      } else if (stateRef.current.state === "closed") {
-        const front = getFrontCard();
-        raycaster.setFromCamera(pointer, camera);
-        if (raycaster.intersectObject(front, false).length > 0) {
-          openCard(front);
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      pointer.set(
+        ((e.clientX - rect.left) / rect.width) * 2 - 1,
+        -((e.clientY - rect.top) / rect.height) * 2 + 1
+      );
+      raycaster.setFromCamera(pointer, camera);
+
+      if (stateRef.current.state === "closed") {
+        const intersects = raycaster.intersectObjects(cards, false);
+        if (intersects.length > 0) {
+          openCard(intersects[0].object as THREE.Mesh);
+        } else {
+          openCard(getFrontCard());
         }
       }
     };
