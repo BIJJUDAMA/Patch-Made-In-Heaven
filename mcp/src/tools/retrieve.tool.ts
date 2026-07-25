@@ -51,7 +51,10 @@ export class RetrieveTools {
       found: true,
       id: card.id,
       verification: card.verification,
-      logText: `[SANDBOX RUN - ${card.verification.sandbox}]\nStatus: ${card.verification.status}\nVerified At: ${card.verification.lastVerified}\nExecution Score: ${card.verification.score}\nResult: Patch verified successfully.`,
+      stdout: card.verification.stdout ?? '',
+      stderr: card.verification.stderr ?? '',
+      exitCode: card.verification.exitCode ?? null,
+      durationMs: card.verification.durationMs ?? null,
     };
   }
 }

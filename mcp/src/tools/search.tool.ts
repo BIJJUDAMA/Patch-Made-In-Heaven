@@ -31,10 +31,11 @@ export class SearchTools {
     inputSchema: searchFixSchema,
   })
   async searchFix(params: z.infer<typeof searchFixSchema>) {
-    const results = await this.elasticService.searchFix(params);
+    const result = await this.elasticService.searchFix(params);
     return {
-      count: results.length,
-      fixes: results,
+      count: result.hits.length,
+      searchMode: result.mode,
+      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
     };
   }
 
@@ -44,10 +45,11 @@ export class SearchTools {
     inputSchema: findSimilarSchema,
   })
   async findSimilar(params: z.infer<typeof findSimilarSchema>) {
-    const results = await this.elasticService.findSimilar(params.query, params.limit);
+    const result = await this.elasticService.findSimilar(params.query, params.limit);
     return {
-      count: results.length,
-      fixes: results,
+      count: result.hits.length,
+      searchMode: result.mode,
+      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
     };
   }
 
@@ -58,10 +60,11 @@ export class SearchTools {
   })
   async searchByError(params: z.infer<typeof searchByErrorSchema>) {
     const queryStr = params.message ? `${params.errorType} ${params.message}` : params.errorType;
-    const results = await this.elasticService.findSimilar(queryStr, params.limit);
+    const result = await this.elasticService.findSimilar(queryStr, params.limit);
     return {
-      count: results.length,
-      fixes: results,
+      count: result.hits.length,
+      searchMode: result.mode,
+      fixes: result.hits.map((hit) => ({ ...hit.card, score: hit.score, confidence: hit.confidence })),
     };
   }
 }

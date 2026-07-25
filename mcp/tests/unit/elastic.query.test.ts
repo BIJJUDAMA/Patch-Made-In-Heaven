@@ -4,7 +4,10 @@ import {
   ElasticServiceError,
   ElasticMappingIncompatibleError,
   INDEX_NAME,
+  buildLexicalQuery,
+  buildRrfRetrieverRequest,
   type ElasticClientLike,
+  type QueryEmbedder,
 } from '../../src/services/elastic.client.js';
 import { loadEnv, type AppEnv } from '../../src/config/env.js';
 import type { KnowledgeCard } from '../../src/domain/knowledge-card.js';
@@ -103,7 +106,7 @@ describe('ElasticService.initIndex', () => {
             'environment.language': { type: 'keyword' },
             'environment.version': { type: 'keyword' },
             'environment.framework': { type: 'keyword' },
-            'environment.packageVersions': { type: 'object' },
+            'environment.packageVersions': { type: 'flattened' },
             patch: { type: 'text' },
             'verification.status': { type: 'keyword' },
             'verification.score': { type: 'float' },
@@ -242,5 +245,175 @@ describe('ElasticService.bulkUpsertFixes', () => {
   it('throws when Elasticsearch is not configured, rather than silently no-op-ing', async () => {
     const service = new ElasticService({ env: testEnv({ ELASTICSEARCH_URL: undefined }) });
     await expect(service.bulkUpsertFixes([sampleCard('fix_a')])).rejects.toThrow(ElasticServiceError);
+  });
+});
+
+describe('query builders', () => {
+  it('buildLexicalQuery always includes the mandatory PASS filter', () => {
+    const query = buildLexicalQuery('ImportError: x', ['stacktrace^2'], {});
+    expect((query.bool as { filter: unknown[] }).filter).toContainEqual({ term: { 'verification.status': 'PASS' } });
+  });
+
+  it('buildLexicalQuery adds exact environment and package-version filters when provided', () => {
+    const query = buildLexicalQuery('ImportError: x', ['stacktrace^2'], {
+      language: 'Python',
+      framework: 'FastAPI',
+      packageVersions: { pydantic: '2.4.2' },
+    });
+    const filter = (query.bool as { filter: Record<string, unknown>[] }).filter;
+    expect(filter).toContainEqual({ term: { 'environment.language': 'python' } });
+    expect(filter).toContainEqual({ term: { 'environment.framework': 'fastapi' } });
+    expect(filter).toContainEqual({ term: { 'environment.packageVersions.pydantic': '2.4.2' } });
+  });
+
+  it('buildRrfRetrieverRequest builds an RRF retriever with exactly a standard and a knn child, both filtered', () => {
+    const request = buildRrfRetrieverRequest({
+      queryText: 'ImportError: x',
+      lexicalFields: ['stacktrace^2', 'problem'],
+      queryVector: [0.1, 0.2, 0.3],
+      filters: { language: 'python' },
+      size: 5,
+    });
+
+    const rrf = (request.retriever as { rrf: Record<string, unknown> }).rrf;
+    const retrievers = rrf.retrievers as Record<string, unknown>[];
+    expect(retrievers).toHaveLength(2);
+
+    const standard = retrievers.find((r) => 'standard' in r) as { standard: { query: { bool: { filter: unknown[] } } } };
+    const knn = retrievers.find((r) => 'knn' in r) as { knn: { field: string; query_vector: number[]; filter: unknown } };
+
+    expect(standard).toBeDefined();
+    expect(standard.standard.query.bool.filter).toContainEqual({ term: { 'verification.status': 'PASS' } });
+    expect(standard.standard.query.bool.filter).toContainEqual({ term: { 'environment.language': 'python' } });
+
+    expect(knn).toBeDefined();
+    expect(knn.knn.field).toBe('embedding');
+    expect(knn.knn.query_vector).toEqual([0.1, 0.2, 0.3]);
+    expect(rrf.rank_window_size).toBeGreaterThan(0);
+    expect(rrf.rank_constant).toBe(60);
+  });
+});
+
+function embedderThatReturns(vector: number[]): QueryEmbedder {
+  return { embed: vi.fn().mockResolvedValue([vector]) };
+}
+
+function embedderThatFails(): QueryEmbedder {
+  return { embed: vi.fn().mockRejectedValue(new Error('embedding provider unreachable')) };
+}
+
+function searchResponse(cards: Array<{ card: KnowledgeCard; score: number }>) {
+  return { hits: { hits: cards.map(({ card, score }) => ({ _source: card, _score: score })) } };
+}
+
+describe('ElasticService hybrid retrieval', () => {
+  it('runs a hybrid (RRF) search and reports mode: "hybrid" when embeddings are available', async () => {
+    const client = baseFakeClient();
+    (client.search as ReturnType<typeof vi.fn>).mockResolvedValue(
+      searchResponse([{ card: sampleCard('fix_a'), score: 12.5 }])
+    );
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatReturns([0.1, 0.2, 0.3]),
+    });
+
+    const result = await service.searchFix({ stacktrace: 'ImportError: x', language: 'python' });
+
+    expect(result.mode).toBe('hybrid');
+    expect(result.hits).toHaveLength(1);
+    expect(result.hits[0].card.id).toBe('fix_a');
+    expect(result.hits[0].score).toBe(12.5);
+    expect(result.hits[0].confidence).toBeGreaterThan(0);
+    expect(result.hits[0].confidence).toBeLessThan(1);
+
+    const searchArgs = (client.search as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(searchArgs.retriever.rrf).toBeDefined();
+  });
+
+  it('falls back to lexical-only search and reports mode: "lexical" when no embedder is configured', async () => {
+    const client = baseFakeClient();
+    (client.search as ReturnType<typeof vi.fn>).mockResolvedValue(
+      searchResponse([{ card: sampleCard('fix_a'), score: 3.2 }])
+    );
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: null,
+    });
+
+    const result = await service.searchFix({ stacktrace: 'ImportError: x', language: 'python' });
+
+    expect(result.mode).toBe('lexical');
+    const searchArgs = (client.search as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(searchArgs.retriever).toBeUndefined();
+    expect(searchArgs.query.bool).toBeDefined();
+  });
+
+  it('degrades to lexical-only, never throwing, when the embedder fails at query time', async () => {
+    const client = baseFakeClient();
+    (client.search as ReturnType<typeof vi.fn>).mockResolvedValue(
+      searchResponse([{ card: sampleCard('fix_a'), score: 3.2 }])
+    );
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatFails(),
+    });
+
+    const result = await service.searchFix({ stacktrace: 'ImportError: x', language: 'python' });
+
+    expect(result.mode).toBe('lexical'); // never falsely claims semantic search occurred
+    const searchArgs = (client.search as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(searchArgs.retriever).toBeUndefined();
+  });
+
+  it('always applies the mandatory PASS filter and the requested environment filter, in both modes', async () => {
+    const client = baseFakeClient();
+    (client.search as ReturnType<typeof vi.fn>).mockResolvedValue(searchResponse([]));
+
+    const hybridService = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatReturns([0.1, 0.2]),
+    });
+    await hybridService.searchFix({ stacktrace: 'x', language: 'python', framework: 'fastapi' });
+    const hybridArgs = (client.search as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const hybridFilter = hybridArgs.retriever.rrf.retrievers[0].standard.query.bool.filter;
+    expect(hybridFilter).toContainEqual({ term: { 'verification.status': 'PASS' } });
+    expect(hybridFilter).toContainEqual({ term: { 'environment.framework': 'fastapi' } });
+
+    const lexicalService = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: null,
+    });
+    await lexicalService.searchFix({ stacktrace: 'x', language: 'python', framework: 'fastapi' });
+    const lexicalArgs = (client.search as ReturnType<typeof vi.fn>).mock.calls[1][0];
+    expect(lexicalArgs.query.bool.filter).toContainEqual({ term: { 'verification.status': 'PASS' } });
+    expect(lexicalArgs.query.bool.filter).toContainEqual({ term: { 'environment.framework': 'fastapi' } });
+  });
+
+  it('findSimilar applies the mandatory PASS filter with no language constraint', async () => {
+    const client = baseFakeClient();
+    (client.search as ReturnType<typeof vi.fn>).mockResolvedValue(searchResponse([]));
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: null,
+    });
+
+    await service.findSimilar('some exploratory query');
+    const args = (client.search as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(args.query.bool.filter).toEqual([{ term: { 'verification.status': 'PASS' } }]);
+  });
+
+  it('returns an empty lexical result when Elasticsearch is not configured', async () => {
+    const service = new ElasticService({ env: testEnv({ ELASTICSEARCH_URL: undefined }) });
+    const result = await service.searchFix({ stacktrace: 'x', language: 'python' });
+    expect(result).toEqual({ mode: 'lexical', hits: [] });
   });
 });

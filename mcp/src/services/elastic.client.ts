@@ -2,6 +2,7 @@ import { Client, type ClientOptions } from '@elastic/elasticsearch';
 import dotenv from 'dotenv';
 import type { KnowledgeCard, EnvironmentMeta, VerificationMeta } from '../domain/knowledge-card.js';
 import { getEnv, type AppEnv } from '../config/env.js';
+import { createEmbeddingClientFromEnv } from './embedding.client.js';
 
 dotenv.config();
 
@@ -108,7 +109,7 @@ function buildMappingProperties(embeddingDimensions?: number): Record<string, Ma
     'environment.language': { type: 'keyword' },
     'environment.version': { type: 'keyword' },
     'environment.framework': { type: 'keyword' },
-    'environment.packageVersions': { type: 'object', enabled: false },
+    'environment.packageVersions': { type: 'flattened' },
     patch: { type: 'text', analyzer: CODE_ANALYZER_NAME },
     'verification.status': { type: 'keyword' },
     'verification.score': { type: 'float' },
@@ -139,10 +140,119 @@ function buildMappingProperties(embeddingDimensions?: number): Record<string, Ma
   return properties;
 }
 
+/** Narrow seam for query-time embedding. The real `EmbeddingClient` satisfies this structurally. */
+export interface QueryEmbedder {
+  embed(input: string | string[]): Promise<number[][]>;
+}
+
+export type SearchMode = 'hybrid' | 'lexical';
+
+export interface RetrievalHit {
+  card: KnowledgeCard;
+  /** Raw Elasticsearch score (RRF rank score in hybrid mode, BM25 score in lexical mode). */
+  score: number;
+  /** Monotonic (0,1) normalization of `score`. Not a calibrated probability. */
+  confidence: number;
+}
+
+export interface RetrievalResult {
+  mode: SearchMode;
+  hits: RetrievalHit[];
+}
+
+export interface SearchFilters {
+  language?: string;
+  framework?: string;
+  packageVersions?: Record<string, string>;
+}
+
+/** Every search path — hybrid or lexical — always includes this. Decision 003: only verified fixes are ever retrievable. */
+function buildFilterClauses(filters: SearchFilters): Record<string, unknown>[] {
+  const clauses: Record<string, unknown>[] = [{ term: { 'verification.status': 'PASS' } }];
+  if (filters.language) {
+    clauses.push({ term: { 'environment.language': filters.language.toLowerCase() } });
+  }
+  if (filters.framework) {
+    clauses.push({ term: { 'environment.framework': filters.framework.toLowerCase() } });
+  }
+  if (filters.packageVersions) {
+    for (const [pkg, version] of Object.entries(filters.packageVersions)) {
+      clauses.push({ term: { [`environment.packageVersions.${pkg}`]: version } });
+    }
+  }
+  return clauses;
+}
+
+export function buildLexicalQuery(
+  queryText: string,
+  fields: string[],
+  filters: SearchFilters
+): Record<string, unknown> {
+  return {
+    bool: {
+      must: [{ multi_match: { query: queryText, fields } }],
+      filter: buildFilterClauses(filters),
+    },
+  };
+}
+
+export function buildRrfRetrieverRequest(params: {
+  queryText: string;
+  lexicalFields: string[];
+  queryVector: number[];
+  filters: SearchFilters;
+  size: number;
+  rankConstant?: number;
+  rankWindowSize?: number;
+}): Record<string, unknown> {
+  const filterClauses = buildFilterClauses(params.filters);
+  const rankWindowSize = params.rankWindowSize ?? Math.max(params.size * 4, 20);
+
+  return {
+    retriever: {
+      rrf: {
+        retrievers: [
+          {
+            standard: {
+              query: {
+                bool: {
+                  must: [{ multi_match: { query: params.queryText, fields: params.lexicalFields } }],
+                  filter: filterClauses,
+                },
+              },
+            },
+          },
+          {
+            knn: {
+              field: 'embedding',
+              query_vector: params.queryVector,
+              k: rankWindowSize,
+              num_candidates: Math.max(rankWindowSize * 5, 100),
+              filter: { bool: { filter: filterClauses } },
+            },
+          },
+        ],
+        rank_window_size: rankWindowSize,
+        rank_constant: params.rankConstant ?? 60,
+      },
+    },
+  };
+}
+
+/** Monotonic (0,1) transform of a raw ES score. A heuristic display value, not a calibrated probability. */
+function scoreToConfidence(score: number | null | undefined): number {
+  if (score === null || score === undefined || !Number.isFinite(score) || score <= 0) {
+    return 0;
+  }
+  return score / (score + 1);
+}
+
 export interface ElasticServiceOptions {
   env?: AppEnv;
   client?: ElasticClientLike;
   indexName?: string;
+  /** Pass `null` explicitly to force lexical-only mode regardless of configuration. */
+  embeddingClient?: QueryEmbedder | null;
 }
 
 export class ElasticService {
@@ -150,12 +260,14 @@ export class ElasticService {
   private readonly indexName: string;
   private readonly apiKey?: string;
   private readonly embeddingDimensions?: number;
+  private readonly embeddingClient: QueryEmbedder | null;
 
   constructor(options: ElasticServiceOptions = {}) {
     const env = options.env ?? getEnv();
     this.indexName = options.indexName ?? INDEX_NAME;
     this.apiKey = env.elasticsearch.apiKey;
     this.embeddingDimensions = env.embedding.dimensions;
+    this.embeddingClient = options.embeddingClient !== undefined ? options.embeddingClient : createEmbeddingClientFromEnv(env);
 
     if (options.client) {
       this.client = options.client;
@@ -312,59 +424,86 @@ export class ElasticService {
     framework?: string;
     packageVersions?: Record<string, string>;
     limit?: number;
-  }): Promise<KnowledgeCard[]> {
+  }): Promise<RetrievalResult> {
     if (!this.client) {
-      return [];
+      return { mode: 'lexical', hits: [] };
     }
 
     const limit = params.limit || 5;
-    const filterConditions: Record<string, unknown>[] = [];
+    const fields = ['stacktrace^2', 'problem', 'errorType'];
+    const filters: SearchFilters = {
+      language: params.language,
+      framework: params.framework,
+      packageVersions: params.packageVersions,
+    };
 
-    if (params.language) {
-      filterConditions.push({ term: { 'environment.language': params.language.toLowerCase() } });
-    }
-    if (params.framework) {
-      filterConditions.push({ term: { 'environment.framework': params.framework.toLowerCase() } });
-    }
-
-    const searchResult = await this.client.search({
-      index: this.indexName,
-      size: limit,
-      query: {
-        bool: {
-          must: [
-            {
-              multi_match: {
-                query: params.stacktrace,
-                fields: ['stacktrace^2', 'problem', 'errorType'],
-              },
-            },
-          ],
-          filter: filterConditions,
-        },
-      },
-    });
-
-    return searchResult.hits.hits.map((hit) => hit._source as KnowledgeCard);
+    return this.runHybridSearch(params.stacktrace, fields, filters, limit);
   }
 
-  public async findSimilar(query: string, limit: number = 5): Promise<KnowledgeCard[]> {
+  public async findSimilar(query: string, limit: number = 5): Promise<RetrievalResult> {
     if (!this.client) {
-      return [];
+      return { mode: 'lexical', hits: [] };
     }
 
-    const searchResult = await this.client.search({
+    const fields = ['problem^2', 'errorType', 'patch'];
+    return this.runHybridSearch(query, fields, {}, limit);
+  }
+
+  /**
+   * Tries RRF hybrid retrieval (BM25 + kNN) when a query embedding is available;
+   * falls back to BM25-only and honestly labels the result `mode: 'lexical'`
+   * whenever embeddings are not configured or the query-time embed call fails.
+   * Never claims semantic search occurred when it did not.
+   */
+  private async runHybridSearch(
+    queryText: string,
+    fields: string[],
+    filters: SearchFilters,
+    limit: number
+  ): Promise<RetrievalResult> {
+    const queryVector = await this.tryEmbedQuery(queryText);
+
+    if (queryVector) {
+      const request = buildRrfRetrieverRequest({
+        queryText,
+        lexicalFields: fields,
+        queryVector,
+        filters,
+        size: limit,
+      });
+      const searchResult = await this.client!.search({ index: this.indexName, size: limit, ...request });
+      return { mode: 'hybrid', hits: this.toHits(searchResult) };
+    }
+
+    const searchResult = await this.client!.search({
       index: this.indexName,
       size: limit,
-      query: {
-        multi_match: {
-          query,
-          fields: ['problem^2', 'errorType', 'patch'],
-        },
-      },
+      query: buildLexicalQuery(queryText, fields, filters),
     });
+    return { mode: 'lexical', hits: this.toHits(searchResult) };
+  }
 
-    return searchResult.hits.hits.map((hit) => hit._source as KnowledgeCard);
+  private async tryEmbedQuery(text: string): Promise<number[] | null> {
+    if (!this.embeddingClient) {
+      return null;
+    }
+    try {
+      const [vector] = await this.embeddingClient.embed(text);
+      return vector ?? null;
+    } catch {
+      // Any embedding failure (network, timeout, validation) degrades to lexical-only.
+      // Search must never fail outright just because the embedding provider hiccuped.
+      return null;
+    }
+  }
+
+  private toHits(searchResult: { hits: { hits: Array<{ _source?: unknown; _score?: number | null }> } }): RetrievalHit[] {
+    return searchResult.hits.hits
+      .filter((hit) => hit._source)
+      .map((hit) => {
+        const score = hit._score ?? 0;
+        return { card: hit._source as KnowledgeCard, score, confidence: scoreToConfidence(score) };
+      });
   }
 
   public async getFixById(id: string): Promise<KnowledgeCard | null> {
