@@ -22,92 +22,93 @@ interface Props {
   onSelectTool?: (tool: ToolItem) => void;
 }
 
-// ── Draw Card Canvas Texture matching Apple Minimal Black & White theme ──
+// ── Draw Card Canvas Texture (Optimized 600x600 size for fast GPU uploads) ──
 function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
-  canvas.width = 800;
-  canvas.height = 800;
+  canvas.width = 600;
+  canvas.height = 600;
   const ctx = canvas.getContext("2d")!;
 
   // Deep Obsidian Monochrome Gradient (--surface-panel #121212 to --bg-app #000000)
-  const bg = ctx.createLinearGradient(0, 0, 800, 800);
+  const bg = ctx.createLinearGradient(0, 0, 600, 600);
   bg.addColorStop(0, "#1c1c1c");
   bg.addColorStop(0.5, "#101010");
   bg.addColorStop(1, "#000000");
   ctx.fillStyle = bg;
-  ctx.fillRect(0, 0, 800, 800);
+  ctx.fillRect(0, 0, 600, 600);
 
   // Subtle Linear Grid Overlay
   ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
-  ctx.lineWidth = 1.5;
-  for (let i = 0; i < 800; i += 60) {
+  ctx.lineWidth = 1.2;
+  for (let i = 0; i < 600; i += 45) {
     ctx.beginPath();
     ctx.moveTo(i, 0);
-    ctx.lineTo(i + 300, 800);
+    ctx.lineTo(i + 225, 600);
     ctx.stroke();
   }
 
   // Card Inner Silver Border Line
   ctx.strokeStyle = "rgba(255, 255, 255, 0.3)";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(30, 30, 740, 740);
+  ctx.lineWidth = 1.8;
+  ctx.strokeRect(22, 22, 556, 556);
 
   // Number Badge (#ffffff White)
-  ctx.font = '600 36px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '600 28px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(`/ ${tool.num}`, 70, 110);
+  ctx.fillText(`/ ${tool.num}`, 52, 82);
 
   // Tag Pill (#a1a1aa Gray)
-  ctx.font = '500 22px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '500 17px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#a1a1aa";
   const tagWidth = ctx.measureText(tool.tag).width;
-  ctx.fillText(tool.tag, 730 - tagWidth, 105);
+  ctx.fillText(tool.tag, 548 - tagWidth, 78);
 
   // Tool Title (Syne Display Font --font-display, #ffffff White)
-  ctx.font = '700 56px "Syne", system-ui, sans-serif';
+  ctx.font = '700 42px "Syne", system-ui, sans-serif';
   ctx.fillStyle = "#ffffff";
 
   const titleWords = tool.name.split("_");
-  let y = 260;
+  let y = 195;
   for (const word of titleWords) {
-    ctx.fillText(word, 70, y);
-    y += 66;
+    ctx.fillText(word, 52, y);
+    y += 50;
   }
 
   // White Accent Line
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(70, y + 10, 110, 3.5);
+  ctx.fillRect(52, y + 8, 85, 3.0);
 
   // Description (DM Sans Body Font --font-body, #a1a1aa Gray)
-  y += 70;
-  ctx.font = '300 26px "DM Sans", system-ui, sans-serif';
+  y += 52;
+  ctx.font = '300 20px "DM Sans", system-ui, sans-serif';
   ctx.fillStyle = "#a1a1aa";
 
   const words = tool.desc.split(" ");
   let line = "";
-  const maxWidth = 660;
-  const lineHeight = 42;
+  const maxWidth = 495;
+  const lineHeight = 32;
 
   for (const word of words) {
     const testLine = line + word + " ";
     const metrics = ctx.measureText(testLine);
     if (metrics.width > maxWidth && line !== "") {
-      ctx.fillText(line, 70, y);
+      ctx.fillText(line, 52, y);
       line = word + " ";
       y += lineHeight;
     } else {
       line = testLine;
     }
   }
-  ctx.fillText(line, 70, y);
+  ctx.fillText(line, 52, y);
 
   // Footer (#ffffff White)
-  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '600 15px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("NITROCLOUD MCP TOOL →", 70, 715);
+  ctx.fillText("NITROCLOUD MCP TOOL →", 52, 536);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = true;
   return texture;
 }
 
@@ -282,7 +283,7 @@ const cardFragmentShader = /* glsl */ `
     color += crystal * sheen * 0.15;
 
     float metalSheen = pow(0.5 + 0.5 * sin((vUv.x - vUv.y) * 5.0 + bandBase * 3.0 + uTime * 0.3), 8.0);
-    vec3 silver = mix(vec3(0.3, 0.3, 0.3), vec3(0.95, 0.95, 0.95), bevel); // Pure Silver Frame
+    vec3 silver = mix(vec3(0.3, 0.3, 0.3), vec3(0.95, 0.95, 0.95), bevel);
     silver *= 0.88 + 0.35 * fres;
     silver += iri * metalSheen * 0.9;
     silver += iri * 0.07;
@@ -335,14 +336,16 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     const CAMERA_Z = 11;
     const OPEN_DISTANCE = 5;
 
+    const isMobile = window.innerWidth < 768;
+
     const params = {
-      bloomStrength: 0.1,
-      bloomRadius: 0.4,
-      bloomThreshold: 0.85,
+      bloomStrength: 0.08,
+      bloomRadius: 0.3,
+      bloomThreshold: 0.88,
       holo: 1.0,
       facetScale: 18.0,
       facetStrength: 0.3,
-      aberration: 0.0012,
+      aberration: 0.001,
       floorReflect: 0.5,
       floorGlow: 0.55,
     };
@@ -367,11 +370,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
-      antialias: true,
+      antialias: !isMobile,
       alpha: true,
+      powerPreference: "high-performance",
     });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.0 : 1.25));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
     renderer.toneMappingExposure = 1.05;
 
@@ -426,10 +430,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     const FLOOR_Y = -1.62;
     const FLOOR_R = 5.6;
 
-    const mirror = new Reflector(new THREE.CircleGeometry(FLOOR_R, 96), {
+    const mirror = new Reflector(new THREE.CircleGeometry(FLOOR_R, isMobile ? 48 : 72), {
       clipBias: 0.003,
-      textureWidth: 1024,
-      textureHeight: 1024,
+      textureWidth: isMobile ? 512 : 1024,
+      textureHeight: isMobile ? 512 : 1024,
       color: 0x121212,
     });
     mirror.rotation.x = -Math.PI / 2;
@@ -437,7 +441,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     scene.add(mirror);
 
     const floorFade = new THREE.Mesh(
-      new THREE.CircleGeometry(FLOOR_R + 0.05, 96),
+      new THREE.CircleGeometry(FLOOR_R + 0.05, 64),
       new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
@@ -460,7 +464,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     scene.add(floorFade);
 
     const floorRing = new THREE.Mesh(
-      new THREE.CircleGeometry(FLOOR_R + 0.35, 96),
+      new THREE.CircleGeometry(FLOOR_R + 0.35, 64),
       new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
@@ -489,7 +493,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       renderer,
       new THREE.WebGLRenderTarget(container.clientWidth, container.clientHeight, {
         type: THREE.HalfFloatType,
-        samples: 4,
+        samples: isMobile ? 1 : 2,
       })
     );
     composer.addPass(new RenderPass(scene, camera));
@@ -531,7 +535,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           );
 
           color *= smoothstep(0.95, 0.35, dist);
-          color += (random(vUv) - 0.5) * 0.006;
+          color += (random(vUv) - 0.5) * 0.005;
 
           gl_FragColor = vec4(color, 1.0);
         }
@@ -776,22 +780,41 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       else if (e.key === "ArrowLeft") stepCard(-1);
     };
 
-    window.addEventListener("pointerdown", handlePointerDown);
-    window.addEventListener("pointermove", handlePointerMove);
-    window.addEventListener("pointerup", handlePointerUp);
+    window.addEventListener("pointerdown", handlePointerDown, { passive: true });
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerup", handlePointerUp, { passive: true });
     window.addEventListener("wheel", handleWheel, { passive: true });
     window.addEventListener("keydown", handleKeyDown);
 
-    // Animation Loop
+    // Animation Loop with IntersectionObserver
     const clock = new THREE.Clock();
     let motionSmooth = 0;
     let lastInteract = 0;
     let idleSpin = 0;
     let lastFrontIdx = -1;
     let animId: number;
+    let isGalleryVisible = true;
+    let lastFrameTime = 0;
 
-    const tick = () => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isGalleryVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
+
+    const tick = (timestamp: number) => {
       animId = requestAnimationFrame(tick);
+
+      if (!isGalleryVisible) return; // Pause rendering when section is offscreen!
+
+      // Throttle to 60 FPS max
+      if (timestamp - lastFrameTime < 14) return;
+      lastFrameTime = timestamp;
+
       const dt = Math.min(clock.getDelta(), 0.05);
       const t = clock.elapsedTime;
 
@@ -861,7 +884,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       composer.render();
     };
 
-    tick();
+    animId = requestAnimationFrame(tick);
 
     const handleResize = () => {
       if (!containerRef.current) return;
@@ -874,10 +897,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       composer.setSize(w, h);
       bloomPass.resolution.set(w, h);
     };
-    window.addEventListener("resize", handleResize);
+    window.addEventListener("resize", handleResize, { passive: true });
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener("pointerdown", handlePointerDown);
       window.removeEventListener("pointermove", handlePointerMove);
       window.removeEventListener("pointerup", handlePointerUp);
@@ -989,8 +1013,6 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           →
         </button>
       </div>
-
-
     </div>
   );
 }

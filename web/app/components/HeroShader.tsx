@@ -3,19 +3,20 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-const vertexShader = `
+const vertexShader = /* glsl */ `
+  precision highp float;
   in vec3 position;
   void main() {
     gl_Position = vec4(position, 1.0);
   }
 `;
 
-const fragmentShader = `
+const fragmentShader = /* glsl */ `
   precision highp float;
-  
+
   uniform vec3 iResolution;
   uniform float iTime;
-  
+
   uniform int u_renderPasses;
   uniform float u_sceneTimeScale;
   uniform float u_grainIntensity;
@@ -23,7 +24,7 @@ const fragmentShader = `
   uniform float u_stepPrecision;
   uniform float u_rayIterations;
   uniform float u_surfaceSolidity;
-  
+
   uniform float u_camPosX;
   uniform float u_camPosY;
   uniform float u_camPitch;
@@ -31,73 +32,68 @@ const fragmentShader = `
   uniform float u_camShiftX;
   uniform float u_camShiftY;
 
-  out vec4 outColor;
+  out vec4 fragColor;
 
-  mat2 calcRotation(float theta) {
-    float sine = sin(theta);
-    float cosine = cos(theta);
-    return mat2(cosine, -sine, sine, cosine);
+  float hashNoise(vec2 seedPos) {
+    return fract(sin(dot(seedPos, vec2(12.9898, 78.233))) * 43758.5453123);
   }
 
-  vec3 applyCinematicGrade(vec3 rawColor) {
-    mat3 colorSpaceA = mat3(
-      0.59719, 0.07600, 0.02840, 
-      0.35458, 0.90834, 0.13383, 
-      0.04823, 0.01566, 0.83777
-    );
-    mat3 colorSpaceB = mat3(
-      1.60475, -0.10208, -0.00327, 
-      -0.53108, 1.10813, -0.07276, 
-      -0.07367, -0.00605, 1.07602
-    );
+  mat2 createRotationMatrix(float angleRad) {
+    float c = cos(angleRad);
+    float s = sin(angleRad);
+    return mat2(c, -s, s, c);
+  }
+
+  float computeStructuralDensity(vec3 samplePos) {
+    samplePos.xz *= createRotationMatrix(samplePos.y * 0.4);
+    vec3 localPos = samplePos;
     
-    vec3 graded = colorSpaceA * rawColor;
-    vec3 numerator = graded * (graded + 0.0945786) - 0.000090537;
-    vec3 denominator = graded * (0.783729 * graded + 0.4329510) + 0.238081;
+    vec3 cellIndex = floor(samplePos);
+    samplePos = fract(samplePos) - 0.5;
+    samplePos.xz *= createRotationMatrix(iTime * u_sceneTimeScale);
     
-    return colorSpaceB * (numerator / denominator);
+    float sphereDistance = length(samplePos) - 0.15;
+    
+    vec3 boxVector = abs(samplePos) - vec3(0.12);
+    float boxDistance = length(max(boxVector, 0.0)) + min(max(boxVector.x, max(boxVector.y, boxVector.z)), 0.0);
+    
+    float rawShape = mix(sphereDistance, boxDistance, 0.5 + 0.5 * sin(iTime * 0.5 + cellIndex.x));
+    
+    float groundWave = sin(localPos.x * 0.8) * cos(localPos.z * 0.8) * 0.5;
+    float planeDistance = localPos.y + 1.5 + groundWave;
+    
+    return min(rawShape, planeDistance);
   }
 
-  float computeStructuralDensity(vec3 pos) {
-    const float phaseShift = 0.228033988;
-    const mat3 structuralBasis = mat3(
-      0.388535087,  0.054921382, -0.743402928,
-      0.441955127,  4.336973341,  0.258518454,
-      0.272087367,  0.174042493, -0.021246185
-    );
-    return dot(cos(structuralBasis * pos), sin(phaseShift * pos * structuralBasis));
+  vec3 applyCinematicGrade(vec3 baseColor) {
+    baseColor = clamp(baseColor, 0.0, 1.0);
+    vec3 gradedColor = pow(baseColor, vec3(0.85, 0.9, 0.95));
+    float vignette = 1.0 - 0.3 * length((gl_FragCoord.xy / iResolution.xy) - 0.5);
+    return gradedColor * vignette;
   }
 
-  float getFilmGrain(vec3 seed3D) {
-    seed3D = fract(seed3D * 0.1031);
-    seed3D += dot(seed3D, seed3D.zyx + 31.32);
-    return fract((seed3D.x + seed3D.y) * seed3D.z);
-  }
-
-  void mainImage(out vec4 fragColor, in vec2 fragCoord) {
+  void main() {
     vec3 finalImage = vec3(0.0);
-    float globalTime = iTime * u_sceneTimeScale;
+    vec2 normalizedCoord = gl_FragCoord.xy / iResolution.xy;
     
-    for(int passX = 0; passX < 4; passX++) {
-      if (passX >= u_renderPasses) break;
-      
-      for(int passY = 0; passY < 4; passY++) {
-        if (passY >= u_renderPasses) break;
-        
-        vec2 pixelOffset = (vec2(float(passX), float(passY)) + 0.5) / float(u_renderPasses) - 0.5;
-        vec2 uv = fragCoord + pixelOffset; 
-        
-        vec3 rayOrigin = vec3(u_camPosX, u_camPosY, globalTime); 
-        vec3 lightAccumulator = vec3(0.0);
-        
-        vec3 viewDir = normalize(vec3(u_camFov * uv - iResolution.xy * vec2(u_camShiftX, u_camShiftY), iResolution.y));
-        viewDir.yz = calcRotation(u_camPitch) * viewDir.yz; 
-        
-        float stepDistance;
-        
-        for(float iter = 0.0; iter < 100.0; iter += 1.0) {
-          if (iter >= u_rayIterations) break;
+    float activeGrain = (hashNoise(gl_FragCoord.xy + iTime) - 0.5) * u_grainIntensity;
 
+    for (int passY = 0; passY < u_renderPasses; passY++) {
+      for (int passX = 0; passX < u_renderPasses; passX++) {
+        vec2 subPixelOffset = (vec2(float(passX), float(passY)) / float(u_renderPasses)) - 0.5;
+        vec2 rayTarget = (gl_FragCoord.xy + subPixelOffset - 0.5 * iResolution.xy) / iResolution.y;
+
+        vec3 rayOrigin = vec3(u_camPosX, u_camPosY, -3.0);
+        vec3 rayDirection = normalize(vec3(rayTarget * u_camFov, 1.0));
+
+        rayDirection.yz *= createRotationMatrix(u_camPitch);
+        rayDirection.xz *= createRotationMatrix(iTime * 0.05);
+
+        vec3 viewDir = rayDirection;
+        vec3 lightAccumulator = vec3(0.0);
+        float stepDistance = 0.0;
+
+        for (float iter = 0.0; iter < u_rayIterations; iter++) {
           vec3 samplePos = rayOrigin;
           
           float detailNoise = computeStructuralDensity(samplePos * 20.0) / 20.0;
@@ -129,16 +125,9 @@ const fragmentShader = `
     
     finalImage *= (4.0 / float(u_renderPasses * u_renderPasses));
     finalImage = (finalImage - 0.5) * 0.5 + 0.5;
-    finalImage *= 0.35;
-    
-    float grainValue = getFilmGrain(vec3(fragCoord, iTime));
-    finalImage += (grainValue - 0.5) * u_grainIntensity;
-    
-    fragColor = vec4(finalImage, 1.0);
-  }
+    finalImage += activeGrain;
 
-  void main() {
-    mainImage(outColor, gl_FragCoord.xy);
+    fragColor = vec4(clamp(finalImage, 0.0, 1.0), 1.0);
   }
 `;
 
@@ -151,8 +140,16 @@ export default function HeroShader() {
     const canvas = canvasRef.current;
     const container = containerRef.current;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.0));
+    // Capped Pixel Ratio for smooth 60fps performance across mobile & 4K displays
+    const isMobile = window.innerWidth < 768;
+    const maxDpr = isMobile ? 0.85 : 1.0;
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: false,
+      powerPreference: "high-performance",
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, maxDpr));
 
     const scene = new THREE.Scene();
     const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
@@ -164,7 +161,7 @@ export default function HeroShader() {
       grain: 0.035,
       luminance: 4.8,
       precision: 0.5,
-      iterations: 24.0,
+      iterations: isMobile ? 18.0 : 22.0, // Reduced iterations on mobile
       solidity: 1.1,
       camX: 2.8,
       camY: -1.0,
@@ -210,22 +207,42 @@ export default function HeroShader() {
       material.uniforms.iResolution.value.set(width * dpr, height * dpr, 1.0);
     };
 
-    window.addEventListener("resize", resize);
+    window.addEventListener("resize", resize, { passive: true });
     resize();
 
     const clock = new THREE.Clock();
     let animId: number;
+    let isVisible = true;
+    let lastFrameTime = 0;
 
-    const animate = () => {
+    // IntersectionObserver to pause rendering when scrolled out of view
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          isVisible = entry.isIntersecting;
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(container);
+
+    const animate = (timestamp: number) => {
       animId = requestAnimationFrame(animate);
+      if (!isVisible) return; // Skip rendering when Hero is offscreen!
+
+      // Throttle to 60 FPS max
+      if (timestamp - lastFrameTime < 14) return;
+      lastFrameTime = timestamp;
+
       material.uniforms.iTime.value = clock.getElapsedTime();
       renderer.render(scene, camera);
     };
 
-    animate();
+    animId = requestAnimationFrame(animate);
 
     return () => {
       cancelAnimationFrame(animId);
+      observer.disconnect();
       window.removeEventListener("resize", resize);
       geometry.dispose();
       material.dispose();
@@ -255,7 +272,7 @@ export default function HeroShader() {
           opacity: 0.85,
         }}
       />
-      {/* Dark gradient overlay for optimal text contrast */}
+      {/* Dark gradient overlay for text contrast */}
       <div
         style={{
           position: "absolute",
