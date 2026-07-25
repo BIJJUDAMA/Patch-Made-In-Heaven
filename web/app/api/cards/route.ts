@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server';
-import { SEED_KNOWLEDGE_CARDS } from '../../../../mcp/src/services/seed.data';
 
 export interface KnowledgeCardResponse {
   id: string;
@@ -41,67 +40,81 @@ export async function GET(request: Request) {
     const errorType = searchParams.get('errorType')?.toLowerCase().trim() || '';
 
     const esUrl = process.env.ELASTICSEARCH_URL;
-    let cards: KnowledgeCardResponse[] = [];
-    let isLiveElastic = false;
 
-    if (esUrl) {
-      try {
-        const authHeader = process.env.ELASTICSEARCH_API_KEY
-          ? `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`
-          : undefined;
-
-        const esResponse = await fetch(`${esUrl}/hacksmymachine-fixes/_search`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(authHeader ? { Authorization: authHeader } : {}),
+    if (!esUrl) {
+      return NextResponse.json(
+        {
+          ok: false,
+          error: {
+            code: 'ELASTICSEARCH_UNCONFIGURED',
+            message:
+              'ELASTICSEARCH_URL is not set. Set ELASTICSEARCH_URL in your environment variables to connect to your Elasticsearch cluster.',
           },
-          body: JSON.stringify({
-            size: 100,
-            query: { match_all: {} },
-          }),
-          cache: 'no-store',
-        });
-
-        if (esResponse.ok) {
-          const esData = await esResponse.json();
-          cards = esData.hits?.hits?.map((hit: { _source: KnowledgeCardResponse }) => hit._source) || [];
-          isLiveElastic = true;
-        }
-      } catch (err) {
-        console.warn('[API Route /api/cards] Elasticsearch query failed, falling back to verified seed corpus:', err);
-      }
+        },
+        { status: 500 }
+      );
     }
 
-    if (cards.length === 0) {
-      cards = SEED_KNOWLEDGE_CARDS as KnowledgeCardResponse[];
+    const authHeader = process.env.ELASTICSEARCH_API_KEY
+      ? `ApiKey ${process.env.ELASTICSEARCH_API_KEY}`
+      : undefined;
+
+    const esResponse = await fetch(`${esUrl}/hacksmymachine-fixes/_search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(authHeader ? { Authorization: authHeader } : {}),
+      },
+      body: JSON.stringify({
+        size: 100,
+        query: { match_all: {} },
+      }),
+      cache: 'no-store',
+    });
+
+    if (!esResponse.ok) {
+      const errText = await esResponse.text();
+      return NextResponse.json(
+        {
+          ok: false,
+          error: {
+            code: 'ELASTICSEARCH_QUERY_FAILED',
+            message: `Elasticsearch returned status ${esResponse.status}: ${errText}`,
+          },
+        },
+        { status: esResponse.status }
+      );
     }
+
+    const esData = await esResponse.json();
+    const cards: KnowledgeCardResponse[] =
+      esData.hits?.hits?.map((hit: { _source: KnowledgeCardResponse }) => hit._source) || [];
 
     let filtered = cards;
 
     if (query) {
       filtered = filtered.filter(
         (card) =>
-          card.problem.toLowerCase().includes(query) ||
-          card.id.toLowerCase().includes(query) ||
-          card.errorType.toLowerCase().includes(query) ||
-          card.stacktrace.toLowerCase().includes(query) ||
-          card.patch.toLowerCase().includes(query)
+          card.problem?.toLowerCase().includes(query) ||
+          card.id?.toLowerCase().includes(query) ||
+          card.errorType?.toLowerCase().includes(query) ||
+          card.stacktrace?.toLowerCase().includes(query) ||
+          card.patch?.toLowerCase().includes(query)
       );
     }
 
     if (language) {
-      filtered = filtered.filter((card) => card.environment.language.toLowerCase() === language);
+      filtered = filtered.filter((card) => card.environment?.language?.toLowerCase() === language);
     }
 
     if (errorType) {
-      filtered = filtered.filter((card) => card.errorType.toLowerCase() === errorType);
+      filtered = filtered.filter((card) => card.errorType?.toLowerCase() === errorType);
     }
 
     return NextResponse.json({
       ok: true,
       total: filtered.length,
-      isLiveElastic,
+      isLiveElastic: true,
       cards: filtered,
     });
   } catch (error) {
@@ -111,7 +124,7 @@ export async function GET(request: Request) {
         ok: false,
         error: {
           code: 'FETCH_ERROR',
-          message: `Failed to fetch knowledge cards: ${message}`,
+          message: `Failed to query Elasticsearch: ${message}`,
         },
       },
       { status: 500 }
