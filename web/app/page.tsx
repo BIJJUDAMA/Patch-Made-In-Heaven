@@ -383,26 +383,7 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Architectural Bottom-Left Anchor */}
-        <div
-          style={{
-            position: 'absolute',
-            left: '3rem',
-            bottom: '2.5rem',
-            zIndex: 2,
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.6875rem',
-            letterSpacing: '0.22em',
-            textTransform: 'uppercase',
-            color: 'var(--text-low)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.75rem',
-          }}
-        >
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: '#ffffff', display: 'inline-block' }} />
-          01 / AVAILABLE TOOLS ({TOOLS.length})
-        </div>
+
 
         {/* Architectural Bottom-Right Anchor */}
         <a
