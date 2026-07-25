@@ -806,13 +806,13 @@ export default function Dashboard() {
                   ))}
                 </div>
               )}
-            </div>
+</div>
           </div>
 
 {/* 3-Pane Inspector Grid */}
-           <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 300px', gap: '1rem', alignItems: 'stretch', maxHeight: 'calc(100vh - 320px)' }}>
+           <div style={{ display: 'grid', gridTemplateColumns: '320px 1fr 300px', gap: '1rem', alignItems: 'stretch', height: 'calc(100vh - 320px)', minHeight: 0 }}>
 
-            {/* ── Pane 1: Card List ── */}
+               {/* ── Pane 1: Card List ── */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
                 <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', letterSpacing: '0.1em', color: 'var(--text-low)', textTransform: 'uppercase' }}>
@@ -1032,11 +1032,11 @@ export default function Dashboard() {
                 <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '8px', color: 'var(--text-low)', fontFamily: 'var(--font-mono)', fontSize: '0.8125rem' }}>
                   No selection
                 </div>
-              )}
+)}
             </div>
-          </div>
-        </div>
-      </section>
+            </div>
+            </div>
+          </section>
     </div>
   );
 }
