@@ -252,7 +252,7 @@ export default function Dashboard() {
               gap: '0.5rem',
               padding: '0.375rem 0.875rem',
               borderRadius: '10px',
-              backgroundColor: isLiveElastic ? 'var(--status-pass-subtle)' : 'rgba(255, 255, 255, 0.05)',
+              backgroundColor: isLiveElastic ? 'var(--status-pass-subtle)' : 'var(--surface-panel)',
               border: isLiveElastic ? '1px solid var(--status-pass-border)' : '1px solid var(--border-muted)',
               fontSize: '0.75rem',
               fontWeight: 600,
@@ -417,7 +417,7 @@ export default function Dashboard() {
                   left: 0,
                   right: 0,
                   zIndex: 50,
-                  backgroundColor: 'rgba(26, 24, 23, 0.95)',
+                  backgroundColor: 'var(--surface-panel)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
                   borderRadius: '10px',
@@ -447,7 +447,7 @@ export default function Dashboard() {
                   }}
                 >
                   <span>All Runtimes</span>
-                  {selectedLanguage === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                  {selectedLanguage === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
                 </div>
 
                 {languages.map((lang) => {
@@ -473,7 +473,7 @@ export default function Dashboard() {
                       }}
                     >
                       <span>{lang.toUpperCase()}</span>
-                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
                     </div>
                   );
                 })}
@@ -530,7 +530,7 @@ export default function Dashboard() {
                   left: 0,
                   right: 0,
                   zIndex: 50,
-                  backgroundColor: 'rgba(26, 24, 23, 0.95)',
+                  backgroundColor: 'var(--surface-panel)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
                   borderRadius: '10px',
@@ -560,7 +560,7 @@ export default function Dashboard() {
                   }}
                 >
                   <span>All Error Classes</span>
-                  {selectedErrorType === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                  {selectedErrorType === 'all' && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
                 </div>
 
                 {errorTypes.map((err) => {
@@ -586,7 +586,7 @@ export default function Dashboard() {
                       }}
                     >
                       <span>{err}</span>
-                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--text-high)' }} />}
+                      {isSel && <Check style={{ width: '0.875rem', height: '0.875rem', color: 'var(--accent-primary)' }} />}
                     </div>
                   );
                 })}
@@ -595,10 +595,10 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 3-Pane Responsive Layout (340px Master List, Fluid Middle, 340px Context Drawer) */}
-        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr 340px', gap: '1.5rem', width: '100%' }}>
-          {/* Pane 1: Master Card List (Uniform Height Cards) */}
-          <div>
+        {/* 3-Pane Equal Height Architecture (Items Align Flex Stretch) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr 340px', gap: '1.5rem', width: '100%', alignItems: 'stretch' }}>
+          {/* Pane 1: Master Card List */}
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
                 Knowledge Base ({filteredCards.length})
@@ -633,6 +633,7 @@ export default function Dashboard() {
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
                   color: 'var(--text-low)',
+                  flex: 1,
                 }}
               >
                 <RefreshCw style={{ width: '1.75rem', height: '1.75rem', margin: '0 auto 1rem', animation: 'spin 1s linear infinite', color: 'var(--text-medium)' }} />
@@ -647,6 +648,7 @@ export default function Dashboard() {
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
                   color: 'var(--text-low)',
+                  flex: 1,
                 }}
               >
                 <Search style={{ width: '2rem', height: '2rem', margin: '0 auto 1rem', opacity: 0.3 }} />
@@ -662,6 +664,7 @@ export default function Dashboard() {
                   maxHeight: 'calc(100vh - 260px)',
                   overflowY: 'auto',
                   paddingRight: '0.375rem',
+                  flex: 1,
                 }}
               >
                 {filteredCards.map((card) => {
@@ -679,10 +682,9 @@ export default function Dashboard() {
                         flexDirection: 'column',
                         justifyContent: 'space-between',
                         padding: '1.125rem',
-
                         borderRadius: '10px',
                         backgroundColor: isSelected ? 'var(--surface-panel)' : 'var(--surface-subtle)',
-                        border: isSelected ? '1px solid var(--border-strong)' : '1px solid var(--border-muted)',
+                        border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
                         cursor: 'pointer',
                         boxSizing: 'border-box',
                       }}
@@ -694,7 +696,7 @@ export default function Dashboard() {
                             fontWeight: 600,
                             padding: '0.2rem 0.5rem',
                             borderRadius: '10px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            backgroundColor: 'var(--surface-panel)',
                             border: '1px solid var(--border-muted)',
                             color: 'var(--text-medium)',
                             fontFamily: "'JetBrains Mono', monospace",
@@ -726,7 +728,6 @@ export default function Dashboard() {
                           WebkitLineClamp: 2,
                           WebkitBoxOrient: 'vertical',
                           overflow: 'hidden',
-
                         }}
                       >
                         {card.problem}
@@ -757,8 +758,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Pane 2: Middle Diff & Execution Evidence Inspector */}
-          <div style={{ minWidth: 0 }}>
+          {/* Pane 2: Middle Diff & Execution Evidence Inspector (Equal Height Stretch) */}
+          <div style={{ minWidth: 0, display: 'flex', flexDirection: 'column' }}>
             {selectedCard ? (
               <div
                 style={{
@@ -767,6 +768,10 @@ export default function Dashboard() {
                   border: '1px solid var(--border-muted)',
                   padding: '1.75rem',
                   boxSizing: 'border-box',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  flex: 1,
+                  height: '100%',
                 }}
               >
                 {/* Header Metadata */}
@@ -776,8 +781,8 @@ export default function Dashboard() {
                       style={{
                         fontFamily: "'JetBrains Mono', monospace",
                         fontSize: '0.8125rem',
-                        color: 'var(--text-medium)',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        color: 'var(--accent-primary)',
+                        backgroundColor: 'var(--accent-primary-subtle)',
                         border: '1px solid var(--border-muted)',
                         padding: '0.25rem 0.625rem',
                         borderRadius: '10px',
@@ -899,26 +904,75 @@ export default function Dashboard() {
                   )}
                 </div>
 
-                {/* Tab Views */}
-                {activeTab === 'diff' && (
-                  <div
-                    style={{
-                      backgroundColor: 'var(--bg-app)',
-                      border: '1px solid var(--border-muted)',
-                      borderRadius: '10px',
-                      padding: '1rem 0',
-                    }}
-                  >
-                    {renderFormattedDiff(selectedCard.patch)}
-                  </div>
-                )}
+                {/* Tab Views (Fills Available Height) */}
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                  {activeTab === 'diff' && (
+                    <div
+                      style={{
+                        backgroundColor: 'var(--bg-app)',
+                        border: '1px solid var(--border-muted)',
+                        borderRadius: '10px',
+                        padding: '1rem 0',
+                        flex: 1,
+                        overflowY: 'auto',
+                      }}
+                    >
+                      {renderFormattedDiff(selectedCard.patch)}
+                    </div>
+                  )}
 
-                {activeTab === 'logs' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    <div>
-                      <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                        Captured STDOUT Output
+                  {activeTab === 'logs' && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', flex: 1, overflowY: 'auto' }}>
+                      <div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                          Captured STDOUT Output
+                        </div>
+                        <pre
+                          style={{
+                            backgroundColor: 'var(--bg-app)',
+                            border: '1px solid var(--border-muted)',
+                            borderRadius: '10px',
+                            padding: '1.25rem',
+                            fontSize: '0.8125rem',
+                            fontFamily: "'JetBrains Mono', monospace",
+                            color: 'var(--status-pass)',
+                            margin: 0,
+                            whiteSpace: 'pre-wrap',
+                            lineHeight: 1.5,
+                          }}
+                        >
+                          {selectedCard.verification?.stdout || '(empty stdout)'}
+                        </pre>
                       </div>
+
+                      {selectedCard.verification?.stderr && (
+                        <div>
+                          <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--status-fail)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                            STDERR Error Log Output
+                          </div>
+                          <pre
+                            style={{
+                              backgroundColor: 'var(--bg-app)',
+                              border: '1px solid var(--status-fail-border)',
+                              borderRadius: '10px',
+                              padding: '1.25rem',
+                              fontSize: '0.8125rem',
+                              fontFamily: "'JetBrains Mono', monospace",
+                              color: 'var(--status-fail)',
+                              margin: 0,
+                              whiteSpace: 'pre-wrap',
+                              lineHeight: 1.5,
+                            }}
+                          >
+                            {selectedCard.verification.stderr}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {activeTab === 'trace' && (
+                    <div style={{ flex: 1, overflowY: 'auto' }}>
                       <pre
                         style={{
                           backgroundColor: 'var(--bg-app)',
@@ -927,62 +981,17 @@ export default function Dashboard() {
                           padding: '1.25rem',
                           fontSize: '0.8125rem',
                           fontFamily: "'JetBrains Mono', monospace",
-                          color: 'var(--status-pass)',
+                          color: 'var(--status-fail)',
                           margin: 0,
                           whiteSpace: 'pre-wrap',
-                          lineHeight: 1.5,
+                          lineHeight: 1.6,
                         }}
                       >
-                        {selectedCard.verification?.stdout || '(empty stdout)'}
+                        {selectedCard.stacktrace || 'No full stacktrace provided for this fixture.'}
                       </pre>
                     </div>
-
-                    {selectedCard.verification?.stderr && (
-                      <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--status-fail)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                          STDERR Error Log Output
-                        </div>
-                        <pre
-                          style={{
-                            backgroundColor: 'var(--bg-app)',
-                            border: '1px solid var(--status-fail-border)',
-                            borderRadius: '10px',
-                            padding: '1.25rem',
-                            fontSize: '0.8125rem',
-                            fontFamily: "'JetBrains Mono', monospace",
-                            color: 'var(--status-fail)',
-                            margin: 0,
-                            whiteSpace: 'pre-wrap',
-                            lineHeight: 1.5,
-                          }}
-                        >
-                          {selectedCard.verification.stderr}
-                        </pre>
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {activeTab === 'trace' && (
-                  <div>
-                    <pre
-                      style={{
-                        backgroundColor: 'var(--bg-app)',
-                        border: '1px solid var(--border-muted)',
-                        borderRadius: '10px',
-                        padding: '1.25rem',
-                        fontSize: '0.8125rem',
-                        fontFamily: "'JetBrains Mono', monospace",
-                        color: 'var(--status-fail)',
-                        margin: 0,
-                        whiteSpace: 'pre-wrap',
-                        lineHeight: 1.6,
-                      }}
-                    >
-                      {selectedCard.stacktrace || 'No full stacktrace provided for this fixture.'}
-                    </pre>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ) : (
               <div
@@ -993,6 +1002,7 @@ export default function Dashboard() {
                   padding: '6rem 2rem',
                   textAlign: 'center',
                   color: 'var(--text-low)',
+                  flex: 1,
                 }}
               >
                 Select a Knowledge Entry on the left to inspect execution evidence.
@@ -1000,8 +1010,8 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Pane 3: Right Context & Provenance Drawer (Full Width Fit) */}
-          <div style={{ minWidth: 0, boxSizing: 'border-box' }}>
+          {/* Pane 3: Right Context & Provenance Drawer (Equal Height Stretch) */}
+          <div style={{ minWidth: 0, boxSizing: 'border-box', display: 'flex', flexDirection: 'column' }}>
             {selectedCard ? (
               <div
                 style={{
@@ -1013,6 +1023,8 @@ export default function Dashboard() {
                   flexDirection: 'column',
                   gap: '1.25rem',
                   boxSizing: 'border-box',
+                  flex: 1,
+                  height: '100%',
                 }}
               >
                 <h3 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
@@ -1022,7 +1034,7 @@ export default function Dashboard() {
                 {/* Runtime & Class info */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Language Runtime</div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1033,7 +1045,7 @@ export default function Dashboard() {
 
                   {selectedCard.environment?.framework && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                       <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Framework</div>
                         <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1044,7 +1056,7 @@ export default function Dashboard() {
                   )}
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Error Class</div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -1057,7 +1069,7 @@ export default function Dashboard() {
                 {/* Sandbox Run Evidence */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Execution Duration</div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
@@ -1067,7 +1079,7 @@ export default function Dashboard() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Sandbox Provider</div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
@@ -1077,7 +1089,7 @@ export default function Dashboard() {
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--accent-primary)', flexShrink: 0 }} />
                     <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Last Verified</div>
                       <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
@@ -1088,7 +1100,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Provenance & Metrics */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)', marginTop: 'auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
                     <span style={{ color: 'var(--text-low)' }}>Reuse Hits</span>
                     <strong style={{ color: 'var(--text-high)' }}>{selectedCard.metrics?.reuseCount || 0}</strong>
@@ -1113,6 +1125,7 @@ export default function Dashboard() {
                   textAlign: 'center',
                   color: 'var(--text-low)',
                   fontSize: '0.8125rem',
+                  flex: 1,
                 }}
               >
                 No active selection

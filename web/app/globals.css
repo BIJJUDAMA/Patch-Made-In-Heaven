@@ -3,33 +3,33 @@
 @tailwind utilities;
 
 :root {
-  /* Minimal Warm Stone & Warm Terracotta Palette */
-  --bg-app: #121010;
-  --surface-subtle: #1a1817;
-  --surface-panel: #242120;
-  --surface-hover: #2e2b29;
-  --surface-active: #383432;
+  /* Rich Warm Charcoal & Terracotta / Amber Palette (Zero Monochrome) */
+  --bg-app: #1c1817;
+  --surface-subtle: #262120;
+  --surface-panel: #302b29;
+  --surface-hover: #3d3734;
+  --surface-active: #47403d;
 
-  /* Accent & Functional Palette (Warm Terracotta / Sand / Amber / Sage) */
-  --accent-primary: #e06c75;
-  --accent-primary-subtle: rgba(224, 108, 117, 0.12);
+  /* Vibrant Functional Colors */
+  --accent-primary: #f97316; /* Warm Amber Terracotta */
+  --accent-primary-subtle: rgba(249, 115, 22, 0.14);
 
-  --status-pass: #4ade80;
-  --status-pass-subtle: rgba(74, 222, 128, 0.08);
-  --status-pass-border: rgba(74, 222, 128, 0.22);
+  --status-pass: #34d399; /* Emerald */
+  --status-pass-subtle: rgba(52, 211, 153, 0.12);
+  --status-pass-border: rgba(52, 211, 153, 0.28);
 
-  --status-fail: #f87171;
-  --status-fail-subtle: rgba(248, 113, 113, 0.08);
-  --status-fail-border: rgba(248, 113, 113, 0.22);
+  --status-fail: #f87171; /* Rose */
+  --status-fail-subtle: rgba(248, 113, 113, 0.12);
+  --status-fail-border: rgba(248, 113, 113, 0.28);
 
-  /* Warm Muted Borders */
-  --border-muted: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.16);
+  /* Rich Warm Borders */
+  --border-muted: #3d3734;
+  --border-strong: #544c48;
 
-  /* Typography Scale */
-  --text-high: #f5f3f0;
-  --text-medium: #a8a29e;
-  --text-low: #78716c;
+  /* Warm Readable Typography (No Cold White) */
+  --text-high: #f5ebe6;
+  --text-medium: #c7b8b1;
+  --text-low: #998982;
 
   /* Strict 10px Border Radius Standard */
   --radius-standard: 10px;
@@ -57,12 +57,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #332e2c;
+  background: #47403d;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #443e3b;
+  background: #574f4b;
 }
 
 /* Apple Fluid Active Scale Feedback */
