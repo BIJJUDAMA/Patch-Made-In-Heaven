@@ -75,12 +75,6 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   ctx.fillStyle = "#ffffff";
   ctx.fillText(`/ ${tool.num}`, 50, 80);
 
-  // Tag Pill (#d4d4d8 Bright Silver-Gray)
-  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#d4d4d8";
-  const tagWidth = ctx.measureText(tool.tag).width;
-  ctx.fillText(tool.tag, 550 - tagWidth, 76);
-
   // Tool Title (Syne Display Font, #ffffff Crisp White)
   ctx.font = '800 48px "Syne", system-ui, sans-serif';
   ctx.fillStyle = "#ffffff";
