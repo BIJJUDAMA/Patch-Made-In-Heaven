@@ -69,6 +69,7 @@ describe('SandboxClient (real container runtime)', () => {
     expect(result.exitCode).toBe(0);
     expect(result.stdout).toContain('hello-from-sandbox');
     expect(result.sandboxType).toBe('docker');
+    expect(result.timedOut).toBe(false);
   }, 30000);
 
   it('returns FAIL with a real non-zero exit code and captured stderr', async () => {
@@ -95,6 +96,7 @@ describe('SandboxClient (real container runtime)', () => {
     });
 
     expect(result.status).toBe('FAIL');
+    expect(result.timedOut).toBe(true);
     expect(result.stderr).toMatch(/timed out/i);
 
     // Guaranteed cleanup: no leftover container from this run, even after a kill.

@@ -1,13 +1,8 @@
 import { McpApp, Module } from '@nitrostack/core';
 import { SearchTools } from './tools/search.tool.js';
 import { RetrieveTools } from './tools/retrieve.tool.js';
-
-// VerifyTools and SubmitTools are intentionally NOT registered as providers.
-// Their trust chain (real Docker isolation now exists via SandboxClient, but
-// `verify_fix`/`submit_fix` still need the end-to-end verified-submission
-// contract) is not complete until Phase 3. Registering them here would expose
-// incomplete public tools to MCP clients. See DECISIONS.md Decision 005 and
-// Implementation_Plans/PHASE_01_CHECKPOINTS.md Checkpoint 5.
+import { VerifyTools } from './tools/verify.tool.js';
+import { SubmitTools } from './tools/submit.tool.js';
 
 @McpApp({
   module: AppModule,
@@ -20,8 +15,10 @@ import { RetrieveTools } from './tools/retrieve.tool.js';
   name: 'app',
   // `controllers` (not `providers`) is what @nitrostack/core actually scans
   // for @Tool/@Resource/@Prompt-decorated methods — see DOUBTS.md for the
-  // full story of how this was found.
-  controllers: [SearchTools, RetrieveTools],
+  // full story of how this was found. VerifyTools/SubmitTools join the
+  // registered set in Phase 3, now that the real verify_fix/submit_fix trust
+  // chain (Checkpoints 2-4) exists — see DECISIONS.md Decision 009.
+  controllers: [SearchTools, RetrieveTools, VerifyTools, SubmitTools],
 })
 export class AppModule {}
 export default AppModule;
