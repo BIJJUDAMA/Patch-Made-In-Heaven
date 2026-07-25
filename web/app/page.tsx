@@ -312,18 +312,18 @@ export default function Dashboard() {
       </header>
 
       {/* Main Hero & Connection Setup */}
-      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '4rem 2.5rem 3.5rem', textAlign: 'center' }}>
-        <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '5rem 2.5rem 4rem', textAlign: 'center' }}>
+        <div style={{ maxWidth: '880px', margin: '0 auto' }}>
           {/* Logo Badge */}
-          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '4rem', height: '4rem', borderRadius: '16px', backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', color: 'var(--accent-primary)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', marginBottom: '1.5rem' }}>
-            <Cpu style={{ width: '2rem', height: '2rem' }} />
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '4.5rem', height: '4.5rem', borderRadius: '18px', backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', color: 'var(--accent-primary)', boxShadow: '0 12px 32px rgba(139, 92, 246, 0.25)', marginBottom: '1.5rem' }}>
+            <Cpu style={{ width: '2.25rem', height: '2.25rem' }} />
           </div>
 
-          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 0.75rem', color: 'var(--text-high)' }}>
+          <h1 style={{ fontSize: '3rem', fontWeight: 800, letterSpacing: '-0.035em', lineHeight: 1.1, margin: '0 0 0.75rem', color: 'var(--text-high)' }}>
             Patch Made In Heaven MCP
           </h1>
 
-          <div style={{ display: 'inline-block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(20, 184, 166, 0.3)', padding: '0.25rem 0.875rem', borderRadius: '20px', marginBottom: '1.25rem' }}>
+          <div style={{ display: 'inline-block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(139, 92, 246, 0.3)', padding: '0.25rem 0.875rem', borderRadius: '20px', marginBottom: '1.25rem' }}>
             v1.0.0
           </div>
 
@@ -332,7 +332,7 @@ export default function Dashboard() {
           </p>
 
           {/* Connection Setup Box */}
-          <div style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-strong)', borderRadius: '12px', padding: '2rem', textAlign: 'left', boxShadow: '0 12px 32px rgba(0,0,0,0.3)', marginBottom: '2rem' }}>
+          <div style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-strong)', borderRadius: '14px', padding: '2rem 2.25rem', textAlign: 'left', boxShadow: '0 16px 40px rgba(0,0,0,0.5)', marginBottom: '2.5rem' }}>
             <h3 style={{ margin: '0 0 0.75rem', fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-high)' }}>
               Connection Setup
             </h3>
@@ -350,7 +350,7 @@ export default function Dashboard() {
                   border: '1px solid var(--border-muted)',
                   borderRadius: '8px',
                   padding: '0.875rem 1.125rem',
-                  color: 'var(--accent-primary)',
+                  color: 'var(--accent-cyan)',
                   wordBreak: 'break-all',
                 }}
               >
@@ -366,7 +366,7 @@ export default function Dashboard() {
                   padding: '0.875rem 1.25rem',
                   borderRadius: '8px',
                   backgroundColor: 'var(--accent-primary)',
-                  color: '#1a202c',
+                  color: '#ffffff',
                   fontWeight: 700,
                   fontSize: '0.875rem',
                   border: 'none',
@@ -383,16 +383,16 @@ export default function Dashboard() {
       </section>
 
       {/* Available Tools Grid */}
-      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '3.5rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
+      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '4rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
         <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text-high)', marginBottom: '2rem', textAlign: 'center' }}>
+          <h2 style={{ fontSize: '1.75rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text-high)', marginBottom: '2.5rem', textAlign: 'center' }}>
             Available Tools
           </h2>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             {/* Tool 1 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 search_fix
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -401,8 +401,8 @@ export default function Dashboard() {
             </div>
 
             {/* Tool 2 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 find_similar
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -411,8 +411,8 @@ export default function Dashboard() {
             </div>
 
             {/* Tool 3 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 get_patch
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -421,8 +421,8 @@ export default function Dashboard() {
             </div>
 
             {/* Tool 4 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 get_execution_log
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -431,8 +431,8 @@ export default function Dashboard() {
             </div>
 
             {/* Tool 5 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 verify_fix
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -441,8 +441,8 @@ export default function Dashboard() {
             </div>
 
             {/* Tool 6 */}
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
-              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '12px', padding: '1.75rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1.0625rem', fontWeight: 700, color: 'var(--accent-cyan)', marginBottom: '0.75rem' }}>
                 submit_fix
               </div>
               <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
@@ -451,14 +451,15 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-low)', fontSize: '0.8125rem' }}>
+          <div style={{ marginTop: '3.5rem', textAlign: 'center', color: 'var(--text-low)', fontSize: '0.875rem' }}>
             Powered by NitroStack - The TypeScript MCP Framework
           </div>
         </div>
       </section>
 
-      {/* Live Inspection Dashboard Section */}
+      {/* Optional Live Knowledge Base Inspection Drawer */}
       <main id="inspector" style={{ maxWidth: '100%', padding: '3rem 2.5rem 4rem' }}>
+
 
 
         {/* Error Alert */}

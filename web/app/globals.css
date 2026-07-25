@@ -3,37 +3,40 @@
 @tailwind utilities;
 
 :root {
-  /* Nordic Slate & Teal Accent Palette (Zero Black/Gray) */
-  --bg-app: #1a202c;
-  --surface-subtle: #242c3d;
-  --surface-panel: #2d374d;
-  --surface-hover: #38445e;
-  --surface-active: #42516e;
+  /* Deep Midnight Indigo & Electric Violet Palette */
+  --bg-app: #0b0f19;
+  --surface-subtle: #111827;
+  --surface-panel: #1f2937;
+  --surface-hover: #374151;
+  --surface-active: #4b5563;
 
-  /* Teal & Mint Functional Accents */
-  --accent-primary: #14b8a6; /* Nordic Teal */
-  --accent-primary-subtle: rgba(20, 184, 166, 0.15);
+  /* Electric Violet & Cyan Accents */
+  --accent-primary: #8b5cf6; /* Electric Violet */
+  --accent-primary-subtle: rgba(139, 92, 246, 0.15);
 
-  --status-pass: #2dd4bf; /* Mint Teal */
-  --status-pass-subtle: rgba(45, 212, 191, 0.14);
-  --status-pass-border: rgba(45, 212, 191, 0.3);
+  --accent-cyan: #06b6d4; /* Vivid Cyan */
 
-  --status-fail: #fb7185; /* Soft Rose */
-  --status-fail-subtle: rgba(251, 113, 133, 0.14);
-  --status-fail-border: rgba(251, 113, 133, 0.3);
+  --status-pass: #10b981; /* Emerald Green */
+  --status-pass-subtle: rgba(16, 185, 129, 0.14);
+  --status-pass-border: rgba(16, 185, 129, 0.3);
 
-  /* Nordic Muted Borders */
-  --border-muted: #38445e;
-  --border-strong: #4d5c7a;
+  --status-fail: #f43f5e; /* Bright Rose */
+  --status-fail-subtle: rgba(244, 63, 94, 0.14);
+  --status-fail-border: rgba(244, 63, 94, 0.3);
 
-  /* Nordic Slate Typography */
-  --text-high: #f1f5f9;
-  --text-medium: #cbd5e1;
-  --text-low: #94a3b8;
+  /* Muted Glass Borders */
+  --border-muted: #1f2937;
+  --border-strong: #374151;
+
+  /* Crisp Typography */
+  --text-high: #f9fafb;
+  --text-medium: #d1d5db;
+  --text-low: #9ca3af;
 
   /* Strict 10px Border Radius Standard */
   --radius-standard: 10px;
 }
+
 
 * {
   box-sizing: border-box;
@@ -101,8 +104,9 @@ body {
 
 /* Glassmorphism ambient glow cards */
 .hero-glow {
-  background: radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.12) 0%, rgba(26, 32, 44, 0) 70%);
+  background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.18) 0%, rgba(11, 15, 25, 0) 75%);
 }
+
 
 .card-glow {
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
