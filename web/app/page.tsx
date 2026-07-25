@@ -376,11 +376,30 @@ export default function Dashboard() {
       <div className="diff-container" style={{ padding: '0.5rem 0' }}>
         {lines.map((line, i) => {
           let bg = 'transparent';
-          let color = 'var(--text-medium)';
-          if (line.startsWith('+') && !line.startsWith('+++')) { bg = 'rgba(110, 231, 183, 0.07)'; color = 'var(--status-pass)'; }
-          else if (line.startsWith('-') && !line.startsWith('---')) { bg = 'rgba(252, 165, 165, 0.07)'; color = 'var(--status-fail)'; }
-          else if (line.startsWith('@@')) { bg = 'rgba(232, 160, 32, 0.07)'; color = 'var(--accent-primary)'; }
-          else if (line.startsWith('diff') || line.startsWith('---') || line.startsWith('+++')) { color = 'var(--text-low)'; }
+          let color = '#d4d4d8';
+          let borderLeft = '3px solid transparent';
+          let fontWeight = 400;
+
+          if (line.startsWith('+') && !line.startsWith('+++')) {
+            bg = 'rgba(16, 185, 129, 0.18)';
+            color = '#34d399';
+            borderLeft = '3px solid #10b981';
+            fontWeight = 500;
+          } else if (line.startsWith('-') && !line.startsWith('---')) {
+            bg = 'rgba(239, 68, 68, 0.18)';
+            color = '#f87171';
+            borderLeft = '3px solid #ef4444';
+            fontWeight = 500;
+          } else if (line.startsWith('@@')) {
+            bg = 'rgba(245, 158, 11, 0.18)';
+            color = '#fbbf24';
+            borderLeft = '3px solid #f59e0b';
+            fontWeight = 600;
+          } else if (line.startsWith('diff') || line.startsWith('---') || line.startsWith('+++')) {
+            color = '#a1a1aa';
+            fontWeight = 600;
+          }
+
           return (
             <div
               key={i}
@@ -388,10 +407,12 @@ export default function Dashboard() {
               style={{
                 backgroundColor: bg,
                 color,
+                borderLeft,
+                fontWeight,
                 fontFamily: 'var(--font-mono)',
-                fontSize: '0.75rem',
-                lineHeight: 1.6,
-                padding: '0.0625rem 1rem',
+                fontSize: '0.78125rem',
+                lineHeight: 1.65,
+                padding: '0.125rem 1rem',
               }}
             >
               {line || ' '}
@@ -955,15 +976,15 @@ export default function Dashboard() {
                     {activeTab === 'logs' && (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div>
-                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--status-pass)', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDOUT</div>
-                          <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-pass)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                          <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', fontWeight: 700, color: '#34d399', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDOUT</div>
+                          <pre style={{ backgroundColor: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.35)', borderRadius: '6px', padding: '1rem', fontSize: '0.78125rem', fontFamily: 'var(--font-mono)', color: '#a7f3d0', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
                             {selectedCard.verification?.stdout || '(empty)'}
                           </pre>
                         </div>
                         {selectedCard.verification?.stderr && (
                           <div>
-                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', color: 'var(--status-fail)', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDERR</div>
-                            <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--status-fail-border)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-fail)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                            <div style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6875rem', fontWeight: 700, color: '#f87171', letterSpacing: '0.08em', marginBottom: '0.5rem' }}>STDERR</div>
+                            <pre style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '6px', padding: '1rem', fontSize: '0.78125rem', fontFamily: 'var(--font-mono)', color: '#fca5a5', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
                               {selectedCard.verification.stderr}
                             </pre>
                           </div>
@@ -971,7 +992,7 @@ export default function Dashboard() {
                       </div>
                     )}
                     {activeTab === 'trace' && (
-                      <pre style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-muted)', borderRadius: '6px', padding: '1rem', fontSize: '0.75rem', fontFamily: 'var(--font-mono)', color: 'var(--status-fail)', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
+                      <pre style={{ backgroundColor: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.35)', borderRadius: '6px', padding: '1rem', fontSize: '0.78125rem', fontFamily: 'var(--font-mono)', color: '#fca5a5', margin: 0, whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>
                         {selectedCard.stacktrace || 'No stacktrace provided.'}
                       </pre>
                     )}
