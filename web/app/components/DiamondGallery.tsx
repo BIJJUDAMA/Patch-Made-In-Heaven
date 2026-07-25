@@ -1236,20 +1236,32 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               maxHeight: "85vh",
               display: "flex",
               flexDirection: "column",
-              background: "linear-gradient(135deg, rgba(24, 24, 28, 0.98) 0%, rgba(12, 12, 15, 0.98) 45%, rgba(4, 4, 6, 0.99) 100%)",
+              background: "linear-gradient(135deg, rgba(16, 18, 28, 0.98) 0%, rgba(10, 12, 22, 0.98) 50%, rgba(4, 4, 12, 0.99) 100%)",
               border: "2.5px solid rgba(255, 255, 255, 0.75)",
               borderRadius: "22px",
               padding: "2rem 2.25rem",
               color: "#ffffff",
               overflow: "hidden",
-              boxShadow: "0 40px 100px rgba(0, 0, 0, 0.98), 0 0 40px rgba(255, 255, 255, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.08)",
+              boxShadow: "0 40px 100px rgba(0, 0, 0, 0.98), 0 0 60px rgba(56, 189, 248, 0.22), 0 0 90px rgba(168, 85, 247, 0.18), inset 0 0 40px rgba(255, 255, 255, 0.08)",
               opacity: schemaModalClosing ? 0 : 1,
               transform: schemaModalClosing ? "scale(0.94)" : "scale(1)",
               transition: "opacity 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
               animation: !schemaModalClosing ? "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both" : "none",
             }}
           >
-            {/* Voronoi Crystalline Facet Cell Grid SVG Pattern */}
+            {/* Iridescent Holographic Voronoi Ambient Color Glow Layer */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                background:
+                  "radial-gradient(ellipse at 20% 20%, rgba(56, 189, 248, 0.28), transparent 50%), radial-gradient(ellipse at 80% 30%, rgba(168, 85, 247, 0.25), transparent 55%), radial-gradient(ellipse at 50% 85%, rgba(236, 72, 153, 0.2), transparent 60%)",
+                zIndex: 0,
+              }}
+            />
+
+            {/* Voronoi Crystalline Facet Cell Grid SVG Pattern with Iridescent Tints */}
             <svg
               style={{
                 position: "absolute",
@@ -1257,7 +1269,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 width: "100%",
                 height: "100%",
                 pointerEvents: "none",
-                opacity: 0.16,
+                opacity: 0.32,
                 zIndex: 0,
               }}
               xmlns="http://www.w3.org/2000/svg"
@@ -1272,38 +1284,27 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                   <path
                     d="M0 0 L60 25 L120 0 L95 60 L120 120 L60 95 L0 120 L25 60 Z M60 25 L60 95 M25 60 L95 60"
                     fill="none"
-                    stroke="#ffffff"
+                    stroke="rgba(192, 132, 252, 0.7)"
                     strokeWidth="1.2"
                     strokeDasharray="3 3"
                   />
-                  <polygon points="30,15 90,15 105,60 90,105 30,105 15,60" fill="none" stroke="#ffffff" strokeWidth="1" />
-                  <line x1="15" y1="60" x2="105" y2="60" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
-                  <line x1="60" y1="15" x2="60" y2="105" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
+                  <polygon points="30,15 90,15 105,60 90,105 30,105 15,60" fill="none" stroke="rgba(56, 189, 248, 0.7)" strokeWidth="1" />
+                  <line x1="15" y1="60" x2="105" y2="60" stroke="rgba(244, 114, 182, 0.6)" strokeWidth="0.8" />
+                  <line x1="60" y1="15" x2="60" y2="105" stroke="rgba(168, 85, 247, 0.6)" strokeWidth="0.8" />
                 </pattern>
               </defs>
               <rect width="100%" height="100%" fill="url(#voronoiModalGrid)" />
             </svg>
 
-            {/* Voronoi Diamond Facet Radial Reflective Shimmer Overlay */}
+            {/* Voronoi Sweeping Holographic Iridescent Sheen Overlay */}
             <div
               style={{
                 position: "absolute",
                 inset: 0,
                 pointerEvents: "none",
                 background:
-                  "radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.14), transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.09), transparent 60%)",
-                zIndex: 0,
-              }}
-            />
-
-            {/* Subtle Glossy Holographic Sweeping Shimmer Overlay */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none",
-                background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.03) 60%, transparent 100%)",
-                opacity: 0.8,
+                  "linear-gradient(120deg, transparent 0%, rgba(56, 189, 248, 0.15) 30%, rgba(192, 132, 252, 0.24) 50%, rgba(244, 114, 182, 0.15) 70%, transparent 100%)",
+                opacity: 0.85,
                 zIndex: 0,
               }}
             />
