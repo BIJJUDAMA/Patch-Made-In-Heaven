@@ -182,10 +182,10 @@ export default function Dashboard() {
 
           if (line.startsWith('+') && !line.startsWith('+++')) {
             bgColor = 'var(--status-pass-subtle)';
-            textColor = '#34d399';
+            textColor = 'var(--status-pass)';
           } else if (line.startsWith('-') && !line.startsWith('---')) {
             bgColor = 'var(--status-fail-subtle)';
-            textColor = '#f87171';
+            textColor = 'var(--status-fail)';
           } else if (line.startsWith('@@') || line.startsWith('===')) {
             textColor = 'var(--text-medium)';
           }
@@ -229,7 +229,7 @@ export default function Dashboard() {
         style={{
           borderBottom: '1px solid var(--border-muted)',
           backgroundColor: 'var(--surface-subtle)',
-          padding: '1.25rem 3rem',
+          padding: '1.25rem 2.5rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -256,7 +256,7 @@ export default function Dashboard() {
               border: isLiveElastic ? '1px solid var(--status-pass-border)' : '1px solid var(--border-muted)',
               fontSize: '0.75rem',
               fontWeight: 600,
-              color: isLiveElastic ? '#34d399' : 'var(--text-medium)',
+              color: isLiveElastic ? 'var(--status-pass)' : 'var(--text-medium)',
             }}
           >
             <span
@@ -300,18 +300,18 @@ export default function Dashboard() {
         </div>
       </header>
 
-      {/* Main Viewport Container */}
-      <main style={{ maxWidth: '1720px', margin: '0 auto', padding: '3rem 3rem 6rem' }}>
+      {/* Main Container */}
+      <main style={{ maxWidth: '100%', padding: '2rem 2.5rem 4rem' }}>
         {/* Error Alert */}
         {error && (
           <div
             style={{
-              marginBottom: '2.5rem',
+              marginBottom: '2rem',
               padding: '1.25rem 1.5rem',
               borderRadius: '10px',
               backgroundColor: 'var(--status-fail-subtle)',
               border: '1px solid var(--status-fail-border)',
-              color: '#f87171',
+              color: 'var(--status-fail)',
               display: 'flex',
               alignItems: 'center',
               gap: '1rem',
@@ -330,8 +330,8 @@ export default function Dashboard() {
           style={{
             display: 'grid',
             gridTemplateColumns: '2fr 1fr 1fr',
-            gap: '1.5rem',
-            marginBottom: '3rem',
+            gap: '1.25rem',
+            marginBottom: '2rem',
           }}
         >
           {/* Search Bar */}
@@ -384,7 +384,7 @@ export default function Dashboard() {
                 padding: '0.875rem 1.25rem',
                 borderRadius: '10px',
                 backgroundColor: 'var(--surface-subtle)',
-                border: langDropdownOpen ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-muted)',
+                border: langDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
                 color: 'var(--text-high)',
                 fontSize: '0.875rem',
                 fontWeight: 500,
@@ -417,7 +417,7 @@ export default function Dashboard() {
                   left: 0,
                   right: 0,
                   zIndex: 50,
-                  backgroundColor: 'rgba(22, 22, 26, 0.95)',
+                  backgroundColor: 'rgba(26, 24, 23, 0.95)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
                   borderRadius: '10px',
@@ -497,7 +497,7 @@ export default function Dashboard() {
                 padding: '0.875rem 1.25rem',
                 borderRadius: '10px',
                 backgroundColor: 'var(--surface-subtle)',
-                border: errorDropdownOpen ? '1px solid rgba(255, 255, 255, 0.4)' : '1px solid var(--border-muted)',
+                border: errorDropdownOpen ? '1px solid var(--accent-primary)' : '1px solid var(--border-muted)',
                 color: 'var(--text-high)',
                 fontSize: '0.875rem',
                 fontWeight: 500,
@@ -530,7 +530,7 @@ export default function Dashboard() {
                   left: 0,
                   right: 0,
                   zIndex: 50,
-                  backgroundColor: 'rgba(22, 22, 26, 0.95)',
+                  backgroundColor: 'rgba(26, 24, 23, 0.95)',
                   backdropFilter: 'blur(20px)',
                   WebkitBackdropFilter: 'blur(20px)',
                   borderRadius: '10px',
@@ -595,9 +595,9 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* 3-Pane Ergonomic Split Architecture */}
-        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr 340px', gap: '2rem' }}>
-          {/* Pane 1: Master Card List */}
+        {/* 3-Pane Responsive Layout (340px Master List, Fluid Middle, 340px Context Drawer) */}
+        <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr 340px', gap: '1.5rem', width: '100%' }}>
+          {/* Pane 1: Master Card List (Uniform Height Cards) */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
               <h2 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
@@ -658,8 +658,8 @@ export default function Dashboard() {
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1rem',
-                  maxHeight: 'calc(100vh - 300px)',
+                  gap: '0.875rem',
+                  maxHeight: 'calc(100vh - 260px)',
                   overflowY: 'auto',
                   paddingRight: '0.375rem',
                 }}
@@ -674,14 +674,20 @@ export default function Dashboard() {
                       onClick={() => setSelectedCard(card)}
                       className="active-press"
                       style={{
-                        padding: '1.25rem',
+                        height: '140px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'space-between',
+                        padding: '1.125rem',
+
                         borderRadius: '10px',
                         backgroundColor: isSelected ? 'var(--surface-panel)' : 'var(--surface-subtle)',
                         border: isSelected ? '1px solid var(--border-strong)' : '1px solid var(--border-muted)',
                         cursor: 'pointer',
+                        boxSizing: 'border-box',
                       }}
                     >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span
                           style={{
                             fontSize: '0.7rem',
@@ -703,7 +709,7 @@ export default function Dashboard() {
                           ) : (
                             <XCircle style={{ width: '0.875rem', height: '0.875rem', color: 'var(--status-fail)' }} />
                           )}
-                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isPass ? '#34d399' : '#f87171' }}>
+                          <span style={{ fontSize: '0.75rem', fontWeight: 600, color: isPass ? 'var(--status-pass)' : 'var(--status-fail)' }}>
                             {card.verification?.status || 'PASS'}
                           </span>
                         </div>
@@ -711,11 +717,16 @@ export default function Dashboard() {
 
                       <h3
                         style={{
-                          margin: '0 0 0.75rem',
+                          margin: 0,
                           fontSize: '0.875rem',
                           fontWeight: 600,
                           color: 'var(--text-high)',
-                          lineHeight: 1.45,
+                          lineHeight: 1.4,
+                          display: '-webkit-box',
+                          WebkitLineClamp: 2,
+                          WebkitBoxOrient: 'vertical',
+                          overflow: 'hidden',
+
                         }}
                       >
                         {card.problem}
@@ -728,7 +739,7 @@ export default function Dashboard() {
                           alignItems: 'center',
                           fontSize: '0.75rem',
                           color: 'var(--text-low)',
-                          paddingTop: '0.625rem',
+                          paddingTop: '0.5rem',
                           borderTop: '1px solid var(--border-muted)',
                         }}
                       >
@@ -747,19 +758,20 @@ export default function Dashboard() {
           </div>
 
           {/* Pane 2: Middle Diff & Execution Evidence Inspector */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             {selectedCard ? (
               <div
                 style={{
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
-                  padding: '2rem',
+                  padding: '1.75rem',
+                  boxSizing: 'border-box',
                 }}
               >
                 {/* Header Metadata */}
-                <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '1.5rem', marginBottom: '1.5rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                <div style={{ borderBottom: '1px solid var(--border-muted)', paddingBottom: '1.25rem', marginBottom: '1.25rem' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem' }}>
                     <div
                       style={{
                         fontFamily: "'JetBrains Mono', monospace",
@@ -781,7 +793,7 @@ export default function Dashboard() {
                         gap: '0.375rem',
                         fontSize: '0.75rem',
                         fontWeight: 600,
-                        color: '#34d399',
+                        color: 'var(--status-pass)',
                         backgroundColor: 'var(--status-pass-subtle)',
                         padding: '0.375rem 0.875rem',
                         borderRadius: '10px',
@@ -793,13 +805,13 @@ export default function Dashboard() {
                     </span>
                   </div>
 
-                  <h2 style={{ margin: '1rem 0 0.5rem', fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-high)', lineHeight: 1.4 }}>
+                  <h2 style={{ margin: '0.75rem 0 0.5rem', fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-high)', lineHeight: 1.4 }}>
                     {selectedCard.problem}
                   </h2>
                 </div>
 
                 {/* Tab Switcher */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-muted)', marginBottom: '1.5rem', paddingBottom: '0.75rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border-muted)', marginBottom: '1.25rem', paddingBottom: '0.75rem' }}>
                   <div style={{ display: 'flex', gap: '0.75rem' }}>
                     <button
                       onClick={() => setActiveTab('diff')}
@@ -876,7 +888,7 @@ export default function Dashboard() {
                         borderRadius: '10px',
                         backgroundColor: 'var(--bg-app)',
                         border: '1px solid var(--border-muted)',
-                        color: copied ? '#34d399' : 'var(--text-medium)',
+                        color: copied ? 'var(--status-pass)' : 'var(--text-medium)',
                         fontSize: '0.75rem',
                         cursor: 'pointer',
                       }}
@@ -894,7 +906,7 @@ export default function Dashboard() {
                       backgroundColor: 'var(--bg-app)',
                       border: '1px solid var(--border-muted)',
                       borderRadius: '10px',
-                      padding: '1.25rem 0',
+                      padding: '1rem 0',
                     }}
                   >
                     {renderFormattedDiff(selectedCard.patch)}
@@ -902,7 +914,7 @@ export default function Dashboard() {
                 )}
 
                 {activeTab === 'logs' && (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                     <div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-medium)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                         Captured STDOUT Output
@@ -915,7 +927,7 @@ export default function Dashboard() {
                           padding: '1.25rem',
                           fontSize: '0.8125rem',
                           fontFamily: "'JetBrains Mono', monospace",
-                          color: '#34d399',
+                          color: 'var(--status-pass)',
                           margin: 0,
                           whiteSpace: 'pre-wrap',
                           lineHeight: 1.5,
@@ -927,7 +939,7 @@ export default function Dashboard() {
 
                     {selectedCard.verification?.stderr && (
                       <div>
-                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: '#f87171', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--status-fail)', marginBottom: '0.5rem', textTransform: 'uppercase' }}>
                           STDERR Error Log Output
                         </div>
                         <pre
@@ -938,7 +950,7 @@ export default function Dashboard() {
                             padding: '1.25rem',
                             fontSize: '0.8125rem',
                             fontFamily: "'JetBrains Mono', monospace",
-                            color: '#f87171',
+                            color: 'var(--status-fail)',
                             margin: 0,
                             whiteSpace: 'pre-wrap',
                             lineHeight: 1.5,
@@ -961,7 +973,7 @@ export default function Dashboard() {
                         padding: '1.25rem',
                         fontSize: '0.8125rem',
                         fontFamily: "'JetBrains Mono', monospace",
-                        color: '#fca5a5',
+                        color: 'var(--status-fail)',
                         margin: 0,
                         whiteSpace: 'pre-wrap',
                         lineHeight: 1.6,
@@ -988,18 +1000,19 @@ export default function Dashboard() {
             )}
           </div>
 
-          {/* Pane 3: Right Context & Provenance Drawer */}
-          <div>
+          {/* Pane 3: Right Context & Provenance Drawer (Full Width Fit) */}
+          <div style={{ minWidth: 0, boxSizing: 'border-box' }}>
             {selectedCard ? (
               <div
                 style={{
                   backgroundColor: 'var(--surface-subtle)',
                   borderRadius: '10px',
                   border: '1px solid var(--border-muted)',
-                  padding: '1.75rem',
+                  padding: '1.5rem',
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: '1.5rem',
+                  gap: '1.25rem',
+                  boxSizing: 'border-box',
                 }}
               >
                 <h3 style={{ margin: 0, fontSize: '0.8125rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)' }}>
@@ -1007,12 +1020,12 @@ export default function Dashboard() {
                 </h3>
 
                 {/* Runtime & Class info */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                    <div>
+                    <Cpu style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Language Runtime</div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {selectedCard.environment?.language} {selectedCard.environment?.version ? `(${selectedCard.environment.version})` : ''}
                       </div>
                     </div>
@@ -1020,10 +1033,10 @@ export default function Dashboard() {
 
                   {selectedCard.environment?.framework && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                      <div>
+                      <Box style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                      <div style={{ minWidth: 0 }}>
                         <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Framework</div>
-                        <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                        <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           {selectedCard.environment.framework}
                         </div>
                       </div>
@@ -1031,10 +1044,10 @@ export default function Dashboard() {
                   )}
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                    <div>
+                    <Hash style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Error Class</div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                         {selectedCard.errorType}
                       </div>
                     </div>
@@ -1042,32 +1055,32 @@ export default function Dashboard() {
                 </div>
 
                 {/* Sandbox Run Evidence */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                    <div>
+                    <Activity style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Execution Duration</div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
                         {selectedCard.verification?.durationMs ?? 100} ms
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                    <div>
+                    <Database style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Sandbox Provider</div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
                         {selectedCard.verification?.sandbox || 'docker'}
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)' }} />
-                    <div>
+                    <Clock style={{ width: '1rem', height: '1rem', color: 'var(--text-medium)', flexShrink: 0 }} />
+                    <div style={{ minWidth: 0 }}>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-low)' }}>Last Verified</div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-high)' }}>
+                      <div style={{ fontSize: '0.8125rem', fontWeight: 600, color: 'var(--text-high)' }}>
                         {new Date(selectedCard.verification?.lastVerified || Date.now()).toLocaleDateString()}
                       </div>
                     </div>
@@ -1075,7 +1088,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Provenance & Metrics */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', backgroundColor: 'var(--bg-app)', padding: '1.25rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', backgroundColor: 'var(--bg-app)', padding: '1rem', borderRadius: '10px', border: '1px solid var(--border-muted)' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
                     <span style={{ color: 'var(--text-low)' }}>Reuse Hits</span>
                     <strong style={{ color: 'var(--text-high)' }}>{selectedCard.metrics?.reuseCount || 0}</strong>
@@ -1086,7 +1099,7 @@ export default function Dashboard() {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8125rem' }}>
                     <span style={{ color: 'var(--text-low)' }}>Confidence Score</span>
-                    <strong style={{ color: '#34d399' }}>{(selectedCard.verification?.score * 100).toFixed(0)}%</strong>
+                    <strong style={{ color: 'var(--status-pass)' }}>{(selectedCard.verification?.score * 100).toFixed(0)}%</strong>
                   </div>
                 </div>
               </div>

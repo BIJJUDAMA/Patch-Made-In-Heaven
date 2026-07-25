@@ -3,30 +3,33 @@
 @tailwind utilities;
 
 :root {
-  /* Refined Quartz Slate & Emerald/Rose Functional Palette */
-  --bg-app: #08090c;
-  --surface-subtle: #111319;
-  --surface-panel: #181b24;
-  --surface-hover: #202430;
-  --surface-active: #272c3b;
+  /* Minimal Warm Stone & Warm Terracotta Palette */
+  --bg-app: #121010;
+  --surface-subtle: #1a1817;
+  --surface-panel: #242120;
+  --surface-hover: #2e2b29;
+  --surface-active: #383432;
 
-  /* Functional Status Accents */
-  --status-pass: #34d399;
-  --status-pass-subtle: rgba(52, 211, 153, 0.08);
-  --status-pass-border: rgba(52, 211, 153, 0.22);
+  /* Accent & Functional Palette (Warm Terracotta / Sand / Amber / Sage) */
+  --accent-primary: #e06c75;
+  --accent-primary-subtle: rgba(224, 108, 117, 0.12);
+
+  --status-pass: #4ade80;
+  --status-pass-subtle: rgba(74, 222, 128, 0.08);
+  --status-pass-border: rgba(74, 222, 128, 0.22);
 
   --status-fail: #f87171;
   --status-fail-subtle: rgba(248, 113, 113, 0.08);
   --status-fail-border: rgba(248, 113, 113, 0.22);
 
-  /* Precise Quartz Borders */
+  /* Warm Muted Borders */
   --border-muted: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.15);
+  --border-strong: rgba(255, 255, 255, 0.16);
 
   /* Typography Scale */
-  --text-high: #f8fafc;
-  --text-medium: #94a3b8;
-  --text-low: #64748b;
+  --text-high: #f5f3f0;
+  --text-medium: #a8a29e;
+  --text-low: #78716c;
 
   /* Strict 10px Border Radius Standard */
   --radius-standard: 10px;
@@ -54,12 +57,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #232733;
+  background: #332e2c;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #32384a;
+  background: #443e3b;
 }
 
 /* Apple Fluid Active Scale Feedback */
