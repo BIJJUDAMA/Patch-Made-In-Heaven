@@ -312,6 +312,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
+  const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
 
@@ -581,6 +582,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       stateRef.current.openedCard = card;
       stateRef.current.velocity = 0;
       setExpandedTool(card.userData.tool);
+      setShowSchemaModal(false); // Expanded card zoomed in 3D initially!
       if (onSelectTool) onSelectTool(card.userData.tool);
 
       const thetaTarget =
@@ -663,6 +665,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       const card = stateRef.current.openedCard;
       if (!card) return;
       stateRef.current.state = "closing";
+      setShowSchemaModal(false);
       setExpandedTool(null);
       const { basePos, angle } = card.userData;
 
@@ -765,7 +768,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       if (moved > 6) return;
 
       if (stateRef.current.state === "open") {
-        closeCard();
+        // Handled via UI controls when opened
       } else if (stateRef.current.state === "closed") {
         const front = getFrontCard();
         raycaster.setFromCamera(pointer, camera);
@@ -783,8 +786,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     };
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && stateRef.current.state === "open") closeCard();
-      else if (e.key === "ArrowRight") stepCard(1);
+      if (e.key === "Escape") {
+        if (showSchemaModal) setShowSchemaModal(false);
+        else if (stateRef.current.state === "open") closeCard();
+      } else if (e.key === "ArrowRight") stepCard(1);
       else if (e.key === "ArrowLeft") stepCard(-1);
     };
 
@@ -920,7 +925,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       cards.forEach((c) => (c.material as THREE.Material).dispose());
       renderer.dispose();
     };
-  }, [tools, onSelectTool]);
+  }, [tools, onSelectTool, showSchemaModal]);
 
   const copySchemaToClipboard = (schemaObj: object) => {
     navigator.clipboard.writeText(JSON.stringify(schemaObj, null, 2));
@@ -1033,29 +1038,98 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Expanded State: Interactive JSON Schema Inspector Modal */}
-      {expandedTool && expandedTool.schema && (
+      {/* 3D Expanded Card Overlay Controls */}
+      {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            inset: "2rem",
-            zIndex: 30,
+            bottom: "2.5rem",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 20,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.875rem",
+            pointerEvents: "auto",
+            animation: "fadeUp 240ms ease both",
+          }}
+        >
+          {expandedTool.schema && (
+            <button
+              onClick={() => setShowSchemaModal(true)}
+              className="active-press"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.625rem",
+                padding: "0.75rem 1.5rem",
+                borderRadius: "100px",
+                border: "1px solid var(--border-strong)",
+                backgroundColor: "rgba(18, 18, 18, 0.85)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
+                color: "#ffffff",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.78rem",
+                fontWeight: 600,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7)",
+              }}
+            >
+              <span>⚙</span> View JSON Schema & Parameters
+            </button>
+          )}
+
+          <button
+            onClick={() => stateRef.current.closeCard()}
+            className="active-press"
+            style={{
+              padding: "0.75rem 1.25rem",
+              borderRadius: "100px",
+              border: "1px solid var(--border-strong)",
+              backgroundColor: "rgba(38, 38, 38, 0.85)",
+              backdropFilter: "blur(16px)",
+              WebkitBackdropFilter: "blur(16px)",
+              color: "#ffffff",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.78rem",
+              fontWeight: 600,
+              letterSpacing: "0.08em",
+              textTransform: "uppercase",
+              cursor: "pointer",
+              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7)",
+            }}
+          >
+            ✕ Close Card
+          </button>
+        </div>
+      )}
+
+      {/* On-Top JSON Schema & Parameter Inspector Modal */}
+      {expandedTool && expandedTool.schema && showSchemaModal && (
+        <div
+          style={{
+            position: "absolute",
+            inset: "1.75rem",
+            zIndex: 35,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "rgba(10, 10, 10, 0.88)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            border: "1px solid var(--border-strong)",
+            backgroundColor: "#121212",
+            backdropFilter: "blur(24px)",
+            WebkitBackdropFilter: "blur(24px)",
+            border: "1px solid rgba(255, 255, 255, 0.35)",
             borderRadius: "16px",
             padding: "1.75rem 2rem",
             color: "#ffffff",
             overflow: "hidden",
-            boxShadow: "0 25px 50px rgba(0,0,0,0.9)",
+            boxShadow: "0 30px 60px rgba(0, 0, 0, 0.95)",
             pointerEvents: "auto",
-            animation: "fadeUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both",
+            animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
           }}
         >
-          {/* Header */}
+          {/* Header matching card aesthetic */}
           <div
             style={{
               display: "flex",
@@ -1071,12 +1145,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 style={{
                   padding: "0.25rem 0.75rem",
                   borderRadius: "100px",
-                  border: "1px solid var(--border-strong)",
-                  backgroundColor: "var(--surface-hover)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.75rem",
                   fontWeight: 600,
                   color: "#ffffff",
+                  letterSpacing: "0.08em",
                 }}
               >
                 {expandedTool.tag}
@@ -1084,8 +1159,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               <h3
                 className="display-font"
                 style={{
-                  fontSize: "1.35rem",
-                  fontWeight: 700,
+                  fontSize: "1.4rem",
+                  fontWeight: 800,
                   letterSpacing: "-0.02em",
                   color: "#ffffff",
                 }}
@@ -1100,7 +1175,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 style={{
                   display: "flex",
                   borderRadius: "8px",
-                  backgroundColor: "var(--surface-subtle)",
+                  backgroundColor: "rgba(0, 0, 0, 0.6)",
                   border: "1px solid var(--border-muted)",
                   padding: "3px",
                 }}
@@ -1112,7 +1187,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
-                      activeTab === "params" ? "var(--surface-hover)" : "transparent",
+                      activeTab === "params" ? "rgba(255, 255, 255, 0.15)" : "transparent",
                     color: activeTab === "params" ? "#ffffff" : "var(--text-medium)",
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.75rem",
@@ -1129,7 +1204,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
-                      activeTab === "schema" ? "var(--surface-hover)" : "transparent",
+                      activeTab === "schema" ? "rgba(255, 255, 255, 0.15)" : "transparent",
                     color: activeTab === "schema" ? "#ffffff" : "var(--text-medium)",
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.75rem",
@@ -1141,15 +1216,15 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 </button>
               </div>
 
-              {/* Close Button */}
+              {/* Close Modal Button */}
               <button
-                onClick={() => stateRef.current.closeCard()}
+                onClick={() => setShowSchemaModal(false)}
                 className="active-press"
                 style={{
                   padding: "0.4rem 0.85rem",
                   borderRadius: "8px",
-                  border: "1px solid var(--border-strong)",
-                  backgroundColor: "var(--surface-subtle)",
+                  border: "1px solid rgba(255, 255, 255, 0.3)",
+                  backgroundColor: "rgba(255, 255, 255, 0.08)",
                   color: "#ffffff",
                   fontFamily: "var(--font-mono)",
                   fontSize: "0.75rem",
@@ -1157,24 +1232,25 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                   cursor: "pointer",
                 }}
               >
-                ✕ Close
+                ✕ Close Inspector
               </button>
             </div>
           </div>
 
-          {/* Tool Description */}
+          {/* Description */}
           <p
             style={{
               fontSize: "0.875rem",
               color: "var(--text-medium)",
               marginBottom: "1.25rem",
               lineHeight: 1.5,
+              fontFamily: "var(--font-body)",
             }}
           >
             {expandedTool.desc}
           </p>
 
-          {/* Body Content */}
+          {/* Content Body */}
           <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.5rem" }}>
             {activeTab === "params" ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
@@ -1189,8 +1265,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                         style={{
                           padding: "1rem 1.25rem",
                           borderRadius: "10px",
-                          backgroundColor: "var(--surface-subtle)",
-                          border: "1px solid var(--border-muted)",
+                          backgroundColor: "#1a1a1a",
+                          border: "1px solid rgba(255, 255, 255, 0.15)",
                           display: "flex",
                           flexDirection: "column",
                           gap: "0.375rem",
@@ -1258,6 +1334,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                               fontSize: "0.8125rem",
                               color: "var(--text-medium)",
                               lineHeight: 1.5,
+                              fontFamily: "var(--font-body)",
                             }}
                           >
                             {prop.description}
@@ -1291,10 +1368,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     right: "0.75rem",
                     padding: "0.4rem 0.85rem",
                     borderRadius: "6px",
-                    border: "1px solid var(--border-strong)",
+                    border: "1px solid rgba(255, 255, 255, 0.3)",
                     backgroundColor: copiedSchema
                       ? "#ffffff"
-                      : "var(--surface-panel)",
+                      : "rgba(255, 255, 255, 0.1)",
                     color: copiedSchema ? "#000000" : "#ffffff",
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.75rem",
@@ -1310,10 +1387,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     padding: "1.25rem",
                     borderRadius: "10px",
                     backgroundColor: "#050505",
-                    border: "1px solid var(--border-muted)",
+                    border: "1px solid rgba(255, 255, 255, 0.2)",
                     fontFamily: "var(--font-mono)",
                     fontSize: "0.78rem",
-                    color: "#d4d4d8",
+                    color: "#e4e4e7",
                     lineHeight: 1.6,
                     overflowX: "auto",
                   }}
