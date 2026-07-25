@@ -31,7 +31,7 @@ export interface KnowledgeCard {
   embedding?: number[];
 }
 
-export const INDEX_NAME = 'hackoverflow-fixes';
+export const INDEX_NAME = 'hacksmymachine-fixes';
 
 function getElasticClient(): Client | null {
   const url = process.env.ELASTICSEARCH_URL;

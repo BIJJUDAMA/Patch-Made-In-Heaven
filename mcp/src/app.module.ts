@@ -7,7 +7,7 @@ import { SubmitTools } from './tools/submit.tool.js';
 @McpApp({
   module: AppModule,
   server: {
-    name: 'hackoverflow-mcp',
+    name: 'hacksmymachine-mcp',
     version: '1.0.0',
   },
 })

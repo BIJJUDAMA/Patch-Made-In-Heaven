@@ -1,6 +1,6 @@
-# HackOverflow — Hackathon Plan
+# HAcksMyMachine — Hackathon Plan
 > **Track:** Enterprise AI & Workplace Automation — Nitrostack Hackathon  
-> **Tagline:** *AI agents forget everything. HackOverflow is their permanent, verified memory.*
+> **Tagline:** *AI agents forget everything. HAcksMyMachine is their permanent, verified memory.*
 
 ---
 
@@ -18,20 +18,20 @@ This wastes:
 
 There is no shared memory. No collective intelligence. No way for one agent's hard-won solution to benefit the next.
 
-**HackOverflow fixes that.**
+**HAcksMyMachine fixes that.**
 
 ---
 
-## 2. What HackOverflow Does
+## 2. What HAcksMyMachine Does
 
-HackOverflow is a **shared, execution-verified knowledge base** that any AI agent can query via MCP.
+HAcksMyMachine is a **shared, execution-verified knowledge base** that any AI agent can query via MCP.
 
 When an agent hits a problem:
-1. It searches HackOverflow first
+1. It searches HAcksMyMachine first
 2. If a verified solution exists → returned instantly, no reasoning required
 3. If not → agent solves it, the solution is verified in a sandbox, stored, and made available to every future agent
 
-Over time, HackOverflow becomes smarter with every agent that uses it. **Collective intelligence, not isolated reasoning.**
+Over time, HAcksMyMachine becomes smarter with every agent that uses it. **Collective intelligence, not isolated reasoning.**
 
 ---
 
@@ -41,7 +41,7 @@ Over time, HackOverflow becomes smarter with every agent that uses it. **Collect
 Agent encounters a problem
          │
          ▼
-  Search HackOverflow
+  Search HAcksMyMachine
          │
     ┌────┴────┐
     │         │
@@ -74,7 +74,7 @@ That is the entire product. Everything else serves this loop.
 ## 4. MCP Tools (What You'll Build)
 
 ```
-HackOverflow MCP Server
+HAcksMyMachine MCP Server
 │
 ├── search_fix(stacktrace, language, framework, package_versions)
 │     Hybrid search: BM25 keyword + dense vector + reranker
@@ -223,18 +223,18 @@ Pre-seed these as already-verified entries with realistic success rates and reus
 
 ### Setup (Before Judges Arrive)
 - Database pre-seeded with 50+ verified fixes
-- Claude Desktop connected to HackOverflow MCP via NitroCloud URL
+- Claude Desktop connected to HAcksMyMachine MCP via NitroCloud URL
 - Simple Next.js dashboard open in browser showing knowledge cards
 - A second terminal ready to show sandbox verification live
 
 ### The Demo Sequence
 
 **Step 1 — Set the scene (30 seconds)**
-> *"Every AI agent starts from zero. Claude, Cursor, Copilot — they all re-solve the same problems from scratch, every single session. There's no shared memory. HackOverflow changes that. It's a permanent, verified knowledge base that any AI agent can query."*
+> *"Every AI agent starts from zero. Claude, Cursor, Copilot — they all re-solve the same problems from scratch, every single session. There's no shared memory. HAcksMyMachine changes that. It's a permanent, verified knowledge base that any AI agent can query."*
 
 **Step 2 — The hit (cache hit)**
 - In Claude Desktop: *"I'm getting ImportError: cannot import name 'BaseSettings' from 'pydantic' in my FastAPI app"*
-- Watch HackOverflow MCP return the verified fix instantly
+- Watch HAcksMyMachine MCP return the verified fix instantly
 - Show the knowledge card — success rate, times reused, execution log
 - Point out: **no reasoning happened. No tokens burned. Instant.**
 
@@ -271,10 +271,10 @@ Purpose-built for MCP servers. For a hackathon:
 npm install -g @nitrostack/cli
 
 # Scaffold the project
-nitrostack init hackoverflow-mcp
+nitrostack init hacksmymachine-mcp
 
 # Start local dev server
-cd hackoverflow-mcp
+cd hacksmymachine-mcp
 npm run dev
 ```
 
@@ -312,15 +312,15 @@ Once deployed, add this to `claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "hackoverflow": {
-      "url": "https://your-hackoverflow.nitrocloud.ai/mcp",
+    "hacksmymachine": {
+      "url": "https://your-hacksmymachine.nitrocloud.ai/mcp",
       "transport": "http"
     }
   }
 }
 ```
 
-Now Claude Desktop, Cursor, VS Code — any MCP client — can query HackOverflow natively.
+Now Claude Desktop, Cursor, VS Code — any MCP client — can query HAcksMyMachine natively.
 
 ### Elasticsearch Setup
 
@@ -328,7 +328,7 @@ For the hackathon, use **Elastic Cloud free tier** (14-day trial, no card needed
 
 ```bash
 # Create index with hybrid search mapping
-PUT /hackoverflow-fixes
+PUT /hacksmymachine-fixes
 {
   "mappings": {
     "properties": {
@@ -392,7 +392,7 @@ Hour 22–24  Pre-seed more entries (aim for 80 total)
 
 ## 12. The Pitch (One Paragraph)
 
-> *"Every AI agent starts from zero. Claude, Cursor, Copilot — they all re-solve the same problems from scratch, burning compute and tokens, every single session. HackOverflow is the shared memory layer they're missing. It's an MCP server exposing a hybrid-search knowledge base where every solution is execution-verified in a real sandbox before it's stored. When an agent hits an error, it queries HackOverflow first. If the fix exists and is verified, it's returned instantly — no reasoning, no tokens burned. If it doesn't exist, the agent solves it, we verify it in Docker, store it, and every future agent benefits. It's not another AI assistant. It's the memory that makes all AI assistants smarter over time."*
+> *"Every AI agent starts from zero. Claude, Cursor, Copilot — they all re-solve the same problems from scratch, burning compute and tokens, every single session. HAcksMyMachine is the shared memory layer they're missing. It's an MCP server exposing a hybrid-search knowledge base where every solution is execution-verified in a real sandbox before it's stored. When an agent hits an error, it queries HAcksMyMachine first. If the fix exists and is verified, it's returned instantly — no reasoning, no tokens burned. If it doesn't exist, the agent solves it, we verify it in Docker, store it, and every future agent benefits. It's not another AI assistant. It's the memory that makes all AI assistants smarter over time."*
 
 ---
 

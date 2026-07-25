@@ -1,7 +1,7 @@
 import { defineConfig } from '@nitrostack/core';
 
 export default defineConfig({
-  name: 'hackoverflow-mcp',
+  name: 'hacksmymachine-mcp',
   version: '1.0.0',
-  description: 'HackOverflow — Permanent, execution-verified agent memory platform.',
+  description: 'HAcksMyMachine — Permanent, execution-verified agent memory platform.',
 });

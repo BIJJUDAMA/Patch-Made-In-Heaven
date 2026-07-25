@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import React from 'react';
 
 export const metadata: Metadata = {
-  title: 'HackOverflow — Verified Agent Memory Platform',
+  title: 'HAcksMyMachine — Verified Agent Memory Platform',
   description: 'Shared, execution-verified knowledge cards for AI agents exposed via MCP.',
 };
 

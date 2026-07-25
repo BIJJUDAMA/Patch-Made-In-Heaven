@@ -1,6 +1,18 @@
+# Governance / agent-instruction docs — local-only, never pushed
+AGENTS.md
+CLAUDE.md
+GEMINI.md
+PROJECT.md
+PHASES.md
+DECISIONS.md
+
 # Working documents — never committed (see AGENTS.md Documentation Commit Rules)
 HANDOFF.md
+DOUBTS.md
 Implementation_Plans/
+
+# Personal deep-dive notes (shruhath-response-skill output) — not project docs
+response-output/
 
 # Dependencies
 node_modules/

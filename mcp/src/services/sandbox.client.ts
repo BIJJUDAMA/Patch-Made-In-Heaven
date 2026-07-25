@@ -34,7 +34,7 @@ export class SandboxClient {
 
   public async runVerification(options: SandboxOptions): Promise<SandboxResult> {
     const startTime = Date.now();
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hackoverflow-sandbox-'));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hacksmymachine-sandbox-'));
 
     try {
       const ext = this.getFileExtension(options.environment.language);
