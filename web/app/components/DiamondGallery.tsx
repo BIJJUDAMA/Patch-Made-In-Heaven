@@ -17,7 +17,6 @@ import {
   ArrowRight,
   Copy,
   Check,
-  Code2,
 } from "lucide-react";
 
 export interface ToolItem {
@@ -66,56 +65,81 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   // Number Badge (#ffffff White)
   ctx.font = '700 32px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(`/ ${tool.num}`, 50, 80);
+  ctx.fillText(`/ ${tool.num}`, 45, 75);
+
+  // Upper Right Close Icon [✕] directly inside card texture
+  ctx.fillStyle = "rgba(255, 255, 255, 0.15)";
+  ctx.beginPath();
+  ctx.arc(535, 65, 22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.7)";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.font = '700 22px "Geist Mono", monospace';
+  ctx.fillStyle = "#ffffff";
+  ctx.fillText("✕", 527, 72);
 
   // Tag Pill (#d4d4d8 Bright Silver-Gray)
-  ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
+  ctx.font = '600 18px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#d4d4d8";
   const tagWidth = ctx.measureText(tool.tag).width;
-  ctx.fillText(tool.tag, 550 - tagWidth, 76);
+  ctx.fillText(tool.tag, 495 - tagWidth, 71);
 
   // Tool Title (Syne Display Font, #ffffff Crisp White)
-  ctx.font = '800 48px "Syne", system-ui, sans-serif';
+  ctx.font = '800 46px "Syne", system-ui, sans-serif';
   ctx.fillStyle = "#ffffff";
 
   const titleWords = tool.name.split("_");
-  let y = 195;
+  let y = 180;
   for (const word of titleWords) {
-    ctx.fillText(word, 50, y);
-    y += 54;
+    ctx.fillText(word, 45, y);
+    y += 52;
   }
 
   // White Accent Line
   ctx.fillStyle = "#ffffff";
-  ctx.fillRect(50, y + 8, 95, 3.5);
+  ctx.fillRect(45, y + 6, 90, 3.5);
 
   // Description (DM Sans Body Font, #e4e4e7 High-Contrast Light Gray)
-  y += 54;
-  ctx.font = '400 23px "DM Sans", system-ui, sans-serif';
+  y += 50;
+  ctx.font = '400 22px "DM Sans", system-ui, sans-serif';
   ctx.fillStyle = "#e4e4e7";
 
   const words = tool.desc.split(" ");
   let line = "";
-  const maxWidth = 500;
-  const lineHeight = 34;
+  const maxWidth = 510;
+  const lineHeight = 32;
 
   for (const word of words) {
     const testLine = line + word + " ";
     const metrics = ctx.measureText(testLine);
     if (metrics.width > maxWidth && line !== "") {
-      ctx.fillText(line, 50, y);
+      ctx.fillText(line, 45, y);
       line = word + " ";
       y += lineHeight;
     } else {
       line = testLine;
     }
   }
-  ctx.fillText(line, 50, y);
+  ctx.fillText(line, 45, y);
 
-  // Footer (#ffffff Pure White)
-  ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
+  // Bottom Middle View JSON Schema Pill Button directly inside card texture
+  ctx.fillStyle = "rgba(255, 255, 255, 0.16)";
+  ctx.strokeStyle = "rgba(255, 255, 255, 0.85)";
+  ctx.lineWidth = 2.5;
+
+  ctx.beginPath();
+  if (typeof (ctx as any).roundRect === "function") {
+    (ctx as any).roundRect(60, 495, 480, 58, 29);
+  } else {
+    ctx.rect(60, 495, 480, 58);
+  }
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.font = '700 18px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("MCP TOOL //", 50, 538);
+  ctx.fillText("⚙  VIEW JSON SCHEMA & PARAMETERS", 115, 531);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -325,6 +349,14 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
+  
+  // Dynamic screen bounds for interactive overlay tracking
+  const [cardScreenBounds, setCardScreenBounds] = useState<{
+    top: number;
+    left: number;
+    width: number;
+    height: number;
+  } | null>(null);
 
   const stateRef = useRef({
     theta: 0,
@@ -677,6 +709,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       stateRef.current.state = "closing";
       setShowSchemaModal(false);
       setExpandedTool(null);
+      setCardScreenBounds(null);
       const { basePos, angle } = card.userData;
 
       let rotBase = angle;
@@ -778,7 +811,25 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       if (moved > 6) return;
 
       if (stateRef.current.state === "open") {
-        // Handled via UI controls when opened
+        // Direct UV Raycast onto 3D Card Texture
+        const front = stateRef.current.openedCard;
+        if (front) {
+          raycaster.setFromCamera(pointer, camera);
+          const intersects = raycaster.intersectObject(front, false);
+          if (intersects.length > 0 && intersects[0].uv) {
+            const uv = intersects[0].uv;
+            // Upper Right [✕] Close Button Zone: uv.x > 0.80 && uv.y > 0.80
+            if (uv.x > 0.78 && uv.y > 0.78) {
+              closeCard();
+              return;
+            }
+            // Bottom Middle [VIEW JSON SCHEMA] Zone: uv.x > 0.10 && uv.x < 0.90 && uv.y < 0.22
+            if (uv.x > 0.08 && uv.x < 0.92 && uv.y < 0.22) {
+              setShowSchemaModal(true);
+              return;
+            }
+          }
+        }
       } else if (stateRef.current.state === "closed") {
         const front = getFrontCard();
         raycaster.setFromCamera(pointer, camera);
@@ -884,7 +935,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         card.scale.setScalar(s);
       }
 
-      if (stateRef.current.openedCard && stateRef.current.state === "open") {
+      // Compute dynamic 2D screen coordinates of opened 3D card
+      if (stateRef.current.openedCard && (stateRef.current.state === "open" || stateRef.current.state === "opening")) {
         let rotY = -stateRef.current.theta + pointer.x * 0.12;
         rotY +=
           Math.round(
@@ -897,6 +949,21 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         stateRef.current.openedCard.rotation.x +=
           (-pointer.y * 0.1 - stateRef.current.openedCard.rotation.x) *
           Math.min(1, dt * 4);
+
+        // Project 3D card bounds to 2D screen space dynamically
+        const cardMesh = stateRef.current.openedCard;
+        const bbox = new THREE.Box3().setFromObject(cardMesh);
+        const minScreen = bbox.min.clone().project(camera);
+        const maxScreen = bbox.max.clone().project(camera);
+
+        const width = Math.abs((maxScreen.x - minScreen.x) * container.clientWidth * 0.5);
+        const height = Math.abs((maxScreen.y - minScreen.y) * container.clientHeight * 0.5);
+
+        const centerScreen = cardMesh.position.clone().project(camera);
+        const left = (centerScreen.x * 0.5 + 0.5) * container.clientWidth - width * 0.5;
+        const top = (-centerScreen.y * 0.5 + 0.5) * container.clientHeight - height * 0.5;
+
+        setCardScreenBounds({ top, left, width, height });
       }
 
       pointerSmooth.x += (pointer.x - pointerSmooth.x) * Math.min(1, dt * 2.2);
@@ -1049,23 +1116,21 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Action Control Overlays - Positioned STRICTLY INSIDE the Card Frame Bounds */}
-      {expandedTool && !showSchemaModal && (
+      {/* Dynamic 2D Screen-Space Overlay Controls tracking the 3D Card Matrix strictly */}
+      {expandedTool && !showSchemaModal && cardScreenBounds && (
         <div
           style={{
             position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            width: "min(74vw, 540px)",
-            height: "min(74vw, 540px)",
-            maxHeight: "72vh",
+            top: `${cardScreenBounds.top}px`,
+            left: `${cardScreenBounds.left}px`,
+            width: `${cardScreenBounds.width}px`,
+            height: `${cardScreenBounds.height}px`,
             zIndex: 25,
             pointerEvents: "none",
-            animation: "fadeUp 260ms ease both",
+            animation: "fadeUp 200ms ease both",
           }}
         >
-          {/* Upper Right Close Card Button X */}
+          {/* Upper Right Close Button [✕] inside the Card Top-Right Corner */}
           <button
             onClick={() => stateRef.current.closeCard()}
             className="active-press"
@@ -1073,13 +1138,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             aria-label="Close Card"
             style={{
               position: "absolute",
-              top: "22px",
-              right: "22px",
-              width: "40px",
-              height: "40px",
+              top: "14px",
+              right: "14px",
+              width: "42px",
+              height: "42px",
               borderRadius: "50%",
-              border: "1.5px solid rgba(255, 255, 255, 0.55)",
-              background: "rgba(10, 10, 10, 0.85)",
+              border: "2px solid rgba(255, 255, 255, 0.75)",
+              background: "rgba(10, 10, 10, 0.9)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               color: "#ffffff",
@@ -1087,46 +1152,45 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               alignItems: "center",
               justifyContent: "center",
               cursor: "pointer",
-              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.8)",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.85)",
               pointerEvents: "auto",
-              transition: "transform 150ms ease, background-color 150ms ease",
             }}
           >
-            <X style={{ width: "18px", height: "18px" }} />
+            <X style={{ width: "20px", height: "20px" }} />
           </button>
 
-          {/* Middle Bottom View JSON Schema Button */}
+          {/* Bottom Center View JSON Schema Button inside the Card Bottom */}
           {expandedTool.schema && (
             <button
               onClick={() => setShowSchemaModal(true)}
               className="active-press"
               style={{
                 position: "absolute",
-                bottom: "26px",
+                bottom: "16px",
                 left: "50%",
                 transform: "translateX(-50%)",
                 whiteSpace: "nowrap",
                 display: "flex",
                 alignItems: "center",
                 gap: "0.625rem",
-                padding: "0.8rem 1.6rem",
+                padding: "0.85rem 1.65rem",
                 borderRadius: "100px",
-                border: "1.5px solid rgba(255, 255, 255, 0.55)",
-                background: "linear-gradient(135deg, rgba(30, 30, 30, 0.92) 0%, rgba(10, 10, 10, 0.92) 100%)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
+                border: "2px solid rgba(255, 255, 255, 0.8)",
+                background: "linear-gradient(135deg, rgba(35, 35, 35, 0.95) 0%, rgba(12, 12, 12, 0.95) 100%)",
+                backdropFilter: "blur(16px)",
+                WebkitBackdropFilter: "blur(16px)",
                 color: "#ffffff",
                 fontFamily: 'var(--font-mono), "Geist Mono", monospace',
-                fontSize: "0.78rem",
+                fontSize: "0.8125rem",
                 fontWeight: 700,
                 letterSpacing: "0.09em",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                boxShadow: "0 14px 40px rgba(0, 0, 0, 0.9)",
+                boxShadow: "0 16px 45px rgba(0, 0, 0, 0.95)",
                 pointerEvents: "auto",
               }}
             >
-              <Settings style={{ width: "15px", height: "15px" }} /> View JSON Schema
+              <Settings style={{ width: "16px", height: "16px" }} /> View JSON Schema & Parameters
             </button>
           )}
         </div>
