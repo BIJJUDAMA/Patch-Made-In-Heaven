@@ -1099,18 +1099,19 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Dynamic 2D Screen-Space Overlay Controls tracking the 3D Card Matrix strictly */}
-      {expandedTool && !showSchemaModal && cardScreenBounds && (
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (1:1 Ratio Square) */}
+      {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            top: `${cardScreenBounds.top}px`,
-            left: `${cardScreenBounds.left}px`,
-            width: `${cardScreenBounds.width}px`,
-            height: `${cardScreenBounds.height}px`,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "min(68vw, 68vh, 520px)",
+            height: "min(68vw, 68vh, 520px)",
             zIndex: 25,
             pointerEvents: "none",
-            animation: "fadeUp 200ms ease both",
+            animation: "fadeUp 220ms ease both",
           }}
         >
           {/* Upper Right Close Button [✕] inside the Card Top-Right Corner */}
@@ -1121,13 +1122,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             aria-label="Close Card"
             style={{
               position: "absolute",
-              top: "14px",
-              right: "14px",
+              top: "16px",
+              right: "16px",
               width: "42px",
               height: "42px",
               borderRadius: "50%",
               border: "2px solid rgba(255, 255, 255, 0.75)",
-              background: "rgba(10, 10, 10, 0.9)",
+              background: "rgba(10, 10, 10, 0.92)",
               backdropFilter: "blur(12px)",
               WebkitBackdropFilter: "blur(12px)",
               color: "#ffffff",
@@ -1149,7 +1150,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               className="active-press"
               style={{
                 position: "absolute",
-                bottom: "16px",
+                bottom: "20px",
                 left: "50%",
                 transform: "translateX(-50%)",
                 whiteSpace: "nowrap",
