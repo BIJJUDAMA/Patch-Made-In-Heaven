@@ -1,59 +1,134 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
-import { ElasticService, KnowledgeCard } from '../services/elastic.client.js';
+import { ElasticService, type KnowledgeCard } from '../services/elastic.client.js';
+import { VerificationRunClient, computePatchDigest } from '../services/verification-run.client.js';
+import { environmentMetaSchema, knowledgeCardSchema, isTrustedForIndexing } from '../domain/knowledge-card.js';
+import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
 
 const submitFixSchema = z.object({
-  problemDescription: z.string().describe('Clear summary of the error or problem solved.'),
-  errorType: z.string().describe('Category of error (e.g. ImportError, TypeError, ReferenceError).'),
-  stacktrace: z.string().optional().describe('Full error stack trace or snippet.'),
-  patch: z.string().describe('Unified git diff patch showing code changes.'),
-  environment: z.object({
-    language: z.string().describe('Programming language.'),
-    version: z.string().optional(),
-    framework: z.string().optional(),
-    packageVersions: z.record(z.string()).optional(),
-  }),
-  verificationStatus: z.enum(['PASS', 'FAIL']).default('PASS').describe('Status from verify_fix execution.'),
+  problemDescription: z.string().trim().min(1).describe('Clear summary of the error or problem solved.'),
+  errorLog: z.string().trim().min(1).describe('The error stacktrace or log text that the fix resolves.'),
+  patch: z
+    .string()
+    .trim()
+    .min(1)
+    .describe('Unified git diff patch — must byte-for-byte match the diff a prior verify_fix call produced.'),
+  verificationLog: z
+    .string()
+    .trim()
+    .min(1)
+    .describe('The verificationRunId returned by the verify_fix call that proved this exact patch.'),
+  environment: environmentMetaSchema,
 });
+
+const ERROR_TYPE_PATTERN = /\b([A-Z][A-Za-z0-9]*(?:Error|Exception))\b/;
+
+/** Best-effort extraction since submit_fix's V1 input contract (PRD §6.1) has no separate errorType field. */
+function deriveErrorType(errorLog: string): string {
+  return errorLog.match(ERROR_TYPE_PATTERN)?.[1] ?? 'UnknownError';
+}
+
+function rejected(code: string, message: string) {
+  return buildSuccessEnvelope('REJECTED', {
+    knowledgeCardId: null,
+    indexed: false,
+    rejectionCode: code,
+    message,
+  });
+}
+
+export interface SubmitToolsOptions {
+  elasticService?: ElasticService;
+  verificationRunClient?: VerificationRunClient;
+}
 
 @Controller()
 export class SubmitTools {
-  private elasticService = new ElasticService();
+  private elasticService: ElasticService;
+  private verificationRunClient: VerificationRunClient;
+
+  constructor(options: SubmitToolsOptions = {}) {
+    this.elasticService = options.elasticService ?? new ElasticService();
+    this.verificationRunClient = options.verificationRunClient ?? new VerificationRunClient();
+  }
 
   @Tool({
     name: 'submit_fix',
-    description: 'Publishes an execution-verified patch to the Elasticsearch knowledge base for all future agents to access.',
+    description:
+      'Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run created by a prior verify_fix call — never trusts a caller-supplied verification status.',
     inputSchema: submitFixSchema,
   })
   async submitFix(params: z.infer<typeof submitFixSchema>) {
-    const id = `fix_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
-    
+    if (!this.elasticService.isConnected() || !this.verificationRunClient.isConnected()) {
+      return dependencyUnavailableEnvelope('Elasticsearch is not configured; submit_fix cannot validate or store a fix.');
+    }
+
+    const patchDigest = computePatchDigest(params.patch);
+    const run = await this.verificationRunClient.lookup(params.verificationLog, patchDigest);
+
+    if (!run) {
+      return rejected(
+        'VERIFICATION_RUN_NOT_MATCHED',
+        'No matching, unexpired Verification Run was found for this exact patch. Call verify_fix again with the current patch before submitting.'
+      );
+    }
+
+    if (run.status !== 'PASS') {
+      return rejected(
+        'VERIFICATION_NOT_PASSED',
+        `The matched Verification Run has status "${run.status}", not PASS. A fix can only be submitted after a passing verification.`
+      );
+    }
+
+    const id = `fix_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 6)}`;
     const card: KnowledgeCard = {
       id,
       problem: params.problemDescription,
-      errorType: params.errorType,
-      stacktrace: params.stacktrace || '',
+      errorType: deriveErrorType(params.errorLog),
+      stacktrace: params.errorLog,
       environment: params.environment,
       patch: params.patch,
       verification: {
-        status: params.verificationStatus,
-        score: params.verificationStatus === 'PASS' ? 0.99 : 0.0,
-        lastVerified: new Date().toISOString(),
+        status: 'PASS',
+        score: 0.9,
+        lastVerified: run.createdAt,
         sandbox: 'docker',
+        exitCode: run.exitCode ?? undefined,
+        durationMs: run.durationMs ?? undefined,
+        stdout: run.stdout,
+        stderr: run.stderr,
       },
-      metrics: {
-        reuseCount: 1,
+      metrics: { reuseCount: 1 },
+      provenance: {
+        source: 'agent-submitted',
+        addedAt: new Date().toISOString(),
       },
     };
 
-    if (this.elasticService.isConnected()) {
-      await this.elasticService.indexFix(card);
+    const parsed = knowledgeCardSchema.safeParse(card);
+    if (!parsed.success) {
+      return rejected(
+        'SCHEMA_VALIDATION_FAILED',
+        `Constructed knowledge card failed schema validation: ${parsed.error.issues.map((issue) => issue.message).join('; ')}`
+      );
     }
 
-    return {
-      knowledgeCardId: id,
+    if (!isTrustedForIndexing(parsed.data)) {
+      // Unreachable given the PASS-run gate above, but never index on a technicality.
+      return rejected('VERIFICATION_NOT_PASSED', 'The constructed card did not satisfy the trust rule for indexing.');
+    }
+
+    try {
+      await this.elasticService.indexFix(parsed.data);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      return dependencyUnavailableEnvelope(`Failed to index the verified fix: ${message}`);
+    }
+
+    return buildSuccessEnvelope('STORED', {
+      knowledgeCardId: parsed.data.id,
       indexed: true,
-      card,
-    };
+      card: parsed.data,
+    });
   }
 }
