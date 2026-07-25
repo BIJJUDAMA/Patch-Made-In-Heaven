@@ -262,21 +262,24 @@ const cardFragmentShader = /* glsl */ `
       image = vec3(0.04, 0.04, 0.04) + iri * 0.1;
     }
 
-    vec3 crystal = mix(iri, vec3(0.9, 0.9, 0.9), 0.5); // Pure Silver/White crystal reflection
+    float focusHoloDampen = (1.0 - 0.45 * uFocus);
+    float focusImageBoost = 1.05 + 0.5 * uFocus;
+
+    vec3 crystal = mix(iri, vec3(0.9, 0.9, 0.9), 0.5);
     vec3 iceGleam = mix(iri, vec3(0.8, 0.8, 0.8), 0.45);
     vec3 imgTint = 0.25 + 0.75 * image;
     vec3 iriChroma = iri - dot(iri, vec3(0.299, 0.587, 0.114));
-    vec3 color = image * (0.98 + 0.05 * uFocus + 0.025 * sweep)
-               + iriChroma * liquid * (0.3 + 0.3 * sweep) * holo
-               + iri * liquid * (0.05 + 0.06 * sweep) * holo
-               + iceGleam * imgTint * gleam * (0.14 + 0.25 * sweep) * holo
-               + iceGleam * imgTint * gleam2 * (0.06 + 0.12 * sweep) * holo
-               + crystal * glass * (0.18 + 0.3 * sweep) * holo
-               + iri * fres * (0.16 + 0.12 * sweep) * holo;
+    vec3 color = image * focusImageBoost
+               + iriChroma * liquid * (0.15 + 0.15 * sweep) * holo * focusHoloDampen
+               + iri * liquid * (0.03 + 0.03 * sweep) * holo * focusHoloDampen
+               + iceGleam * imgTint * gleam * (0.08 + 0.12 * sweep) * holo * focusHoloDampen
+               + iceGleam * imgTint * gleam2 * (0.04 + 0.08 * sweep) * holo * focusHoloDampen
+               + crystal * glass * (0.12 + 0.2 * sweep) * holo
+               + iri * fres * (0.12 + 0.08 * sweep) * holo;
 
     vec2 pUv = uPointer * 0.5 + 0.5;
     float sheen = exp(-dot(vUv - pUv, vUv - pUv) * 6.0) * uFocus * (1.0 - uOpen);
-    color += crystal * sheen * 0.10;
+    color += crystal * sheen * 0.15;
 
     float metalSheen = pow(0.5 + 0.5 * sin((vUv.x - vUv.y) * 5.0 + bandBase * 3.0 + uTime * 0.3), 8.0);
     vec3 silver = mix(vec3(0.3, 0.3, 0.3), vec3(0.95, 0.95, 0.95), bevel); // Pure Silver Frame
@@ -894,6 +897,43 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
       {/* Radial Glow Overlay matching monochrome Apple minimal theme */}
       <div className="dg-glow" />
+
+      {/* Top Left Click-to-Expand Reminder Pill */}
+      <div
+        style={{
+          position: "absolute",
+          left: "2rem",
+          top: "2rem",
+          zIndex: 10,
+          display: "flex",
+          alignItems: "center",
+          gap: "0.625rem",
+          padding: "0.5rem 0.875rem",
+          borderRadius: "100px",
+          border: "1px solid var(--border-strong)",
+          backgroundColor: "rgba(10, 10, 10, 0.75)",
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          color: "var(--text-high)",
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.6875rem",
+          letterSpacing: "0.12em",
+          textTransform: "uppercase",
+          pointerEvents: "none",
+        }}
+      >
+        <span
+          style={{
+            width: "6px",
+            height: "6px",
+            borderRadius: "50%",
+            backgroundColor: "#ffffff",
+            display: "inline-block",
+            boxShadow: "0 0 8px rgba(255, 255, 255, 0.8)",
+          }}
+        />
+        Click card to expand ↗
+      </div>
 
       {/* Counter & Panel Right */}
       <div className="dg-panel-right">
