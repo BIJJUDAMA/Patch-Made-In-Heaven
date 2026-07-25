@@ -1,0 +1,42 @@
+name: mcp-phase1
+
+on:
+  push:
+    branches:
+      - feat/phase-01-core-search
+    paths:
+      - "mcp/**"
+      - ".github/workflows/mcp-phase1.yml"
+  pull_request:
+    paths:
+      - "mcp/**"
+      - ".github/workflows/mcp-phase1.yml"
+
+defaults:
+  run:
+    working-directory: mcp
+
+jobs:
+  fast-checks:
+    name: typecheck, unit tests, build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: mcp/package-lock.json
+
+      - name: Install dependencies (locked)
+        run: npm ci
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Production build
+        run: npm run build
