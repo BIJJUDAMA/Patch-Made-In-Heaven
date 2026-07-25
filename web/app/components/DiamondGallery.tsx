@@ -1049,77 +1049,86 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Action Control Bar - Positioned STRICTLY WITHIN the Card Frame Area */}
+      {/* Action Control Overlays - Positioned STRICTLY INSIDE the Card Frame Bounds */}
       {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
             top: "50%",
             left: "50%",
-            transform: "translate(-50%, 140px)",
-            width: "90%",
-            maxWidth: "460px",
+            transform: "translate(-50%, -50%)",
+            width: "min(74vw, 540px)",
+            height: "min(74vw, 540px)",
+            maxHeight: "72vh",
             zIndex: 25,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            gap: "0.75rem",
-            pointerEvents: "auto",
+            pointerEvents: "none",
             animation: "fadeUp 260ms ease both",
           }}
         >
+          {/* Upper Right Close Card Button X */}
+          <button
+            onClick={() => stateRef.current.closeCard()}
+            className="active-press"
+            title="Close Card"
+            aria-label="Close Card"
+            style={{
+              position: "absolute",
+              top: "22px",
+              right: "22px",
+              width: "40px",
+              height: "40px",
+              borderRadius: "50%",
+              border: "1.5px solid rgba(255, 255, 255, 0.55)",
+              background: "rgba(10, 10, 10, 0.85)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              color: "#ffffff",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              boxShadow: "0 10px 25px rgba(0, 0, 0, 0.8)",
+              pointerEvents: "auto",
+              transition: "transform 150ms ease, background-color 150ms ease",
+            }}
+          >
+            <X style={{ width: "18px", height: "18px" }} />
+          </button>
+
+          {/* Middle Bottom View JSON Schema Button */}
           {expandedTool.schema && (
             <button
               onClick={() => setShowSchemaModal(true)}
               className="active-press"
               style={{
-                flex: 1,
+                position: "absolute",
+                bottom: "26px",
+                left: "50%",
+                transform: "translateX(-50%)",
+                whiteSpace: "nowrap",
                 display: "flex",
                 alignItems: "center",
-                justifyContent: "center",
-                gap: "0.5rem",
-                padding: "0.8rem 1.1rem",
-                borderRadius: "12px",
-                border: "2px solid rgba(255, 255, 255, 0.45)",
-                background: "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 100%)",
+                gap: "0.625rem",
+                padding: "0.8rem 1.6rem",
+                borderRadius: "100px",
+                border: "1.5px solid rgba(255, 255, 255, 0.55)",
+                background: "linear-gradient(135deg, rgba(30, 30, 30, 0.92) 0%, rgba(10, 10, 10, 0.92) 100%)",
+                backdropFilter: "blur(14px)",
+                WebkitBackdropFilter: "blur(14px)",
                 color: "#ffffff",
                 fontFamily: 'var(--font-mono), "Geist Mono", monospace',
-                fontSize: "0.75rem",
+                fontSize: "0.78rem",
                 fontWeight: 700,
-                letterSpacing: "0.08em",
+                letterSpacing: "0.09em",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
+                boxShadow: "0 14px 40px rgba(0, 0, 0, 0.9)",
+                pointerEvents: "auto",
               }}
             >
-              <Settings style={{ width: "14px", height: "14px" }} /> View JSON Schema
+              <Settings style={{ width: "15px", height: "15px" }} /> View JSON Schema
             </button>
           )}
-
-          <button
-            onClick={() => stateRef.current.closeCard()}
-            className="active-press"
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "0.4rem",
-              padding: "0.8rem 1.25rem",
-              borderRadius: "12px",
-              border: "2px solid rgba(255, 255, 255, 0.35)",
-              background: "linear-gradient(135deg, #151515 0%, #050505 100%)",
-              color: "#ffffff",
-              fontFamily: 'var(--font-mono), "Geist Mono", monospace',
-              fontSize: "0.75rem",
-              fontWeight: 700,
-              letterSpacing: "0.08em",
-              textTransform: "uppercase",
-              cursor: "pointer",
-              boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
-            }}
-          >
-            <X style={{ width: "14px", height: "14px" }} /> Close Card
-          </button>
         </div>
       )}
 
