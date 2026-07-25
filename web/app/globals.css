@@ -423,35 +423,180 @@ a:hover { color: var(--color-main); }
   transform: translateX(3px);
 }
 
-/* ── 3-col tools grid ────────────────────────── */
-.tools-grid {
+/* ── Diamond Gallery cards ───────────────────── */
+/* Fonts from Diamond Gallery reference */
+:root {
+  --dg-cream: #f5f1e8;
+  --dg-dim: rgba(245,241,232,0.45);
+  --dg-gold: #c9a876;
+  --dg-gold-dim: rgba(201,168,118,0.55);
+  --dg-line: rgba(245,241,232,0.16);
+  --dg-serif: "Didot","Bodoni 72","Playfair Display",Georgia,serif;
+  --dg-mono: "SF Mono","Cascadia Code","Courier New",monospace;
+}
+
+.dg-cards-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1px;
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.07);
-  margin-bottom: 1.5rem;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0;
+  margin-bottom: 2rem;
+  border: 1px solid var(--dg-line);
 }
-.tool-card-hh {
-  background: var(--div-bg);
-  padding: 22px 24px;
-  transition: background 0.2s ease;
+
+.dg-card {
+  position: relative;
+  border-right: 1px solid var(--dg-line);
+  background: #010102;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  overflow: hidden;
+  cursor: default;
+  transition: border-color 0.4s ease;
 }
-.tool-card-hh:hover { background: rgba(64,53,72,0.35); }
-.tool-card-hh-name {
-  font-family: var(--font-main);
-  font-size: 12px;
-  font-weight: 700;
+.dg-card:last-child { border-right: none; }
+.dg-card:hover { border-color: var(--dg-gold-dim); }
+
+/* Holographic shimmer overlay — diagonal sweep on hover */
+.dg-card-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(
+    115deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(201,168,118,0.07) 48%,
+    rgba(245,241,232,0.12) 50%,
+    rgba(201,168,118,0.07) 52%,
+    transparent 60%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  background-position: -100% 0;
+  transition: background-position 0.7s ease;
+}
+.dg-card:hover .dg-card-shimmer {
+  background-position: 200% 0;
+  transition: background-position 0.7s ease;
+}
+
+/* Iridescent edge glow */
+.dg-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(201,168,118,0.06) 0%,
+    transparent 30%,
+    transparent 70%,
+    rgba(201,168,118,0.04) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.dg-card:hover::before { opacity: 1; }
+
+.dg-card-inner {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  padding: 20px 18px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.dg-card-eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.dg-card-num {
+  font-family: var(--dg-mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--dg-gold);
+}
+.dg-card-tag {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--dg-mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-accent2);
-  margin-bottom: 8px;
+  color: var(--dg-dim);
 }
-.tool-card-hh-desc {
-  font-size: 11px;
-  color: var(--color-main);
-  opacity: 0.7;
-  line-height: 1.6;
+.dg-card-dot {
+  display: inline-block;
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: var(--dg-gold);
+  box-shadow: 0 0 6px rgba(201,168,118,0.7);
+}
+
+.dg-card-name {
+  font-family: var(--dg-serif);
+  font-size: 15px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--dg-cream);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  word-break: break-word;
+}
+
+.dg-card-divider {
+  width: 28px;
+  height: 1px;
+  background: var(--dg-gold-dim);
+  margin: 14px 0;
+  flex-shrink: 0;
+}
+
+.dg-card-desc {
+  font-family: var(--dg-mono);
+  font-size: 9.5px;
+  line-height: 1.72;
+  color: var(--dg-dim);
+  letter-spacing: 0.02em;
+  flex: 1;
+}
+
+.dg-card-bottom {
+  position: relative;
+  z-index: 2;
+  padding: 12px 18px;
+  border-top: 1px solid var(--dg-line);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  transition: border-color 0.4s ease;
+}
+.dg-card:hover .dg-card-bottom { border-color: var(--dg-gold-dim); }
+
+.dg-card-arrow {
+  font-size: 12px;
+  color: var(--dg-gold);
+  opacity: 0.4;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.dg-card:hover .dg-card-arrow {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+@media (max-width: 1100px) {
+  .dg-cards-row { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 720px) {
+  .dg-cards-row { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ── Inspector section ───────────────────────── */

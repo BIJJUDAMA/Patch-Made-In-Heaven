@@ -21,31 +21,42 @@ const MCP_URL =
 
 const TOOLS = [
   {
+    num: "01",
     name: "search_fix",
+    tag: "Retrieval",
     desc:
       "Finds verified patches matching a given stack trace or error log via BM25 full-text + dense vector hybrid search.",
   },
   {
+    num: "02",
     name: "find_similar",
+    tag: "Semantic",
     desc:
       "Performs semantic vector search across the knowledge store to surface related engineering fixes.",
   },
   {
+    num: "03",
     name: "get_patch",
+    tag: "Retrieval",
     desc:
       "Returns the raw unified git diff patch for a verified solution by knowledge-entry ID.",
   },
   {
+    num: "04",
     name: "get_execution_log",
+    tag: "Logs",
     desc:
       "Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.",
   },
   {
+    num: "05",
     name: "verify_fix",
+    tag: "Sandbox",
     desc:
       "Executes a candidate fix inside an isolated Docker sandbox and persists the outcome as a server-owned Verification Run.",
   },
   {
+    num: "06",
     name: "submit_fix",
     desc:
       "Publishes an execution-verified patch to the knowledge base after sandbox confirmation.",
@@ -163,7 +174,10 @@ export default function Page() {
     setLoading(true);
     try {
       const r = await fetch("/api/cards");
-      if (r.ok) setCards(await r.json());
+      if (r.ok) {
+        const data = await r.json();
+        setCards(Array.isArray(data) ? data : (data?.cards ?? data?.data ?? []));
+      }
     } catch (_) {}
     finally { setLoading(false); }
   };
@@ -306,11 +320,22 @@ export default function Page() {
               <span className="category-highlight">Tools</span>
             </div>
 
-            <div className="tools-grid">
+            <div className="dg-cards-row">
               {TOOLS.map((t) => (
-                <div className="tool-card-hh" key={t.name}>
-                  <div className="tool-card-hh-name">{t.name.replace(/_/g, "_\u200B")}</div>
-                  <div className="tool-card-hh-desc">{t.desc}</div>
+                <div className="dg-card" key={t.name}>
+                  <div className="dg-card-shimmer" />
+                  <div className="dg-card-inner">
+                    <div className="dg-card-eyebrow">
+                      <span className="dg-card-num">{t.num}</span>
+                      <span className="dg-card-tag">{t.tag}<span className="dg-card-dot"></span></span>
+                    </div>
+                    <div className="dg-card-name">{t.name.replace(/_/g, "_\u200B")}</div>
+                    <div className="dg-card-divider" />
+                    <div className="dg-card-desc">{t.desc}</div>
+                  </div>
+                  <div className="dg-card-bottom">
+                    <span className="dg-card-arrow">→</span>
+                  </div>
                 </div>
               ))}
             </div>
