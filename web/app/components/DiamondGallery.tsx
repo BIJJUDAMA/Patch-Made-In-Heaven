@@ -9,6 +9,16 @@ import { UnrealBloomPass } from "three/examples/jsm/postprocessing/UnrealBloomPa
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
 import { OutputPass } from "three/examples/jsm/postprocessing/OutputPass.js";
 import { Reflector } from "three/examples/jsm/objects/Reflector.js";
+import {
+  Settings,
+  X,
+  ArrowUpRight,
+  ArrowLeft,
+  ArrowRight,
+  Copy,
+  Check,
+  Code2,
+} from "lucide-react";
 
 export interface ToolItem {
   num: string;
@@ -105,7 +115,7 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   // Footer (#ffffff Pure White)
   ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText("MCP TOOL →", 50, 538);
+  ctx.fillText("MCP TOOL //", 50, 538);
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
@@ -582,7 +592,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       stateRef.current.openedCard = card;
       stateRef.current.velocity = 0;
       setExpandedTool(card.userData.tool);
-      setShowSchemaModal(false); // Expanded card zoomed in 3D initially!
+      setShowSchemaModal(false);
       if (onSelectTool) onSelectTool(card.userData.tool);
 
       const thetaTarget =
@@ -969,7 +979,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               display: "inline-block",
             }}
           />
-          Click card to expand ↗
+          <span>Click card to expand</span>
+          <ArrowUpRight style={{ width: "13px", height: "13px", strokeWidth: 2 }} />
         </div>
       )}
 
@@ -992,14 +1003,14 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               onClick={() => stateRef.current.stepCard(-1)}
               title="Previous tool"
             >
-              ←
+              <ArrowLeft style={{ width: "14px", height: "14px" }} />
             </button>
             <button
               className="dg-circle-btn"
               onClick={() => stateRef.current.stepCard(1)}
               title="Next tool"
             >
-              →
+              <ArrowRight style={{ width: "14px", height: "14px" }} />
             </button>
           </div>
         </div>
@@ -1013,7 +1024,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(-1)}
           >
-            ←
+            <ArrowLeft style={{ width: "13px", height: "13px" }} />
           </button>
 
           <div style={{ display: "flex", gap: "0.5rem" }}>
@@ -1033,25 +1044,28 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(1)}
           >
-            →
+            <ArrowRight style={{ width: "13px", height: "13px" }} />
           </button>
         </div>
       )}
 
-      {/* 3D Expanded Card Overlay Controls */}
+      {/* Action Control Bar - Positioned STRICTLY WITHIN the Card Frame Area */}
       {expandedTool && !showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            bottom: "2.5rem",
+            top: "50%",
             left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 20,
+            transform: "translate(-50%, 140px)",
+            width: "90%",
+            maxWidth: "460px",
+            zIndex: 25,
             display: "flex",
             alignItems: "center",
-            gap: "0.875rem",
+            justifyContent: "center",
+            gap: "0.75rem",
             pointerEvents: "auto",
-            animation: "fadeUp 240ms ease both",
+            animation: "fadeUp 260ms ease both",
           }}
         >
           {expandedTool.schema && (
@@ -1059,26 +1073,26 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               onClick={() => setShowSchemaModal(true)}
               className="active-press"
               style={{
+                flex: 1,
                 display: "flex",
                 alignItems: "center",
-                gap: "0.625rem",
-                padding: "0.75rem 1.5rem",
-                borderRadius: "100px",
-                border: "1px solid var(--border-strong)",
-                backgroundColor: "rgba(18, 18, 18, 0.85)",
-                backdropFilter: "blur(16px)",
-                WebkitBackdropFilter: "blur(16px)",
+                justifyContent: "center",
+                gap: "0.5rem",
+                padding: "0.8rem 1.1rem",
+                borderRadius: "12px",
+                border: "2px solid rgba(255, 255, 255, 0.45)",
+                background: "linear-gradient(135deg, #1f1f1f 0%, #0d0d0d 100%)",
                 color: "#ffffff",
-                fontFamily: "var(--font-mono)",
-                fontSize: "0.78rem",
-                fontWeight: 600,
+                fontFamily: 'var(--font-mono), "Geist Mono", monospace',
+                fontSize: "0.75rem",
+                fontWeight: 700,
                 letterSpacing: "0.08em",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7)",
+                boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
               }}
             >
-              <span>⚙</span> View JSON Schema & Parameters
+              <Settings style={{ width: "14px", height: "14px" }} /> View JSON Schema
             </button>
           )}
 
@@ -1086,97 +1100,160 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             onClick={() => stateRef.current.closeCard()}
             className="active-press"
             style={{
-              padding: "0.75rem 1.25rem",
-              borderRadius: "100px",
-              border: "1px solid var(--border-strong)",
-              backgroundColor: "rgba(38, 38, 38, 0.85)",
-              backdropFilter: "blur(16px)",
-              WebkitBackdropFilter: "blur(16px)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: "0.4rem",
+              padding: "0.8rem 1.25rem",
+              borderRadius: "12px",
+              border: "2px solid rgba(255, 255, 255, 0.35)",
+              background: "linear-gradient(135deg, #151515 0%, #050505 100%)",
               color: "#ffffff",
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.78rem",
-              fontWeight: 600,
+              fontFamily: 'var(--font-mono), "Geist Mono", monospace',
+              fontSize: "0.75rem",
+              fontWeight: 700,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
               cursor: "pointer",
-              boxShadow: "0 10px 30px rgba(0, 0, 0, 0.7)",
+              boxShadow: "0 12px 35px rgba(0, 0, 0, 0.95)",
             }}
           >
-            ✕ Close Card
+            <X style={{ width: "14px", height: "14px" }} /> Close Card
           </button>
         </div>
       )}
 
-      {/* On-Top JSON Schema & Parameter Inspector Modal */}
+      {/* JSON Schema Popup Inspector - STYLED IN THE EXACT THEME & AESTHETIC OF THE CARD */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
           style={{
             position: "absolute",
-            inset: "1.75rem",
-            zIndex: 35,
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "calc(100% - 3.5rem)",
+            maxWidth: "760px",
+            maxHeight: "85vh",
+            zIndex: 40,
             display: "flex",
             flexDirection: "column",
-            backgroundColor: "#121212",
-            backdropFilter: "blur(24px)",
-            WebkitBackdropFilter: "blur(24px)",
-            border: "1px solid rgba(255, 255, 255, 0.35)",
-            borderRadius: "16px",
-            padding: "1.75rem 2rem",
+            background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 40%, #030303 100%)",
+            border: "2px solid rgba(255, 255, 255, 0.45)",
+            borderRadius: "20px",
+            padding: "2rem 2.25rem",
             color: "#ffffff",
             overflow: "hidden",
-            boxShadow: "0 30px 60px rgba(0, 0, 0, 0.95)",
+            boxShadow: "0 40px 90px rgba(0, 0, 0, 0.98), inset 0 0 0 1px rgba(255,255,255,0.15)",
             pointerEvents: "auto",
             animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
           }}
         >
-          {/* Header matching card aesthetic */}
+          {/* Subtle Linear Grid Pattern matching Card Texture */}
           <div
             style={{
+              position: "absolute",
+              inset: 0,
+              pointerEvents: "none",
+              backgroundImage:
+                "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+              backgroundSize: "45px 45px",
+              opacity: 0.7,
+              zIndex: 0,
+            }}
+          />
+
+          {/* Modal Header matching Card Texture typography & badges */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
               display: "flex",
-              alignItems: "center",
+              alignItems: "flex-start",
               justifyContent: "space-between",
-              marginBottom: "1.25rem",
-              paddingBottom: "1rem",
-              borderBottom: "1px solid var(--border-muted)",
+              marginBottom: "1rem",
+              paddingBottom: "1.25rem",
+              borderBottom: "1px solid rgba(255, 255, 255, 0.2)",
             }}
           >
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-              <span
+            <div>
+              {/* Badge & Number */}
+              <div
                 style={{
-                  padding: "0.25rem 0.75rem",
-                  borderRadius: "100px",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
-                  fontFamily: "var(--font-mono)",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  color: "#ffffff",
-                  letterSpacing: "0.08em",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.875rem",
+                  marginBottom: "0.625rem",
                 }}
               >
-                {expandedTool.tag}
-              </span>
+                <span
+                  style={{
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
+                    fontSize: "0.875rem",
+                    fontWeight: 700,
+                    color: "#ffffff",
+                  }}
+                >
+                  / {expandedTool.num}
+                </span>
+                <span
+                  style={{
+                    padding: "0.2rem 0.65rem",
+                    borderRadius: "4px",
+                    border: "1px solid rgba(255, 255, 255, 0.35)",
+                    backgroundColor: "rgba(255, 255, 255, 0.08)",
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
+                    fontSize: "0.72rem",
+                    fontWeight: 600,
+                    color: "#d4d4d8",
+                    letterSpacing: "0.08em",
+                  }}
+                >
+                  {expandedTool.tag}
+                </span>
+              </div>
+
+              {/* Title */}
               <h3
-                className="display-font"
                 style={{
-                  fontSize: "1.4rem",
+                  fontFamily: '"Syne", system-ui, sans-serif',
+                  fontSize: "1.65rem",
                   fontWeight: 800,
                   letterSpacing: "-0.02em",
                   color: "#ffffff",
+                  textTransform: "uppercase",
+                  marginBottom: "0.5rem",
                 }}
               >
                 {expandedTool.name}
               </h3>
+
+              {/* Card White Accent Line */}
+              <div
+                style={{
+                  width: "80px",
+                  height: "3.5px",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "2px",
+                }}
+              />
             </div>
 
-            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "0.75rem",
+                position: "relative",
+                zIndex: 1,
+              }}
+            >
               {/* Tab Selector */}
               <div
                 style={{
                   display: "flex",
                   borderRadius: "8px",
-                  backgroundColor: "rgba(0, 0, 0, 0.6)",
-                  border: "1px solid var(--border-muted)",
+                  backgroundColor: "#080808",
+                  border: "1px solid rgba(255, 255, 255, 0.25)",
                   padding: "3px",
                 }}
               >
@@ -1187,11 +1264,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
-                      activeTab === "params" ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                      activeTab === "params" ? "#222222" : "transparent",
                     color: activeTab === "params" ? "#ffffff" : "var(--text-medium)",
-                    fontFamily: "var(--font-mono)",
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                     fontSize: "0.75rem",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: "pointer",
                   }}
                 >
@@ -1204,11 +1281,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
-                      activeTab === "schema" ? "rgba(255, 255, 255, 0.15)" : "transparent",
+                      activeTab === "schema" ? "#222222" : "transparent",
                     color: activeTab === "schema" ? "#ffffff" : "var(--text-medium)",
-                    fontFamily: "var(--font-mono)",
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                     fontSize: "0.75rem",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: "pointer",
                   }}
                 >
@@ -1221,37 +1298,50 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 onClick={() => setShowSchemaModal(false)}
                 className="active-press"
                 style={{
-                  padding: "0.4rem 0.85rem",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.375rem",
+                  padding: "0.45rem 0.85rem",
                   borderRadius: "8px",
-                  border: "1px solid rgba(255, 255, 255, 0.3)",
-                  backgroundColor: "rgba(255, 255, 255, 0.08)",
+                  border: "1px solid rgba(255, 255, 255, 0.4)",
+                  backgroundColor: "rgba(255, 255, 255, 0.1)",
                   color: "#ffffff",
-                  fontFamily: "var(--font-mono)",
+                  fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                   fontSize: "0.75rem",
-                  fontWeight: 600,
+                  fontWeight: 700,
                   cursor: "pointer",
                 }}
               >
-                ✕ Close Inspector
+                <X style={{ width: "14px", height: "14px" }} /> Close
               </button>
             </div>
           </div>
 
-          {/* Description */}
+          {/* Card Tool Description */}
           <p
             style={{
-              fontSize: "0.875rem",
-              color: "var(--text-medium)",
+              position: "relative",
+              zIndex: 1,
+              fontSize: "0.9rem",
+              color: "#e4e4e7",
               marginBottom: "1.25rem",
               lineHeight: 1.5,
-              fontFamily: "var(--font-body)",
+              fontFamily: '"DM Sans", system-ui, sans-serif',
             }}
           >
             {expandedTool.desc}
           </p>
 
-          {/* Content Body */}
-          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.5rem" }}>
+          {/* Content Body inside matching dark Obsidian boxes */}
+          <div
+            style={{
+              position: "relative",
+              zIndex: 1,
+              flex: 1,
+              overflowY: "auto",
+              paddingRight: "0.5rem",
+            }}
+          >
             {activeTab === "params" ? (
               <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
                 {Object.entries(expandedTool.schema.properties || {}).map(
@@ -1263,13 +1353,13 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                       <div
                         key={key}
                         style={{
-                          padding: "1rem 1.25rem",
-                          borderRadius: "10px",
-                          backgroundColor: "#1a1a1a",
-                          border: "1px solid rgba(255, 255, 255, 0.15)",
+                          padding: "1.1rem 1.35rem",
+                          borderRadius: "12px",
+                          backgroundColor: "#0d0d0d",
+                          border: "1px solid rgba(255, 255, 255, 0.22)",
                           display: "flex",
                           flexDirection: "column",
-                          gap: "0.375rem",
+                          gap: "0.4rem",
                         }}
                       >
                         <div
@@ -1288,8 +1378,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                           >
                             <span
                               style={{
-                                fontFamily: "var(--font-mono)",
-                                fontSize: "0.875rem",
+                                fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
+                                fontSize: "0.9rem",
                                 fontWeight: 700,
                                 color: "#ffffff",
                               }}
@@ -1298,12 +1388,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                             </span>
                             <span
                               style={{
-                                fontFamily: "var(--font-mono)",
+                                fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                                 fontSize: "0.7rem",
                                 padding: "0.15rem 0.5rem",
                                 borderRadius: "4px",
-                                backgroundColor: "rgba(255, 255, 255, 0.08)",
-                                color: "var(--text-medium)",
+                                backgroundColor: "rgba(255, 255, 255, 0.1)",
+                                color: "#d4d4d8",
                               }}
                             >
                               {prop.type || "string"}
@@ -1311,18 +1401,18 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                           </div>
                           <span
                             style={{
-                              fontFamily: "var(--font-mono)",
+                              fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                               fontSize: "0.6875rem",
                               padding: "0.15rem 0.5rem",
                               borderRadius: "4px",
                               backgroundColor: isRequired
-                                ? "rgba(255, 255, 255, 0.15)"
+                                ? "rgba(255, 255, 255, 0.2)"
                                 : "transparent",
                               color: isRequired ? "#ffffff" : "var(--text-low)",
                               border: isRequired
-                                ? "1px solid rgba(255, 255, 255, 0.3)"
+                                ? "1px solid rgba(255, 255, 255, 0.4)"
                                 : "none",
-                              fontWeight: isRequired ? 600 : 400,
+                              fontWeight: isRequired ? 700 : 400,
                             }}
                           >
                             {isRequired ? "Required" : "Optional"}
@@ -1331,10 +1421,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                         {prop.description && (
                           <p
                             style={{
-                              fontSize: "0.8125rem",
-                              color: "var(--text-medium)",
+                              fontSize: "0.835rem",
+                              color: "#e4e4e7",
                               lineHeight: 1.5,
-                              fontFamily: "var(--font-body)",
+                              fontFamily: '"DM Sans", system-ui, sans-serif',
                             }}
                           >
                             {prop.description}
@@ -1343,7 +1433,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                         {prop.default !== undefined && (
                           <div
                             style={{
-                              fontFamily: "var(--font-mono)",
+                              fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                               fontSize: "0.75rem",
                               color: "var(--text-low)",
                               marginTop: "0.25rem",
@@ -1366,29 +1456,33 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     position: "absolute",
                     top: "0.75rem",
                     right: "0.75rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
                     padding: "0.4rem 0.85rem",
                     borderRadius: "6px",
-                    border: "1px solid rgba(255, 255, 255, 0.3)",
+                    border: "1px solid rgba(255, 255, 255, 0.35)",
                     backgroundColor: copiedSchema
                       ? "#ffffff"
-                      : "rgba(255, 255, 255, 0.1)",
+                      : "rgba(255, 255, 255, 0.12)",
                     color: copiedSchema ? "#000000" : "#ffffff",
-                    fontFamily: "var(--font-mono)",
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                     fontSize: "0.75rem",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     cursor: "pointer",
                     zIndex: 10,
                   }}
                 >
+                  {copiedSchema ? <Check style={{ width: "14px", height: "14px" }} /> : <Copy style={{ width: "14px", height: "14px" }} />}
                   {copiedSchema ? "Copied" : "Copy JSON Schema"}
                 </button>
                 <pre
                   style={{
                     padding: "1.25rem",
-                    borderRadius: "10px",
+                    borderRadius: "12px",
                     backgroundColor: "#050505",
-                    border: "1px solid rgba(255, 255, 255, 0.2)",
-                    fontFamily: "var(--font-mono)",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                    fontFamily: '"Geist Mono", "JetBrains Mono", monospace',
                     fontSize: "0.78rem",
                     color: "#e4e4e7",
                     lineHeight: 1.6,
