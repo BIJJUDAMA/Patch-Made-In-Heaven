@@ -1,8 +1,7 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
 import { createTwoFilesPatch } from 'diff';
-import { SandboxClient } from '../services/sandbox.client.js';
-import type { SandboxProvider } from '../services/sandbox-provider.js';
+import { resolveSandboxProvider, type SandboxProvider } from '../services/sandbox-provider.js';
 import { VerificationRunClient } from '../services/verification-run.client.js';
 import { environmentMetaSchema } from '../domain/knowledge-card.js';
 import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
@@ -31,7 +30,7 @@ export class VerifyTools {
   private verificationRunClient: VerificationRunClient;
 
   constructor(options: VerifyToolsOptions = {}) {
-    this.sandboxClient = options.sandboxClient ?? new SandboxClient();
+    this.sandboxClient = options.sandboxClient ?? resolveSandboxProvider();
     this.verificationRunClient = options.verificationRunClient ?? new VerificationRunClient();
   }
 
