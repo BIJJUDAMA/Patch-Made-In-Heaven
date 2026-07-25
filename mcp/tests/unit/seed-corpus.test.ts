@@ -56,6 +56,15 @@ describe('seed corpus (schema, uniqueness, honesty)', () => {
     expect(dockerCards).toHaveLength(15);
   });
 
+  it('has exactly 10 general/environment fixtures (Checkpoint 9 deliverable)', () => {
+    const generalCards = SEED_KNOWLEDGE_CARDS.filter((card) => card.provenance?.category === 'general');
+    expect(generalCards).toHaveLength(10);
+  });
+
+  it('the full cold-start corpus is exactly 60 fixes (Phase 1 Definition of Done)', () => {
+    expect(SEED_KNOWLEDGE_CARDS).toHaveLength(60);
+  });
+
   it('every card carries real PASS verification evidence, not a placeholder', () => {
     for (const card of SEED_KNOWLEDGE_CARDS) {
       expect(card.verification.status).toBe('PASS');

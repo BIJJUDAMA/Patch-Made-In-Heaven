@@ -2,6 +2,7 @@ import type { EnvironmentMeta } from '../../domain/knowledge-card.js';
 import { PYTHON_SEED_FIXTURES } from './python.js';
 import { NODE_SEED_FIXTURES } from './node.js';
 import { DOCKER_SEED_FIXTURES } from './docker.js';
+import { GENERAL_SEED_FIXTURES } from './general.js';
 
 /**
  * Shared seed fixture contract for Checkpoints 6-9. A fixture is NOT yet a
@@ -47,6 +48,7 @@ export const ALL_SEED_FIXTURES: SeedFixtureDefinition[] = [
   ...PYTHON_SEED_FIXTURES,
   ...NODE_SEED_FIXTURES,
   ...DOCKER_SEED_FIXTURES,
+  ...GENERAL_SEED_FIXTURES,
 ];
 
 export function getFixturesByCategory(category: SeedCategory): SeedFixtureDefinition[] {

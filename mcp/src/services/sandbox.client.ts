@@ -64,6 +64,7 @@ const EXTENSION_BY_LANGUAGE: Record<string, string> = {
   typescript: 'ts',
   node: 'js',
   go: 'go',
+  general: 'sh',
 };
 
 /** Shared with scripts (e.g. verify-seeds.ts) that need to pre-pull images before verifying. */
