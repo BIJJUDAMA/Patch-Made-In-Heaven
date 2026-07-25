@@ -4,11 +4,11 @@ import './globals.css';
 
 
 export const metadata: Metadata = {
-  title: 'Hacks On My Machine',
+  title: 'Patch Made In Heaven',
 
 
   description:
-    'Execution-Verified Agent Memory Platform exposed via MCP. Browse live Knowledge Cards, unified patch diffs, and sandbox verification run logs.',
+    'Execution-Verified AI Agent Memory & Search Platform',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

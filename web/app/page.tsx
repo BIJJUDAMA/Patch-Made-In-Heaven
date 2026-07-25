@@ -240,9 +240,10 @@ export default function Dashboard() {
       >
         <div>
           <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--text-high)' }}>
-            Hacks On My Machine
+            Patch Made In Heaven
           </h1>
         </div>
+
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
           <button

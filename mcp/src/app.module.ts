@@ -7,7 +7,7 @@ import { SubmitTools } from './tools/submit.tool.js';
 @McpApp({
   module: AppModule,
   server: {
-    name: 'hacksmymachine-mcp',
+    name: 'patch-made-in-heaven-mcp',
     version: '1.0.0',
   },
 })
