@@ -221,11 +221,11 @@ const cardFragmentShader = /* glsl */ `
     vec3 vor2 = voronoi(suv * uFacetScale * vec2(2.1, 1.6) + 13.7 + uSeed, cellId2);
 
     vec2 rnd = hash2(cellId + 7.3) - 0.5;
-    float dynamicFacetStrength = uFacetStrength * mix(1.0, 0.25, uOpen);
+    float dynamicFacetStrength = uFacetStrength * (1.0 - 0.9 * uOpen);
     vec3 Nf = normalize(N + (rnd.x * vTangent + rnd.y * vBitangent) * dynamicFacetStrength);
 
     float fres = pow(1.0 - max(dot(N, V), 0.0), 2.5);
-    float holo = uHolo * mix(0.55 + 0.45 * uFocus, 0.35, uOpen);
+    float holo = uHolo * mix(0.55 + 0.45 * uFocus, 0.25, uOpen);
     holo *= 1.0 + uMotion * (0.5 + 1.2 * uFocus);
 
     float centerMask = smoothstep(0.12, 0.52, length(vUv - 0.5));
@@ -251,8 +251,8 @@ const cardFragmentShader = /* glsl */ `
     iri = mix(vec3(1.0), iri, 0.55);
 
     float liquid = pow(0.5 + 0.5 * sin(flow * 4.0 + bandBase * 9.0 + uTime * 0.4), 2.0);
-    float gleam = pow(0.5 + 0.5 * sin(hash(cellId) * 6.28318 + bandBase * 6.0 + uTime * 0.12), 3.0) * mix(1.0, 0.4, uOpen);
-    float gleam2 = pow(0.5 + 0.5 * sin(hash(cellId2) * 6.28318 - bandBase * 5.0 + uTime * 0.09), 4.0) * mix(1.0, 0.4, uOpen);
+    float gleam = pow(0.5 + 0.5 * sin(hash(cellId) * 6.28318 + bandBase * 6.0 + uTime * 0.12), 3.0) * mix(1.0, 0.25, uOpen);
+    float gleam2 = pow(0.5 + 0.5 * sin(hash(cellId2) * 6.28318 - bandBase * 5.0 + uTime * 0.09), 4.0) * mix(1.0, 0.25, uOpen);
 
     float fw = 0.028;
     vec2 edge = min(vUv, 1.0 - vUv);
@@ -322,8 +322,22 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
   const [openProgress, setOpenProgress] = useState(0);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
+  const [schemaModalClosing, setSchemaModalClosing] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
+
+  const openSchemaModal = () => {
+    setSchemaModalClosing(false);
+    setShowSchemaModal(true);
+  };
+
+  const closeSchemaModal = () => {
+    setSchemaModalClosing(true);
+    setTimeout(() => {
+      setShowSchemaModal(false);
+      setSchemaModalClosing(false);
+    }, 220);
+  };
 
   // Dynamic screen bounds for interactive overlay tracking
   const [cardScreenBounds, setCardScreenBounds] = useState<{
@@ -1154,7 +1168,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
           {/* Bottom Center View JSON Schema Button strictly inside 3D Card Bottom-Center */}
           <button
-            onClick={() => setShowSchemaModal(true)}
+            onClick={openSchemaModal}
             className="active-press"
             style={{
               position: "absolute",
@@ -1188,7 +1202,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* JSON Schema Popup Inspector - FIXED HEIGHT & GLOSSY HOLOGRAPHIC GLITCH CARD STYLE */}
+      {/* JSON Schema Popup Inspector - LIQUID SMOOTH OPEN/CLOSE TRANSITIONS */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
           style={{
@@ -1198,14 +1212,15 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "rgba(0, 0, 0, 0.85)",
-            backdropFilter: "blur(16px)",
-            WebkitBackdropFilter: "blur(16px)",
+            backgroundColor: schemaModalClosing ? "rgba(0, 0, 0, 0)" : "rgba(0, 0, 0, 0.85)",
+            backdropFilter: schemaModalClosing ? "blur(0px)" : "blur(16px)",
+            WebkitBackdropFilter: schemaModalClosing ? "blur(0px)" : "blur(16px)",
             padding: "1.5rem",
             pointerEvents: "auto",
+            transition: "all 220ms ease",
           }}
           onClick={(e) => {
-            if (e.target === e.currentTarget) stateRef.current.closeCard();
+            if (e.target === e.currentTarget) closeSchemaModal();
           }}
         >
           <div
@@ -1224,7 +1239,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               color: "#ffffff",
               overflow: "hidden",
               boxShadow: "0 40px 100px rgba(0, 0, 0, 0.98), 0 0 40px rgba(255, 255, 255, 0.15), inset 0 0 30px rgba(255, 255, 255, 0.08)",
-              animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
+              opacity: schemaModalClosing ? 0 : 1,
+              transform: schemaModalClosing ? "scale(0.94)" : "scale(1)",
+              transition: "opacity 220ms ease, transform 220ms cubic-bezier(0.16, 1, 0.3, 1)",
+              animation: !schemaModalClosing ? "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both" : "none",
             }}
           >
             {/* Subtle Glossy Holographic Sweeping Shimmer Overlay */}
@@ -1396,7 +1414,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
               {/* Close Modal Button with Icon */}
               <button
-                onClick={() => stateRef.current.closeCard()}
+                onClick={closeSchemaModal}
                 className="active-press"
                 style={{
                   display: "flex",
