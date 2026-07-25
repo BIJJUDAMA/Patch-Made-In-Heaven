@@ -86,6 +86,34 @@ body {
   }
 }
 
-.apple-menu-anim {
-  animation: appleMenuFadeIn 160ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+/* Custom Diff Text & Scrollbar Wrappers */
+.diff-container pre {
+  word-break: break-word;
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
+
+.diff-line {
+  word-break: break-all;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+/* Glassmorphism ambient glow cards */
+.hero-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(20, 184, 166, 0.12) 0%, rgba(26, 32, 44, 0) 70%);
+}
+
+.card-glow {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.3);
+}
+
+.code-block {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  background-color: #141a24;
+  border: 1px solid var(--border-muted);
+  border-radius: 10px;
+}
+

@@ -196,10 +196,13 @@ export default function Dashboard() {
               style={{
                 backgroundColor: bgColor,
                 color: textColor,
-                padding: '0.125rem 1.25rem',
+                padding: '0.125rem 1rem',
                 display: 'flex',
-                gap: '1.5rem',
-                whiteSpace: 'pre',
+                gap: '1rem',
+                whiteSpace: 'pre-wrap',
+                wordBreak: 'break-all',
+                minWidth: 0,
+                maxWidth: '100%',
               }}
             >
               <span
@@ -214,13 +217,14 @@ export default function Dashboard() {
               >
                 {idx + 1}
               </span>
-              <span>{line}</span>
+              <span style={{ minWidth: 0, wordBreak: 'break-all', overflowWrap: 'anywhere' }}>{line}</span>
             </div>
           );
         })}
       </pre>
     );
   };
+
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)', color: 'var(--text-high)' }}>
@@ -277,8 +281,110 @@ export default function Dashboard() {
 
       </header>
 
+      {/* Hero Presentation Section */}
+      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '3.5rem 2.5rem 3rem', textAlign: 'center' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 0.875rem', borderRadius: '20px', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(20, 184, 166, 0.3)', color: 'var(--accent-primary)', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '1.25rem' }}>
+            <Cpu style={{ width: '0.875rem', height: '0.875rem' }} />
+            Execution-Verified AI Agent Memory Layer · MCP Protocol Native
+          </div>
+
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.15, margin: '0 0 1.25rem', color: 'var(--text-high)' }}>
+            Patch Made In Heaven
+          </h1>
+
+          <p style={{ fontSize: '1.125rem', color: 'var(--text-medium)', lineHeight: 1.6, margin: '0 0 2rem' }}>
+            Eliminating redundant reasoning, token waste, and repetitive debugging cycles across AI agent workflows. When an agent hits a runtime stack trace, it queries Patch Made In Heaven via MCP for instant, sandbox-proven fixes.
+          </p>
+
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
+            <a
+              href="#inspector"
+              className="active-press"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '10px',
+                backgroundColor: 'var(--accent-primary)',
+                color: '#1a202c',
+                fontWeight: 700,
+                fontSize: '0.875rem',
+                textDecoration: 'none',
+              }}
+            >
+              <Database style={{ width: '1rem', height: '1rem' }} />
+              Explore Live Inspector
+            </a>
+            <button
+              onClick={() => copyToClipboard('https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp')}
+              className="active-press"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.75rem 1.5rem',
+                borderRadius: '10px',
+                backgroundColor: 'var(--surface-panel)',
+                border: '1px solid var(--border-strong)',
+                color: 'var(--text-high)',
+                fontWeight: 600,
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+              }}
+            >
+              <Copy style={{ width: '1rem', height: '1rem' }} />
+              {copied ? 'MCP Endpoint Copied!' : 'Copy NitroCloud MCP Endpoint'}
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* MCP Architecture & Lifecycle Cards */}
+      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '2.5rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '0.8125rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)', marginBottom: '1.25rem', textAlign: 'center' }}>
+            MCP Execution & Trust Lifecycle
+          </h2>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
+              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
+                1
+              </div>
+              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>1. Agent Encounter</h3>
+              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
+                When Claude or Cursor hits a stack trace during code execution, it calls <code style={{ color: 'var(--accent-primary)' }}>search_fix</code> via native MCP.
+              </p>
+            </div>
+
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
+              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
+                2
+              </div>
+              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>2. Docker Sandbox Verification</h3>
+              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
+                If no fix exists, the agent resolves the issue and runs <code style={{ color: 'var(--accent-primary)' }}>verify_fix</code> in an isolated container to capture stdout/stderr proof.
+              </p>
+            </div>
+
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
+              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
+                3
+              </div>
+              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>3. Global Vector Indexing</h3>
+              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
+                Verified patches are indexed into Elasticsearch (BM25 + 1024-dim dense vectors) for instant reuse by all future AI agents on the network.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Main Container */}
-      <main style={{ maxWidth: '100%', padding: '2rem 2.5rem 4rem' }}>
+      <main id="inspector" style={{ maxWidth: '100%', padding: '2rem 2.5rem 4rem' }}>
+
         {/* Error Alert */}
         {error && (
           <div
