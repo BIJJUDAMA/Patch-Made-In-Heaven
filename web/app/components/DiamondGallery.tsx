@@ -221,11 +221,11 @@ const cardFragmentShader = /* glsl */ `
     vec3 vor2 = voronoi(suv * uFacetScale * vec2(2.1, 1.6) + 13.7 + uSeed, cellId2);
 
     vec2 rnd = hash2(cellId + 7.3) - 0.5;
-    float dynamicFacetStrength = uFacetStrength * mix(1.0, 1.75, uOpen);
+    float dynamicFacetStrength = uFacetStrength * mix(1.0, 0.25, uOpen);
     vec3 Nf = normalize(N + (rnd.x * vTangent + rnd.y * vBitangent) * dynamicFacetStrength);
 
     float fres = pow(1.0 - max(dot(N, V), 0.0), 2.5);
-    float holo = uHolo * mix(0.55 + 0.45 * uFocus, 1.15, uOpen);
+    float holo = uHolo * mix(0.55 + 0.45 * uFocus, 0.35, uOpen);
     holo *= 1.0 + uMotion * (0.5 + 1.2 * uFocus);
 
     float centerMask = smoothstep(0.12, 0.52, length(vUv - 0.5));
@@ -251,8 +251,8 @@ const cardFragmentShader = /* glsl */ `
     iri = mix(vec3(1.0), iri, 0.55);
 
     float liquid = pow(0.5 + 0.5 * sin(flow * 4.0 + bandBase * 9.0 + uTime * 0.4), 2.0);
-    float gleam = pow(0.5 + 0.5 * sin(hash(cellId) * 6.28318 + bandBase * 6.0 + uTime * 0.12), 3.0) * mix(1.0, 1.4, uOpen);
-    float gleam2 = pow(0.5 + 0.5 * sin(hash(cellId2) * 6.28318 - bandBase * 5.0 + uTime * 0.09), 4.0) * mix(1.0, 1.4, uOpen);
+    float gleam = pow(0.5 + 0.5 * sin(hash(cellId) * 6.28318 + bandBase * 6.0 + uTime * 0.12), 3.0) * mix(1.0, 0.4, uOpen);
+    float gleam2 = pow(0.5 + 0.5 * sin(hash(cellId2) * 6.28318 - bandBase * 5.0 + uTime * 0.09), 4.0) * mix(1.0, 0.4, uOpen);
 
     float fw = 0.028;
     vec2 edge = min(vUv, 1.0 - vUv);
@@ -1205,7 +1205,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             pointerEvents: "auto",
           }}
           onClick={(e) => {
-            if (e.target === e.currentTarget) setShowSchemaModal(false);
+            if (e.target === e.currentTarget) stateRef.current.closeCard();
           }}
         >
           <div
@@ -1396,7 +1396,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
 
               {/* Close Modal Button with Icon */}
               <button
-                onClick={() => setShowSchemaModal(false)}
+                onClick={() => stateRef.current.closeCard()}
                 className="active-press"
                 style={{
                   display: "flex",
