@@ -228,12 +228,12 @@ export default function Dashboard() {
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-app)', color: 'var(--text-high)' }}>
-      {/* Clean Header */}
+      {/* Sleek Header */}
       <header
         style={{
           borderBottom: '1px solid var(--border-muted)',
           backgroundColor: 'var(--surface-subtle)',
-          padding: '1.25rem 2.5rem',
+          padding: '1rem 2.5rem',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -242,14 +242,45 @@ export default function Dashboard() {
           zIndex: 40,
         }}
       >
-        <div>
-          <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--text-high)' }}>
-            Patch Made In Heaven
-          </h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div
+            style={{
+              width: '2rem',
+              height: '2rem',
+              borderRadius: '8px',
+              backgroundColor: 'var(--accent-primary-subtle)',
+              border: '1px solid var(--accent-primary)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'var(--accent-primary)',
+              fontWeight: 800,
+            }}
+          >
+            P
+          </div>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '1.125rem', fontWeight: 700, letterSpacing: '-0.025em', color: 'var(--text-high)' }}>
+              Patch Made In Heaven MCP
+            </h1>
+          </div>
         </div>
 
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <span
+            style={{
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              padding: '0.25rem 0.625rem',
+              borderRadius: '12px',
+              backgroundColor: 'var(--surface-panel)',
+              border: '1px solid var(--border-muted)',
+              color: 'var(--accent-primary)',
+              fontFamily: "'JetBrains Mono', monospace",
+            }}
+          >
+            v1.0.0
+          </span>
           <button
             onClick={fetchCards}
             disabled={loading}
@@ -258,7 +289,7 @@ export default function Dashboard() {
               display: 'flex',
               alignItems: 'center',
               gap: '0.5rem',
-              padding: '0.5rem 1.125rem',
+              padding: '0.5rem 1rem',
               borderRadius: '10px',
               backgroundColor: 'var(--surface-panel)',
               border: '1px solid var(--border-muted)',
@@ -275,115 +306,160 @@ export default function Dashboard() {
                 animation: loading ? 'spin 1s linear infinite' : 'none',
               }}
             />
-            Refresh
+            Refresh Base
           </button>
         </div>
-
       </header>
 
-      {/* Hero Presentation Section */}
-      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '3.5rem 2.5rem 3rem', textAlign: 'center' }}>
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.375rem 0.875rem', borderRadius: '20px', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(20, 184, 166, 0.3)', color: 'var(--accent-primary)', fontSize: '0.8125rem', fontWeight: 600, marginBottom: '1.25rem' }}>
-            <Cpu style={{ width: '0.875rem', height: '0.875rem' }} />
-            Execution-Verified AI Agent Memory Layer · MCP Protocol Native
+      {/* Main Hero & Connection Setup */}
+      <section className="hero-glow" style={{ borderBottom: '1px solid var(--border-muted)', padding: '4rem 2.5rem 3.5rem', textAlign: 'center' }}>
+        <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+          {/* Logo Badge */}
+          <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '4rem', height: '4rem', borderRadius: '16px', backgroundColor: 'var(--surface-panel)', border: '1px solid var(--border-strong)', color: 'var(--accent-primary)', boxShadow: '0 8px 24px rgba(0,0,0,0.4)', marginBottom: '1.5rem' }}>
+            <Cpu style={{ width: '2rem', height: '2rem' }} />
           </div>
 
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.15, margin: '0 0 1.25rem', color: 'var(--text-high)' }}>
-            Patch Made In Heaven
+          <h1 style={{ fontSize: '2.75rem', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1, margin: '0 0 0.75rem', color: 'var(--text-high)' }}>
+            Patch Made In Heaven MCP
           </h1>
 
-          <p style={{ fontSize: '1.125rem', color: 'var(--text-medium)', lineHeight: 1.6, margin: '0 0 2rem' }}>
-            Eliminating redundant reasoning, token waste, and repetitive debugging cycles across AI agent workflows. When an agent hits a runtime stack trace, it queries Patch Made In Heaven via MCP for instant, sandbox-proven fixes.
+          <div style={{ display: 'inline-block', fontSize: '0.875rem', fontWeight: 600, color: 'var(--accent-primary)', backgroundColor: 'var(--accent-primary-subtle)', border: '1px solid rgba(20, 184, 166, 0.3)', padding: '0.25rem 0.875rem', borderRadius: '20px', marginBottom: '1.25rem' }}>
+            v1.0.0
+          </div>
+
+          <p style={{ fontSize: '1.25rem', color: 'var(--text-medium)', fontWeight: 500, lineHeight: 1.5, margin: '0 0 2.5rem' }}>
+            A powerful MCP server built with NitroStack
           </p>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-            <a
-              href="#inspector"
-              className="active-press"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.75rem 1.5rem',
-                borderRadius: '10px',
-                backgroundColor: 'var(--accent-primary)',
-                color: '#1a202c',
-                fontWeight: 700,
-                fontSize: '0.875rem',
-                textDecoration: 'none',
-              }}
-            >
-              <Database style={{ width: '1rem', height: '1rem' }} />
-              Explore Live Inspector
-            </a>
-            <button
-              onClick={() => copyToClipboard('https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp')}
-              className="active-press"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '0.5rem',
-                padding: '0.75rem 1.5rem',
-                borderRadius: '10px',
-                backgroundColor: 'var(--surface-panel)',
-                border: '1px solid var(--border-strong)',
-                color: 'var(--text-high)',
-                fontWeight: 600,
-                fontSize: '0.875rem',
-                cursor: 'pointer',
-              }}
-            >
-              <Copy style={{ width: '1rem', height: '1rem' }} />
-              {copied ? 'MCP Endpoint Copied!' : 'Copy NitroCloud MCP Endpoint'}
-            </button>
+          {/* Connection Setup Box */}
+          <div style={{ backgroundColor: 'var(--surface-subtle)', border: '1px solid var(--border-strong)', borderRadius: '12px', padding: '2rem', textAlign: 'left', boxShadow: '0 12px 32px rgba(0,0,0,0.3)', marginBottom: '2rem' }}>
+            <h3 style={{ margin: '0 0 0.75rem', fontSize: '1.125rem', fontWeight: 700, color: 'var(--text-high)' }}>
+              Connection Setup
+            </h3>
+            <p style={{ margin: '0 0 1.25rem', fontSize: '0.875rem', color: 'var(--text-medium)' }}>
+              Connect directly using the Server-Sent Events endpoint:
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <div
+                style={{
+                  flex: 1,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: '0.8125rem',
+                  backgroundColor: 'var(--bg-app)',
+                  border: '1px solid var(--border-muted)',
+                  borderRadius: '8px',
+                  padding: '0.875rem 1.125rem',
+                  color: 'var(--accent-primary)',
+                  wordBreak: 'break-all',
+                }}
+              >
+                https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp
+              </div>
+              <button
+                onClick={() => copyToClipboard('https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp')}
+                className="active-press"
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.875rem 1.25rem',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--accent-primary)',
+                  color: '#1a202c',
+                  fontWeight: 700,
+                  fontSize: '0.875rem',
+                  border: 'none',
+                  cursor: 'pointer',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                {copied ? <Check style={{ width: '1rem', height: '1rem' }} /> : <Copy style={{ width: '1rem', height: '1rem' }} />}
+                {copied ? 'Copied' : 'Copy Endpoint'}
+              </button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* MCP Architecture & Lifecycle Cards */}
-      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '2.5rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-          <h2 style={{ fontSize: '0.8125rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-low)', marginBottom: '1.25rem', textAlign: 'center' }}>
-            MCP Execution & Trust Lifecycle
+      {/* Available Tools Grid */}
+      <section style={{ borderBottom: '1px solid var(--border-muted)', padding: '3.5rem 2.5rem', backgroundColor: 'var(--surface-subtle)' }}>
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '1.5rem', fontWeight: 800, letterSpacing: '-0.025em', color: 'var(--text-high)', marginBottom: '2rem', textAlign: 'center' }}>
+            Available Tools
           </h2>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
-              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
-                1
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            {/* Tool 1 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                search_fix
               </div>
-              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>1. Agent Encounter</h3>
-              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
-                When Claude or Cursor hits a stack trace during code execution, it calls <code style={{ color: 'var(--accent-primary)' }}>search_fix</code> via native MCP.
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Finds verified patches and fixes matching a given stack trace or error log.
               </p>
             </div>
 
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
-              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
-                2
+            {/* Tool 2 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                find_similar
               </div>
-              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>2. Docker Sandbox Verification</h3>
-              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
-                If no fix exists, the agent resolves the issue and runs <code style={{ color: 'var(--accent-primary)' }}>verify_fix</code> in an isolated container to capture stdout/stderr proof.
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Performs semantic vector search across the knowledge store to find related engineering fixes.
               </p>
             </div>
 
-            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.25rem' }}>
-              <div style={{ width: '2rem', height: '2rem', borderRadius: '8px', backgroundColor: 'var(--accent-primary-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontWeight: 700, marginBottom: '0.75rem' }}>
-                3
+            {/* Tool 3 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                get_patch
               </div>
-              <h3 style={{ margin: '0 0 0.5rem', fontSize: '1rem', fontWeight: 600, color: 'var(--text-high)' }}>3. Global Vector Indexing</h3>
-              <p style={{ margin: 0, fontSize: '0.8125rem', color: 'var(--text-medium)', lineHeight: 1.5 }}>
-                Verified patches are indexed into Elasticsearch (BM25 + 1024-dim dense vectors) for instant reuse by all future AI agents on the network.
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Returns the raw unified git diff patch for a verified solution.
               </p>
             </div>
+
+            {/* Tool 4 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                get_execution_log
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.
+              </p>
+            </div>
+
+            {/* Tool 5 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                verify_fix
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome as a server-owned Verification Run, later matched (never trusted) by submit_fix.
+              </p>
+            </div>
+
+            {/* Tool 6 */}
+            <div style={{ backgroundColor: 'var(--bg-app)', border: '1px solid var(--border-muted)', borderRadius: '10px', padding: '1.5rem' }}>
+              <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '1rem', fontWeight: 700, color: 'var(--accent-primary)', marginBottom: '0.75rem' }}>
+                submit_fix
+              </div>
+              <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-medium)', lineHeight: 1.6 }}>
+                Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run created by a prior verify_fix call — never trusts a caller-supplied verification status.
+              </p>
+            </div>
+          </div>
+
+          <div style={{ marginTop: '3rem', textAlign: 'center', color: 'var(--text-low)', fontSize: '0.8125rem' }}>
+            Powered by NitroStack - The TypeScript MCP Framework
           </div>
         </div>
       </section>
 
-      {/* Main Container */}
-      <main id="inspector" style={{ maxWidth: '100%', padding: '2rem 2.5rem 4rem' }}>
+      {/* Live Inspection Dashboard Section */}
+      <main id="inspector" style={{ maxWidth: '100%', padding: '3rem 2.5rem 4rem' }}>
+
 
         {/* Error Alert */}
         {error && (
