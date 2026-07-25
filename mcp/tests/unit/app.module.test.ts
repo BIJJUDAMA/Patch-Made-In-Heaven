@@ -12,16 +12,12 @@ describe('AppModule tool discovery', () => {
     expect(AppModule).toBeDefined();
   });
 
-  it('does not import VerifyTools/SubmitTools at all', () => {
-    // Checkpoint 5: verify_fix/submit_fix stay unregistered until Phase 3
-    // completes their end-to-end trust contract. Asserting on the source text
-    // (rather than framework-internal decorator metadata) directly enforces
-    // "not discoverable" regardless of how @nitrostack/core stores providers.
-    expect(appModuleSource).not.toMatch(/^import .*VerifyTools/m);
-    expect(appModuleSource).not.toMatch(/^import .*SubmitTools/m);
+  it('imports VerifyTools and SubmitTools (Phase 3: trust chain complete, tools now registered)', () => {
+    expect(appModuleSource).toMatch(/^import .*VerifyTools/m);
+    expect(appModuleSource).toMatch(/^import .*SubmitTools/m);
   });
 
-  it('registers exactly the two binding search/retrieval classes as controllers (not providers)', () => {
+  it('registers all four tool classes as controllers (not providers)', () => {
     // @nitrostack/core only scans `controllers` for @Tool/@Resource/@Prompt
     // methods — `providers` is DI-only and is never inspected for tools. See
     // DOUBTS.md for how this was discovered (tools/list returned empty while
@@ -29,7 +25,7 @@ describe('AppModule tool discovery', () => {
     const controllersMatch = appModuleSource.match(/controllers:\s*\[([^\]]*)]/);
     expect(controllersMatch).not.toBeNull();
     const controllerNames = controllersMatch![1].split(',').map((name) => name.trim()).filter(Boolean);
-    expect(controllerNames).toEqual(['SearchTools', 'RetrieveTools']);
+    expect(controllerNames).toEqual(['SearchTools', 'RetrieveTools', 'VerifyTools', 'SubmitTools']);
 
     expect(appModuleSource).not.toMatch(/providers:\s*\[/);
   });

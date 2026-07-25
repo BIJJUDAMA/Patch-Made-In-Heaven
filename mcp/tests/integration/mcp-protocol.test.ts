@@ -122,7 +122,7 @@ describe('MCP protocol: real tool discovery', () => {
     probe = undefined;
   });
 
-  it('exposes exactly the binding search/retrieval tools via a real tools/list call', async () => {
+  it('exposes exactly the binding six-tool contract via a real tools/list call', async () => {
     probe = new McpProbe();
     const initResult = await probe.initialize();
     expect(initResult.result).toBeDefined();
@@ -131,10 +131,16 @@ describe('MCP protocol: real tool discovery', () => {
     const tools = (toolsResult.result as { tools: Array<{ name: string }> }).tools;
     const names = tools.map((tool) => tool.name).sort();
 
-    expect(names).toEqual(['find_similar', 'get_execution_log', 'get_patch', 'search_fix']);
-    // The trust-chain-incomplete tools must never be discoverable before Phase 3.
-    expect(names).not.toContain('verify_fix');
-    expect(names).not.toContain('submit_fix');
+    // Phase 3: verify_fix/submit_fix join the registered set now that the
+    // real trust chain (Checkpoints 2-4) exists — see DECISIONS.md Decision 009.
+    expect(names).toEqual([
+      'find_similar',
+      'get_execution_log',
+      'get_patch',
+      'search_fix',
+      'submit_fix',
+      'verify_fix',
+    ]);
     // Not part of the binding six-tool contract (PROJECT.md) — removed from discovery.
     expect(names).not.toContain('search_by_error');
   }, 15000);

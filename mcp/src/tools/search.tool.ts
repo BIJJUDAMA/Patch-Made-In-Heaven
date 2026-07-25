@@ -35,9 +35,17 @@ const findSimilarSchema = z.object({
   limit: z.number().optional().default(5).describe('Maximum number of results to return.'),
 });
 
+export interface SearchToolsOptions {
+  elasticService?: ElasticService;
+}
+
 @Controller()
 export class SearchTools {
-  private elasticService = new ElasticService();
+  private elasticService: ElasticService;
+
+  constructor(options: SearchToolsOptions = {}) {
+    this.elasticService = options.elasticService ?? new ElasticService();
+  }
 
   @Tool({
     name: 'search_fix',

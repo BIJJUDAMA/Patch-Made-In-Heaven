@@ -20,9 +20,17 @@ const getExecutionLogSchema = z.object({
   knowledgeCardId: z.string().describe('Unique identifier of the verified knowledge card.'),
 });
 
+export interface RetrieveToolsOptions {
+  elasticService?: ElasticService;
+}
+
 @Controller()
 export class RetrieveTools {
-  private elasticService = new ElasticService();
+  private elasticService: ElasticService;
+
+  constructor(options: RetrieveToolsOptions = {}) {
+    this.elasticService = options.elasticService ?? new ElasticService();
+  }
 
   @Tool({
     name: 'get_patch',
