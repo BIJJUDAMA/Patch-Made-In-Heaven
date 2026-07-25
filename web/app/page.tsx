@@ -54,34 +54,51 @@ export interface KnowledgeCardView {
   };
 }
 
+import dynamic from 'next/dynamic';
+import { ToolItem } from './components/DiamondGallery';
+
+const DiamondGallery = dynamic(() => import('./components/DiamondGallery'), {
+  ssr: false,
+});
+
 const MCP_URL = 'https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp';
 
-const TOOLS = [
+const TOOLS: ToolItem[] = [
   {
+    num: '01',
     name: 'search_fix',
-    description: 'Finds verified patches and fixes matching a given stack trace or error log.',
+    tag: 'SEARCH',
+    desc: 'Finds verified patches and fixes matching a given stack trace or error log.',
   },
   {
+    num: '02',
     name: 'find_similar',
-    description: 'Performs semantic vector search across the knowledge store to find related engineering fixes.',
+    tag: 'VECTOR',
+    desc: 'Performs semantic vector search across the knowledge store to find related engineering fixes.',
   },
   {
+    num: '03',
     name: 'get_patch',
-    description: 'Returns the raw unified git diff patch for a verified solution.',
+    tag: 'PATCH',
+    desc: 'Returns the raw unified git diff patch for a verified solution.',
   },
   {
+    num: '04',
     name: 'get_execution_log',
-    description: 'Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.',
+    tag: 'LOGS',
+    desc: 'Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.',
   },
   {
+    num: '05',
     name: 'verify_fix',
-    description:
-      'Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome as a server-owned Verification Run, later matched (never trusted) by submit_fix.',
+    tag: 'SANDBOX',
+    desc: 'Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome.',
   },
   {
+    num: '06',
     name: 'submit_fix',
-    description:
-      'Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run — never trusts a caller-supplied verification status.',
+    tag: 'VERIFIED',
+    desc: 'Publishes an execution-verified patch to the knowledge base, backed by a real PASS-status Verification Run.',
   },
 ];
 
@@ -497,52 +514,9 @@ export default function Dashboard() {
             </h2>
           </div>
 
-          {/* Tool grid */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-              gap: '1px',
-              backgroundColor: 'var(--border-muted)',
-              border: '1px solid var(--border-muted)',
-              borderRadius: '10px',
-              overflow: 'hidden',
-            }}
-          >
-            {TOOLS.map((tool, i) => (
-              <div
-                key={tool.name}
-                className="tool-card"
-                style={{
-                  backgroundColor: 'var(--surface-subtle)',
-                  padding: '2rem',
-                }}
-              >
-                <div
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.875rem',
-                    fontWeight: 500,
-                    color: 'var(--accent-primary)',
-                    marginBottom: '0.875rem',
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  {tool.name}
-                </div>
-                <p
-                  style={{
-                    fontSize: '0.875rem',
-                    color: 'var(--text-medium)',
-                    lineHeight: 1.65,
-                    fontWeight: 300,
-                    margin: 0,
-                  }}
-                >
-                  {tool.description}
-                </p>
-              </div>
-            ))}
+          {/* 3D Diamond Gallery WebGL Carousel */}
+          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-muted)' }}>
+            <DiamondGallery tools={TOOLS} />
           </div>
 
           {/* Footer attribution */}
