@@ -7,7 +7,7 @@ type SearchStatus = 'HIT' | 'MISS' | 'DEGRADED';
 
 /**
  * HIT takes priority over DEGRADED whenever real hits were found, even via lexical
- * fallback — the data is genuine either way. DEGRADED only fires on an empty lexical
+ * fallback - the data is genuine either way. DEGRADED only fires on an empty lexical
  * result, since a hybrid search might have found something a BM25-only pass could not.
  * `warnings` still discloses lexical fallback on the HIT path (see below).
  */

@@ -17,7 +17,7 @@ const submitFixSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .describe('Unified git diff patch — must byte-for-byte match the diff a prior verify_fix call produced.'),
+    .describe('Unified git diff patch - must byte-for-byte match the diff a prior verify_fix call produced.'),
   verificationLog: z
     .string()
     .trim()
@@ -33,7 +33,7 @@ function deriveErrorType(errorLog: string): string {
   return errorLog.match(ERROR_TYPE_PATTERN)?.[1] ?? 'UnknownError';
 }
 
-/** Order-independent comparison — a caller re-serializing packageVersions in a different key order must still match. */
+/** Order-independent comparison - a caller re-serializing packageVersions in a different key order must still match. */
 function normalizeEnvironment(env: EnvironmentMeta): string {
   const packageVersions = env.packageVersions
     ? Object.fromEntries(Object.entries(env.packageVersions).sort(([a], [b]) => a.localeCompare(b)))
@@ -72,7 +72,7 @@ export class SubmitTools {
   @Tool({
     name: 'submit_fix',
     description:
-      'Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run created by a prior verify_fix call — never trusts a caller-supplied verification status.',
+      'Publishes an execution-verified patch to the knowledge base. Only stores a fix backed by a real, matching, PASS-status Verification Run created by a prior verify_fix call - never trusts a caller-supplied verification status.',
     inputSchema: submitFixSchema,
   })
   async submitFix(params: z.infer<typeof submitFixSchema>) {

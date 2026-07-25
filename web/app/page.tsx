@@ -72,36 +72,213 @@ const TOOLS: ToolItem[] = [
     name: 'search_fix',
     tag: 'SEARCH',
     desc: 'Finds verified patches and fixes matching a given stack trace or error log.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        stacktrace: {
+          type: 'string',
+          description: 'The error stacktrace or error message to search for.',
+        },
+        language: {
+          type: 'string',
+          description: 'Programming language environment (e.g. python, javascript, docker).',
+        },
+        framework: {
+          type: 'string',
+          description: 'Framework name if applicable (e.g. fastapi, express, react).',
+        },
+        packageVersions: {
+          type: 'object',
+          additionalProperties: {
+            type: 'string',
+          },
+          description: 'Key-value record of active package versions.',
+        },
+        limit: {
+          type: 'number',
+          default: 5,
+          description: 'Maximum number of results to return.',
+        },
+      },
+      required: ['stacktrace', 'language'],
+      additionalProperties: false,
+    },
   },
   {
     num: '02',
     name: 'find_similar',
     tag: 'VECTOR',
     desc: 'Performs semantic vector search across the knowledge store to find related engineering fixes.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        query: {
+          type: 'string',
+          description: 'Problem description or natural language query.',
+        },
+        limit: {
+          type: 'number',
+          default: 5,
+          description: 'Maximum number of results to return.',
+        },
+      },
+      required: ['query'],
+      additionalProperties: false,
+    },
   },
   {
     num: '03',
     name: 'get_patch',
     tag: 'PATCH',
     desc: 'Returns the raw unified git diff patch for a verified solution.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        knowledgeCardId: {
+          type: 'string',
+          description: 'Unique identifier of the verified knowledge card.',
+        },
+      },
+      required: ['knowledgeCardId'],
+      additionalProperties: false,
+    },
   },
   {
     num: '04',
     name: 'get_execution_log',
     tag: 'LOGS',
     desc: 'Retrieves full stdout/stderr verification execution logs for a specific knowledge entry.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        knowledgeCardId: {
+          type: 'string',
+          description: 'Unique identifier of the verified knowledge card.',
+        },
+      },
+      required: ['knowledgeCardId'],
+      additionalProperties: false,
+    },
   },
   {
     num: '05',
     name: 'verify_fix',
     tag: 'SANDBOX',
     desc: 'Executes a candidate fix inside an isolated sandbox against a real test command and persists the outcome.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        code: {
+          type: 'string',
+          description: 'The candidate fix source code to execute.',
+        },
+        testCommand: {
+          type: 'string',
+          description: 'The command to run verification (e.g. python main.py or node index.js).',
+        },
+        environment: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              minLength: 1,
+            },
+            version: {
+              type: 'string',
+              minLength: 1,
+            },
+            framework: {
+              type: 'string',
+              minLength: 1,
+            },
+            packageVersions: {
+              type: 'object',
+              additionalProperties: {
+                type: 'string',
+                minLength: 1,
+              },
+            },
+          },
+          required: ['language'],
+          additionalProperties: false,
+        },
+        baselineCode: {
+          type: 'string',
+          description: 'The original/broken code before the fix, used to compute a real diff. Omit to diff against an empty file.',
+        },
+        filePath: {
+          type: 'string',
+          description: 'Logical file path used to label the generated unified diff.',
+        },
+      },
+      required: ['code', 'testCommand', 'environment'],
+      additionalProperties: false,
+    },
   },
   {
     num: '06',
     name: 'submit_fix',
     tag: 'VERIFIED',
     desc: 'Publishes an execution-verified patch to the knowledge base, backed by a real PASS-status Verification Run.',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'object',
+      properties: {
+        problemDescription: {
+          type: 'string',
+          minLength: 1,
+          description: 'Clear summary of the error or problem solved.',
+        },
+        errorLog: {
+          type: 'string',
+          minLength: 1,
+          description: 'The error stacktrace or log text that the fix resolves.',
+        },
+        patch: {
+          type: 'string',
+          minLength: 1,
+          description: 'Unified git diff patch - must byte-for-byte match the diff a prior verify_fix call produced.',
+        },
+        verificationLog: {
+          type: 'string',
+          minLength: 1,
+          description: 'The verificationRunId returned by the verify_fix call that proved this exact patch.',
+        },
+        environment: {
+          type: 'object',
+          properties: {
+            language: {
+              type: 'string',
+              minLength: 1,
+            },
+            version: {
+              type: 'string',
+              minLength: 1,
+            },
+            framework: {
+              type: 'string',
+              minLength: 1,
+            },
+            packageVersions: {
+              type: 'object',
+              additionalProperties: {
+                type: 'string',
+                minLength: 1,
+              },
+            },
+          },
+          required: ['language'],
+          additionalProperties: false,
+        },
+      },
+      required: ['problemDescription', 'errorLog', 'patch', 'verificationLog', 'environment'],
+      additionalProperties: false,
+    },
   },
 ];
 
@@ -320,7 +497,7 @@ export default function Dashboard() {
               marginBottom: '3rem',
             }}
           >
-            Powered by NitroStack — TypeScript MCP Framework
+            Powered by NitroStack - TypeScript MCP Framework
           </p>
 
           {/* Restrained Hairline Glass Endpoint Card */}

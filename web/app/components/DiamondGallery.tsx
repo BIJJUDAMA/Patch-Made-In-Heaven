@@ -15,6 +15,7 @@ export interface ToolItem {
   name: string;
   tag: string;
   desc: string;
+  schema?: Record<string, any>;
 }
 
 interface Props {
@@ -310,6 +311,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
+  const [copiedSchema, setCopiedSchema] = useState(false);
+  const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
 
   const stateRef = useRef({
     theta: 0,
@@ -352,7 +356,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       floorGlow: 0.55,
     };
 
-    // Scene setup — Pure Black background matching --bg-app (#000000)
+    // Scene setup - Pure Black background matching --bg-app (#000000)
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x000000);
 
@@ -576,6 +580,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       stateRef.current.state = "opening";
       stateRef.current.openedCard = card;
       stateRef.current.velocity = 0;
+      setExpandedTool(card.userData.tool);
       if (onSelectTool) onSelectTool(card.userData.tool);
 
       const thetaTarget =
@@ -658,6 +663,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       const card = stateRef.current.openedCard;
       if (!card) return;
       stateRef.current.state = "closing";
+      setExpandedTool(null);
       const { basePos, angle } = card.userData;
 
       let rotBase = angle;
@@ -811,9 +817,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     const tick = (timestamp: number) => {
       animId = requestAnimationFrame(tick);
 
-      if (!isGalleryVisible) return; // Pause rendering when section is offscreen!
+      if (!isGalleryVisible) return;
 
-      // Throttle to 60 FPS max
       if (timestamp - lastFrameTime < 14) return;
       lastFrameTime = timestamp;
 
@@ -917,6 +922,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     };
   }, [tools, onSelectTool]);
 
+  const copySchemaToClipboard = (schemaObj: object) => {
+    navigator.clipboard.writeText(JSON.stringify(schemaObj, null, 2));
+    setCopiedSchema(true);
+    setTimeout(() => setCopiedSchema(false), 2000);
+  };
+
   return (
     <div ref={containerRef} className="dg-container">
       <canvas ref={canvasRef} className="dg-canvas" />
@@ -925,96 +936,395 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       <div className="dg-glow" />
 
       {/* Integrated Click-to-Expand Hint */}
-      <div
-        style={{
-          position: "absolute",
-          left: "2rem",
-          top: "2rem",
-          zIndex: 10,
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          color: "var(--text-low)",
-          fontFamily: "var(--font-mono)",
-          fontSize: "0.6875rem",
-          letterSpacing: "0.16em",
-          textTransform: "uppercase",
-          pointerEvents: "none",
-          opacity: 0.8,
-        }}
-      >
-        <span
+      {!expandedTool && (
+        <div
           style={{
-            width: "5px",
-            height: "5px",
-            borderRadius: "50%",
-            backgroundColor: "var(--text-low)",
-            display: "inline-block",
+            position: "absolute",
+            left: "2rem",
+            top: "2rem",
+            zIndex: 10,
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            color: "var(--text-low)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.6875rem",
+            letterSpacing: "0.16em",
+            textTransform: "uppercase",
+            pointerEvents: "none",
+            opacity: 0.8,
           }}
-        />
-        Click card to expand ↗
-      </div>
+        >
+          <span
+            style={{
+              width: "5px",
+              height: "5px",
+              borderRadius: "50%",
+              backgroundColor: "var(--text-low)",
+              display: "inline-block",
+            }}
+          />
+          Click card to expand ↗
+        </div>
+      )}
 
       {/* Counter & Panel Right */}
-      <div className="dg-panel-right">
-        <div>
-          <span className="dg-counter-idx">
-            / {String(activeIndex + 1).padStart(2, "0")}
-          </span>
-          <span className="dg-counter-title">
-            {tools[activeIndex]?.name || "Tool"}
-          </span>
-        </div>
+      {!expandedTool && (
+        <div className="dg-panel-right">
+          <div>
+            <span className="dg-counter-idx">
+              / {String(activeIndex + 1).padStart(2, "0")}
+            </span>
+            <span className="dg-counter-title">
+              {tools[activeIndex]?.name || "Tool"}
+            </span>
+          </div>
 
-        {/* Arrow Navigation */}
-        <div style={{ display: "flex", gap: "0.5rem", pointerEvents: "auto" }}>
+          {/* Arrow Navigation */}
+          <div style={{ display: "flex", gap: "0.5rem", pointerEvents: "auto" }}>
+            <button
+              className="dg-circle-btn"
+              onClick={() => stateRef.current.stepCard(-1)}
+              title="Previous tool"
+            >
+              ←
+            </button>
+            <button
+              className="dg-circle-btn"
+              onClick={() => stateRef.current.stepCard(1)}
+              title="Next tool"
+            >
+              →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Thumbnail Strip */}
+      {!expandedTool && (
+        <div className="dg-thumb-strip">
           <button
             className="dg-circle-btn"
+            style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(-1)}
-            title="Previous tool"
           >
             ←
           </button>
+
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            {tools.map((t, idx) => (
+              <button
+                key={t.num}
+                onClick={() => stateRef.current.goToCard(idx)}
+                className={`dg-thumb-pill${idx === activeIndex ? " active" : ""}`}
+              >
+                {t.num} {t.name.split("_")[0]}
+              </button>
+            ))}
+          </div>
+
           <button
             className="dg-circle-btn"
+            style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
             onClick={() => stateRef.current.stepCard(1)}
-            title="Next tool"
           >
             →
           </button>
         </div>
-      </div>
+      )}
 
-      {/* Bottom Thumbnail Strip */}
-      <div className="dg-thumb-strip">
-        <button
-          className="dg-circle-btn"
-          style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
-          onClick={() => stateRef.current.stepCard(-1)}
+      {/* Expanded State: Interactive JSON Schema Inspector Modal */}
+      {expandedTool && expandedTool.schema && (
+        <div
+          style={{
+            position: "absolute",
+            inset: "2rem",
+            zIndex: 30,
+            display: "flex",
+            flexDirection: "column",
+            backgroundColor: "rgba(10, 10, 10, 0.88)",
+            backdropFilter: "blur(20px)",
+            WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid var(--border-strong)",
+            borderRadius: "16px",
+            padding: "1.75rem 2rem",
+            color: "#ffffff",
+            overflow: "hidden",
+            boxShadow: "0 25px 50px rgba(0,0,0,0.9)",
+            pointerEvents: "auto",
+            animation: "fadeUp 300ms cubic-bezier(0.23, 1, 0.32, 1) both",
+          }}
         >
-          ←
-        </button>
+          {/* Header */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              marginBottom: "1.25rem",
+              paddingBottom: "1rem",
+              borderBottom: "1px solid var(--border-muted)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+              <span
+                style={{
+                  padding: "0.25rem 0.75rem",
+                  borderRadius: "100px",
+                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--surface-hover)",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  color: "#ffffff",
+                }}
+              >
+                {expandedTool.tag}
+              </span>
+              <h3
+                className="display-font"
+                style={{
+                  fontSize: "1.35rem",
+                  fontWeight: 700,
+                  letterSpacing: "-0.02em",
+                  color: "#ffffff",
+                }}
+              >
+                {expandedTool.name}
+              </h3>
+            </div>
 
-        <div style={{ display: "flex", gap: "0.5rem" }}>
-          {tools.map((t, idx) => (
-            <button
-              key={t.num}
-              onClick={() => stateRef.current.goToCard(idx)}
-              className={`dg-thumb-pill${idx === activeIndex ? " active" : ""}`}
-            >
-              {t.num} {t.name.split("_")[0]}
-            </button>
-          ))}
+            <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+              {/* Tab Selector */}
+              <div
+                style={{
+                  display: "flex",
+                  borderRadius: "8px",
+                  backgroundColor: "var(--surface-subtle)",
+                  border: "1px solid var(--border-muted)",
+                  padding: "3px",
+                }}
+              >
+                <button
+                  onClick={() => setActiveTab("params")}
+                  style={{
+                    padding: "0.35rem 0.85rem",
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor:
+                      activeTab === "params" ? "var(--surface-hover)" : "transparent",
+                    color: activeTab === "params" ? "#ffffff" : "var(--text-medium)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Parameters
+                </button>
+                <button
+                  onClick={() => setActiveTab("schema")}
+                  style={{
+                    padding: "0.35rem 0.85rem",
+                    borderRadius: "6px",
+                    border: "none",
+                    backgroundColor:
+                      activeTab === "schema" ? "var(--surface-hover)" : "transparent",
+                    color: activeTab === "schema" ? "#ffffff" : "var(--text-medium)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                  }}
+                >
+                  Raw JSON Schema
+                </button>
+              </div>
+
+              {/* Close Button */}
+              <button
+                onClick={() => stateRef.current.closeCard()}
+                className="active-press"
+                style={{
+                  padding: "0.4rem 0.85rem",
+                  borderRadius: "8px",
+                  border: "1px solid var(--border-strong)",
+                  backgroundColor: "var(--surface-subtle)",
+                  color: "#ffffff",
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.75rem",
+                  fontWeight: 600,
+                  cursor: "pointer",
+                }}
+              >
+                ✕ Close
+              </button>
+            </div>
+          </div>
+
+          {/* Tool Description */}
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "var(--text-medium)",
+              marginBottom: "1.25rem",
+              lineHeight: 1.5,
+            }}
+          >
+            {expandedTool.desc}
+          </p>
+
+          {/* Body Content */}
+          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.5rem" }}>
+            {activeTab === "params" ? (
+              <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+                {Object.entries(expandedTool.schema.properties || {}).map(
+                  ([key, prop]: [string, any]) => {
+                    const isRequired = (
+                      expandedTool.schema?.required || []
+                    ).includes(key);
+                    return (
+                      <div
+                        key={key}
+                        style={{
+                          padding: "1rem 1.25rem",
+                          borderRadius: "10px",
+                          backgroundColor: "var(--surface-subtle)",
+                          border: "1px solid var(--border-muted)",
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: "0.375rem",
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.625rem",
+                            }}
+                          >
+                            <span
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                fontSize: "0.875rem",
+                                fontWeight: 700,
+                                color: "#ffffff",
+                              }}
+                            >
+                              {key}
+                            </span>
+                            <span
+                              style={{
+                                fontFamily: "var(--font-mono)",
+                                fontSize: "0.7rem",
+                                padding: "0.15rem 0.5rem",
+                                borderRadius: "4px",
+                                backgroundColor: "rgba(255, 255, 255, 0.08)",
+                                color: "var(--text-medium)",
+                              }}
+                            >
+                              {prop.type || "string"}
+                            </span>
+                          </div>
+                          <span
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "0.6875rem",
+                              padding: "0.15rem 0.5rem",
+                              borderRadius: "4px",
+                              backgroundColor: isRequired
+                                ? "rgba(255, 255, 255, 0.15)"
+                                : "transparent",
+                              color: isRequired ? "#ffffff" : "var(--text-low)",
+                              border: isRequired
+                                ? "1px solid rgba(255, 255, 255, 0.3)"
+                                : "none",
+                              fontWeight: isRequired ? 600 : 400,
+                            }}
+                          >
+                            {isRequired ? "Required" : "Optional"}
+                          </span>
+                        </div>
+                        {prop.description && (
+                          <p
+                            style={{
+                              fontSize: "0.8125rem",
+                              color: "var(--text-medium)",
+                              lineHeight: 1.5,
+                            }}
+                          >
+                            {prop.description}
+                          </p>
+                        )}
+                        {prop.default !== undefined && (
+                          <div
+                            style={{
+                              fontFamily: "var(--font-mono)",
+                              fontSize: "0.75rem",
+                              color: "var(--text-low)",
+                              marginTop: "0.25rem",
+                            }}
+                          >
+                            Default: <code>{JSON.stringify(prop.default)}</code>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+                )}
+              </div>
+            ) : (
+              <div style={{ position: "relative" }}>
+                <button
+                  onClick={() => copySchemaToClipboard(expandedTool.schema!)}
+                  className="active-press"
+                  style={{
+                    position: "absolute",
+                    top: "0.75rem",
+                    right: "0.75rem",
+                    padding: "0.4rem 0.85rem",
+                    borderRadius: "6px",
+                    border: "1px solid var(--border-strong)",
+                    backgroundColor: copiedSchema
+                      ? "#ffffff"
+                      : "var(--surface-panel)",
+                    color: copiedSchema ? "#000000" : "#ffffff",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.75rem",
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    zIndex: 10,
+                  }}
+                >
+                  {copiedSchema ? "Copied" : "Copy JSON Schema"}
+                </button>
+                <pre
+                  style={{
+                    padding: "1.25rem",
+                    borderRadius: "10px",
+                    backgroundColor: "#050505",
+                    border: "1px solid var(--border-muted)",
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.78rem",
+                    color: "#d4d4d8",
+                    lineHeight: 1.6,
+                    overflowX: "auto",
+                  }}
+                >
+                  <code>{JSON.stringify(expandedTool.schema, null, 2)}</code>
+                </pre>
+              </div>
+            )}
+          </div>
         </div>
-
-        <button
-          className="dg-circle-btn"
-          style={{ width: "32px", height: "32px", fontSize: "0.8rem" }}
-          onClick={() => stateRef.current.stepCard(1)}
-        >
-          →
-        </button>
-      </div>
+      )}
     </div>
   );
 }
