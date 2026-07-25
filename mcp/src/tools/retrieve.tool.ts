@@ -1,13 +1,14 @@
 import { ToolDecorator as Tool, ControllerDecorator as Controller } from '@nitrostack/core';
 import { z } from 'zod';
 import { ElasticService } from '../services/elastic.client.js';
-import { buildSuccessEnvelope, buildErrorEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
+import { buildSuccessEnvelope, dependencyUnavailableEnvelope } from '../domain/response-envelope.js';
 
+// NOT_FOUND is a normal, ok:true product outcome (PRD §6.1's closing note: MISS,
+// DEGRADED, FAIL, TIMEOUT, REJECTED, and NOT_FOUND are "expected product outcomes,"
+// distinct from the ok:false DEPENDENCY_UNAVAILABLE/INVALID_INPUT failure statuses).
 function notFoundEnvelope(knowledgeCardId: string) {
-  return buildErrorEnvelope('NOT_FOUND', {
-    code: 'KNOWLEDGE_CARD_NOT_FOUND',
+  return buildSuccessEnvelope('NOT_FOUND', {
     message: `Knowledge card '${knowledgeCardId}' not found.`,
-    retryable: false,
   });
 }
 
