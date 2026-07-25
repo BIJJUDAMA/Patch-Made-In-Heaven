@@ -119,11 +119,6 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   }
   ctx.fillText(line, 50, y);
 
-  // Footer (#ffffff Pure White)
-  ctx.font = '700 17px "Geist Mono", "JetBrains Mono", monospace';
-  ctx.fillStyle = "#ffffff";
-  ctx.fillText("MCP TOOL //", 50, 538);
-
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
   texture.minFilter = THREE.LinearFilter;
@@ -327,6 +322,7 @@ const flatVertexShader = /* glsl */ `
 export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [expandedTool, setExpandedTool] = useState<ToolItem | null>(null);
   const [openProgress, setOpenProgress] = useState(0);
@@ -350,6 +346,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     downY: 0,
     lastX: 0,
     state: "closed",
+    openProgressVal: 0,
     openedCard: null as THREE.Mesh | null,
     currentFront: null as THREE.Mesh | null,
     stepCard: (_dir: number) => {},
@@ -683,7 +680,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           duration: 1.2,
           ease: "power3.inOut",
           onUpdate() {
-            setOpenProgress((this as any).targets()[0].p);
+            const val = (this as any).targets()[0].p;
+            stateRef.current.openProgressVal = val;
+            setOpenProgress(val);
           },
         },
         0.1
@@ -714,6 +713,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         onComplete: () => {
           stateRef.current.state = "closed";
           stateRef.current.openedCard = null;
+          stateRef.current.openProgressVal = 0;
           setExpandedTool(null);
           setOpenProgress(0);
         },
@@ -725,7 +725,9 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           duration: 1.1,
           ease: "power3.inOut",
           onUpdate() {
-            setOpenProgress((this as any).targets()[0].p);
+            const val = (this as any).targets()[0].p;
+            stateRef.current.openProgressVal = val;
+            setOpenProgress(val);
           },
         },
         0
@@ -951,20 +953,16 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
           (-pointer.y * 0.1 - stateRef.current.openedCard.rotation.x) *
           Math.min(1, dt * 4);
 
-        // Project 3D card bounds to 2D screen space dynamically
-        const cardMesh = stateRef.current.openedCard;
-        const bbox = new THREE.Box3().setFromObject(cardMesh);
-        const minScreen = bbox.min.clone().project(camera);
-        const maxScreen = bbox.max.clone().project(camera);
+        if (overlayRef.current) {
+          const mesh = stateRef.current.openedCard;
+          const tiltX = THREE.MathUtils.radToDeg(mesh.rotation.x);
+          const deltaY = mesh.rotation.y - (-stateRef.current.theta);
+          const tiltY = THREE.MathUtils.radToDeg(deltaY);
+          const scaleVal = 0.45 + 0.55 * stateRef.current.openProgressVal;
 
-        const width = Math.abs((maxScreen.x - minScreen.x) * container.clientWidth * 0.5);
-        const height = Math.abs((maxScreen.y - minScreen.y) * container.clientHeight * 0.5);
-
-        const centerScreen = cardMesh.position.clone().project(camera);
-        const left = (centerScreen.x * 0.5 + 0.5) * container.clientWidth - width * 0.5;
-        const top = (-centerScreen.y * 0.5 + 0.5) * container.clientHeight - height * 0.5;
-
-        setCardScreenBounds({ top, left, width, height });
+          overlayRef.current.style.transform = `translate(-50%, -50%) perspective(1000px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) scale(${scaleVal})`;
+          overlayRef.current.style.opacity = `${Math.min(1, stateRef.current.openProgressVal * 1.6)}`;
+        }
       }
 
       pointerSmooth.x += (pointer.x - pointerSmooth.x) * Math.min(1, dt * 2.2);
@@ -1117,9 +1115,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Animated 1:1 with GSAP Card Expansion) */}
-      {expandedTool && !showSchemaModal && openProgress > 0.05 && (
+      {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Animated & 3D Tilting 1:1 with Card Mesh) */}
+      {expandedTool && !showSchemaModal && (
         <div
+          ref={overlayRef}
           style={{
             position: "absolute",
             top: "50%",
@@ -1131,6 +1130,8 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             zIndex: 100,
             pointerEvents: "none",
             boxSizing: "border-box",
+            transformStyle: "preserve-3d",
+            willChange: "transform, opacity",
           }}
         >
           {/* Upper Right Close Button [✕] strictly inside 3D Card Top-Right Corner */}
