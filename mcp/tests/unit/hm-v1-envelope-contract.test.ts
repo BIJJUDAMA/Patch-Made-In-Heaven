@@ -3,6 +3,7 @@ import { SearchTools } from '../../src/tools/search.tool.js';
 import { RetrieveTools } from '../../src/tools/retrieve.tool.js';
 import { VerifyTools } from '../../src/tools/verify.tool.js';
 import { SubmitTools } from '../../src/tools/submit.tool.js';
+import { SandboxClient } from '../../src/services/sandbox.client.js';
 import { ElasticService, type ElasticClientLike } from '../../src/services/elastic.client.js';
 import { VerificationRunClient, type VerificationRunClientLike } from '../../src/services/verification-run.client.js';
 import { loadEnv, type AppEnv } from '../../src/config/env.js';
@@ -131,6 +132,10 @@ describe('hm.v1 envelope conformance across all six tools', () => {
 
   it('verify_fix: DEPENDENCY_UNAVAILABLE conforms (no sandbox required for this status)', async () => {
     const tools = new VerifyTools({
+      // VerifyTools's default constructor also builds a SandboxClient, which
+      // independently calls getEnv() — must be given a deterministic env too,
+      // not just verificationRunClient, or this test depends on ambient process.env.
+      sandboxClient: new SandboxClient({ env: disconnectedEnv() }),
       verificationRunClient: new VerificationRunClient({ env: disconnectedEnv() }),
     });
     assertEnvelopeShape(

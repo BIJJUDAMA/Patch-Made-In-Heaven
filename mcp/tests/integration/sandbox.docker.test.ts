@@ -5,15 +5,23 @@ import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
 import { SandboxClient, SandboxImageNotAllowedError } from '../../src/services/sandbox.client.js';
-import { loadEnv } from '../../src/config/env.js';
+import { loadEnv, type AppEnv } from '../../src/config/env.js';
 
 const execFileAsync = promisify(execFile);
+
+// Deterministic test env carrying through only the real SANDBOX_CONTAINER_RUNTIME
+// (podman on this machine) — never bare `loadEnv()`/`getEnv()`, which now reflects
+// this machine's real root `.env` (real OPENROUTER_API_KEY without a matching
+// EMBEDDING_VECTOR_DIMENSIONS) since `config/env.ts` also loads the monorepo root `.env`.
+function testEnv(): AppEnv {
+  return loadEnv({ SANDBOX_CONTAINER_RUNTIME: process.env.SANDBOX_CONTAINER_RUNTIME } as NodeJS.ProcessEnv);
+}
 
 // Runs for real against whatever SANDBOX_CONTAINER_RUNTIME resolves to (docker
 // in CI/production; podman here, via mcp/.env, since this dev machine has no
 // `docker` binary — see DECISIONS.md Decision 005/008). Not credential-gated:
 // a working container runtime is a stated Checkpoint 5 precondition.
-const runtime = loadEnv().sandbox.containerRuntime;
+const runtime = testEnv().sandbox.containerRuntime;
 
 async function runtimeAvailable(): Promise<boolean> {
   try {
@@ -46,7 +54,7 @@ describe('SandboxClient (real container runtime)', () => {
   });
 
   it('rejects a non-allowlisted language before touching the filesystem or spawning anything', async () => {
-    const client = new SandboxClient();
+    const client = new SandboxClient({ env: testEnv() });
     await expect(
       client.runVerification({
         code: 'irrelevant',
@@ -58,7 +66,7 @@ describe('SandboxClient (real container runtime)', () => {
 
   it('returns PASS with real captured stdout and exit code 0', async () => {
     if (!hasRuntime) return;
-    const client = new SandboxClient();
+    const client = new SandboxClient({ env: testEnv() });
     const result = await client.runVerification({
       code: 'irrelevant for this shell test',
       testCommand: 'echo hello-from-sandbox',
@@ -74,7 +82,7 @@ describe('SandboxClient (real container runtime)', () => {
 
   it('returns FAIL with a real non-zero exit code and captured stderr', async () => {
     if (!hasRuntime) return;
-    const client = new SandboxClient();
+    const client = new SandboxClient({ env: testEnv() });
     const result = await client.runVerification({
       code: 'irrelevant',
       testCommand: 'echo boom 1>&2; exit 7',
@@ -88,7 +96,7 @@ describe('SandboxClient (real container runtime)', () => {
 
   it('times out a hanging command, kills it, and cleans up the container', async () => {
     if (!hasRuntime) return;
-    const client = new SandboxClient({ timeoutMs: 1500 });
+    const client = new SandboxClient({ env: testEnv(), timeoutMs: 1500 });
     const result = await client.runVerification({
       code: 'irrelevant',
       testCommand: 'sleep 60',
@@ -106,7 +114,7 @@ describe('SandboxClient (real container runtime)', () => {
 
   it('caps output at the configured byte limit and reports truncated: true', async () => {
     if (!hasRuntime) return;
-    const client = new SandboxClient({ maxOutputBytes: 1024 });
+    const client = new SandboxClient({ env: testEnv(), maxOutputBytes: 1024 });
     const result = await client.runVerification({
       code: 'irrelevant',
       testCommand: "yes 'this line is here to pad output size' | head -c 200000",
@@ -120,7 +128,7 @@ describe('SandboxClient (real container runtime)', () => {
   it('cleans up its temp directory after both a PASS and a FAIL run', async () => {
     if (!hasRuntime) return;
     const before = await countSandboxTempDirs();
-    const client = new SandboxClient();
+    const client = new SandboxClient({ env: testEnv() });
 
     await client.runVerification({ code: 'x', testCommand: 'true', environment: { language: 'general' } });
     await client.runVerification({ code: 'x', testCommand: 'false', environment: { language: 'general' } });
@@ -131,7 +139,7 @@ describe('SandboxClient (real container runtime)', () => {
 
   it('denies network access: an outbound connection attempt fails immediately', async () => {
     if (!hasRuntime) return;
-    const client = new SandboxClient();
+    const client = new SandboxClient({ env: testEnv() });
     const result = await client.runVerification({
       code: 'irrelevant',
       testCommand: 'ping -c1 -W2 1.1.1.1',
@@ -149,7 +157,7 @@ describe('SandboxClient (real container runtime)', () => {
     fs.writeFileSync(sentinelPath, 'this must never be readable from inside the sandbox');
 
     try {
-      const client = new SandboxClient();
+      const client = new SandboxClient({ env: testEnv() });
       const result = await client.runVerification({
         code: 'irrelevant',
         testCommand: `cat ${sentinelPath}`,

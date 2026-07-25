@@ -73,6 +73,35 @@ describe('loadEnv', () => {
       } as NodeJS.ProcessEnv)
     ).toThrow(EnvironmentConfigError);
   });
+
+  it('defaults SANDBOX_PROVIDER to local with no E2B_API_KEY required (Decision 010)', () => {
+    const env = loadEnv(MINIMAL_VALID_ENV);
+    expect(env.sandbox.provider).toBe('local');
+    expect(env.sandbox.e2bApiKey).toBeUndefined();
+  });
+
+  it('treats blank SANDBOX_PROVIDER/E2B_API_KEY values the same as unset', () => {
+    const env = loadEnv({ SANDBOX_PROVIDER: '', E2B_API_KEY: '' } as NodeJS.ProcessEnv);
+    expect(env.sandbox.provider).toBe('local');
+    expect(env.sandbox.e2bApiKey).toBeUndefined();
+  });
+
+  it('accepts SANDBOX_PROVIDER=e2b once E2B_API_KEY is set', () => {
+    const env = loadEnv({
+      SANDBOX_PROVIDER: 'e2b',
+      E2B_API_KEY: 'e2b_super_secret_key',
+    } as NodeJS.ProcessEnv);
+    expect(env.sandbox.provider).toBe('e2b');
+    expect(env.sandbox.e2bApiKey).toBe('e2b_super_secret_key');
+  });
+
+  it('rejects SANDBOX_PROVIDER=e2b without an E2B_API_KEY — never silently falls back to local', () => {
+    expect(() => loadEnv({ SANDBOX_PROVIDER: 'e2b' } as NodeJS.ProcessEnv)).toThrow(EnvironmentConfigError);
+  });
+
+  it('rejects an unrecognized SANDBOX_PROVIDER value', () => {
+    expect(() => loadEnv({ SANDBOX_PROVIDER: 'modal' } as NodeJS.ProcessEnv)).toThrow(EnvironmentConfigError);
+  });
 });
 
 describe('describeCapabilities', () => {

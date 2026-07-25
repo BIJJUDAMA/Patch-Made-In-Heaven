@@ -7,10 +7,24 @@ import { SearchTools } from '../../src/tools/search.tool.js';
 import { RetrieveTools } from '../../src/tools/retrieve.tool.js';
 import { ElasticService, type ElasticClientLike } from '../../src/services/elastic.client.js';
 import { VerificationRunClient, type VerificationRunClientLike } from '../../src/services/verification-run.client.js';
-import { loadEnv } from '../../src/config/env.js';
+import { SandboxClient } from '../../src/services/sandbox.client.js';
+import { loadEnv, type AppEnv } from '../../src/config/env.js';
 
 const execFileAsync = promisify(execFile);
-const runtime = loadEnv().sandbox.containerRuntime;
+
+// Deterministic test env — never bare `loadEnv()`/`getEnv()`, which now reflects
+// this machine's real root `.env` (real OPENROUTER_API_KEY without a matching
+// EMBEDDING_VECTOR_DIMENSIONS) since `config/env.ts` also loads the monorepo root `.env`.
+// Still carries through the real SANDBOX_CONTAINER_RUNTIME (podman here) so the
+// sandbox half of this test genuinely runs.
+function testEnv(overrides: Record<string, string | undefined> = {}): AppEnv {
+  return loadEnv({
+    SANDBOX_CONTAINER_RUNTIME: process.env.SANDBOX_CONTAINER_RUNTIME,
+    ...overrides,
+  } as NodeJS.ProcessEnv);
+}
+
+const runtime = testEnv().sandbox.containerRuntime;
 
 async function runtimeAvailable(): Promise<boolean> {
   try {
@@ -117,11 +131,11 @@ describe('End-to-end trust chain: verify_fix -> submit_fix -> search_fix/get_pat
   it('a genuine sandbox PASS becomes an immediately reusable, indexed knowledge card', async () => {
     if (!hasRuntime) return;
 
-    const env = loadEnv({ ELASTICSEARCH_URL: 'https://es.example.com:9243' } as NodeJS.ProcessEnv);
+    const env = testEnv({ ELASTICSEARCH_URL: 'https://es.example.com:9243' });
     const elasticService = new ElasticService({ env, client: makeSharedElasticClient() });
     const verificationRunClient = new VerificationRunClient({ env, client: makeSharedVerificationRunClientLike() });
 
-    const verifyTools = new VerifyTools({ verificationRunClient });
+    const verifyTools = new VerifyTools({ sandboxClient: new SandboxClient({ env }), verificationRunClient });
     const submitTools = new SubmitTools({ elasticService, verificationRunClient });
     const searchTools = new SearchTools({ elasticService });
     const retrieveTools = new RetrieveTools({ elasticService });
@@ -179,11 +193,11 @@ describe('End-to-end trust chain: verify_fix -> submit_fix -> search_fix/get_pat
   it('a genuine sandbox FAIL is rejected end-to-end and never becomes searchable', async () => {
     if (!hasRuntime) return;
 
-    const env = loadEnv({ ELASTICSEARCH_URL: 'https://es.example.com:9243' } as NodeJS.ProcessEnv);
+    const env = testEnv({ ELASTICSEARCH_URL: 'https://es.example.com:9243' });
     const elasticService = new ElasticService({ env, client: makeSharedElasticClient() });
     const verificationRunClient = new VerificationRunClient({ env, client: makeSharedVerificationRunClientLike() });
 
-    const verifyTools = new VerifyTools({ verificationRunClient });
+    const verifyTools = new VerifyTools({ sandboxClient: new SandboxClient({ env }), verificationRunClient });
     const submitTools = new SubmitTools({ elasticService, verificationRunClient });
 
     const verifyResult = await verifyTools.verifyFix({

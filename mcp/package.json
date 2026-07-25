@@ -1,19 +1,14 @@
 {
   "name": "patch-made-in-heaven-mcp",
   "version": "1.0.0",
-
   "private": true,
   "type": "module",
   "description": "Patch Made In Heaven - Execution-Verified MCP Server",
-
   "scripts": {
     "dev": "nitrostack-cli dev",
     "build": "nitrostack-cli build",
     "start": "npm run build && nitrostack-cli start",
     "start:prod": "nitrostack-cli start",
-
-
-
     "upgrade": "nitrostack-cli upgrade",
     "install:all": "nitrostack-cli install",
     "typecheck": "tsc --noEmit",
@@ -35,6 +30,7 @@
     "@nitrostack/core": "^1",
     "diff": "^9.0.0",
     "dotenv": "^16.3.1",
+    "e2b": "^2.36.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
