@@ -60,6 +60,9 @@ import { ToolItem } from './components/DiamondGallery';
 const DiamondGallery = dynamic(() => import('./components/DiamondGallery'), {
   ssr: false,
 });
+const HeroShader = dynamic(() => import('./components/HeroShader'), {
+  ssr: false,
+});
 
 const MCP_URL = 'https://patch-made-in-works-on-my-machine-amrita-university-coimbatore.app.nitrocloud.ai/mcp';
 
@@ -268,6 +271,9 @@ export default function Dashboard() {
           overflow: 'hidden',
         }}
       >
+        {/* Cinematic WebGL Raymarching Volumetric Background */}
+        <HeroShader />
+
         {/* Top bar */}
         <header
           style={{
@@ -276,6 +282,8 @@ export default function Dashboard() {
             alignItems: 'center',
             padding: '1.5rem 3rem',
             borderBottom: '1px solid var(--border-muted)',
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
@@ -333,6 +341,8 @@ export default function Dashboard() {
             maxWidth: '760px',
             margin: '0 auto',
             width: '100%',
+            position: 'relative',
+            zIndex: 2,
           }}
         >
           {/* Eyebrow */}
