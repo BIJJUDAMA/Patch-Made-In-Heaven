@@ -7,10 +7,12 @@
   "description": "Patch Made In Heaven - Execution-Verified MCP Server",
 
   "scripts": {
-    "dev": "npx nitrostack-cli dev",
-    "build": "npx nitrostack-cli build",
-    "start": "npm run build && npx nitrostack-cli start",
-    "start:prod": "npx nitrostack-cli start",
+    "dev": "nitrostack-cli dev",
+    "build": "nitrostack-cli build",
+    "start": "npm run build && nitrostack-cli start",
+    "start:prod": "nitrostack-cli start",
+
+
 
     "upgrade": "nitrostack-cli upgrade",
     "install:all": "nitrostack-cli install",

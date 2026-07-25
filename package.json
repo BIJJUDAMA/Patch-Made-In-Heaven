@@ -7,9 +7,9 @@
   "main": "mcp/dist/index.js",
   "scripts": {
     "dev": "npm --prefix mcp run dev",
-    "build": "npm --prefix mcp run build",
+    "build": "npm --prefix mcp run build && node -e \"fs.cpSync('mcp/dist', 'dist', { recursive: true }); fs.copyFileSync('mcp/nitro.config.ts', 'nitro.config.ts');\"",
+    "start": "nitrostack-cli start",
 
-    "start": "npm --prefix mcp run start",
     "test": "npm --prefix mcp run test",
     "typecheck": "npm --prefix mcp run typecheck",
     "deploy": "cd mcp && npx @nitrostack/cli deploy"
