@@ -708,14 +708,18 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
     };
 
     const closeCard = () => {
-      const card = stateRef.current.openedCard;
-      if (!card) return;
-      stateRef.current.state = "closing";
       setShowSchemaModal(false);
+      setSchemaModalClosing(false);
       setExpandedTool(null);
       setOpenProgress(0);
       stateRef.current.openProgressVal = 0;
       setCardScreenBounds(null);
+      const card = stateRef.current.openedCard;
+      if (!card) {
+        stateRef.current.state = "closed";
+        return;
+      }
+      stateRef.current.state = "closing";
       const { basePos, angle } = card.userData;
 
       let rotBase = angle;
@@ -1119,7 +1123,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
       )}
 
       {/* Interactive Controls Positioned STRICTLY INSIDE the Visual 3D Card Face (Animated & 3D Tilting 1:1 with Card Mesh) */}
-      {expandedTool && !showSchemaModal && (
+      {expandedTool && !showSchemaModal && (stateRef.current.state === "open" || stateRef.current.state === "opening") && openProgress > 0.05 && (
         <div
           ref={overlayRef}
           style={{
