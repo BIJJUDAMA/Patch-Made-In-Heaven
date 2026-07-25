@@ -4,15 +4,23 @@ import { promisify } from 'util';
 import { VerifyTools } from '../../src/tools/verify.tool.js';
 import { SandboxClient } from '../../src/services/sandbox.client.js';
 import { VerificationRunClient, type VerificationRunClientLike } from '../../src/services/verification-run.client.js';
-import { loadEnv } from '../../src/config/env.js';
+import { loadEnv, type AppEnv } from '../../src/config/env.js';
 
 const execFileAsync = promisify(execFile);
+
+// Deterministic test env carrying through only the real SANDBOX_CONTAINER_RUNTIME
+// (podman on this machine) — never bare `loadEnv()`/`getEnv()`, which now reflects
+// this machine's real root `.env` (real OPENROUTER_API_KEY without a matching
+// EMBEDDING_VECTOR_DIMENSIONS) since `config/env.ts` also loads the monorepo root `.env`.
+function testEnv(): AppEnv {
+  return loadEnv({ SANDBOX_CONTAINER_RUNTIME: process.env.SANDBOX_CONTAINER_RUNTIME } as NodeJS.ProcessEnv);
+}
 
 // Runs the real sandbox (docker/podman, per SANDBOX_CONTAINER_RUNTIME) end to end,
 // same as sandbox.docker.test.ts — but with an in-memory fake VerificationRunClientLike
 // standing in for Elasticsearch, since no live cluster exists in this environment.
 // This keeps sandbox execution genuinely real while persistence stays deterministic.
-const runtime = loadEnv().sandbox.containerRuntime;
+const runtime = testEnv().sandbox.containerRuntime;
 
 async function runtimeAvailable(): Promise<boolean> {
   try {
@@ -53,8 +61,9 @@ describe('VerifyTools.verifyFix', () => {
   });
 
   it('returns DEPENDENCY_UNAVAILABLE without ever touching the sandbox when persistence is not configured', async () => {
-    const disconnectedEnv = { ...loadEnv(), elasticsearch: { ...loadEnv().elasticsearch, url: undefined } };
+    const disconnectedEnv = testEnv(); // no ELASTICSEARCH_URL in this constructed env -> disconnected
     const tools = new VerifyTools({
+      sandboxClient: new SandboxClient({ env: disconnectedEnv }),
       verificationRunClient: new VerificationRunClient({ env: disconnectedEnv }),
     });
     const result = await tools.verifyFix({
@@ -70,7 +79,8 @@ describe('VerifyTools.verifyFix', () => {
   it('genuine PASS: real sandbox execution persisted as a real Verification Run', async () => {
     if (!hasRuntime) return;
     const tools = new VerifyTools({
-      verificationRunClient: new VerificationRunClient({ client: makeFakeVerificationRunClient() }),
+      sandboxClient: new SandboxClient({ env: testEnv() }),
+      verificationRunClient: new VerificationRunClient({ env: testEnv(), client: makeFakeVerificationRunClient() }),
     });
 
     const result = await tools.verifyFix({
@@ -92,7 +102,8 @@ describe('VerifyTools.verifyFix', () => {
   it('genuine FAIL: a real non-zero exit is reported as FAIL, not TIMEOUT', async () => {
     if (!hasRuntime) return;
     const tools = new VerifyTools({
-      verificationRunClient: new VerificationRunClient({ client: makeFakeVerificationRunClient() }),
+      sandboxClient: new SandboxClient({ env: testEnv() }),
+      verificationRunClient: new VerificationRunClient({ env: testEnv(), client: makeFakeVerificationRunClient() }),
     });
 
     const result = await tools.verifyFix({
@@ -110,8 +121,8 @@ describe('VerifyTools.verifyFix', () => {
   it('genuine TIMEOUT: distinct from FAIL when the sandbox kills a hanging command', async () => {
     if (!hasRuntime) return;
     const tools = new VerifyTools({
-      sandboxClient: new SandboxClient({ timeoutMs: 1500 }),
-      verificationRunClient: new VerificationRunClient({ client: makeFakeVerificationRunClient() }),
+      sandboxClient: new SandboxClient({ env: testEnv(), timeoutMs: 1500 }),
+      verificationRunClient: new VerificationRunClient({ env: testEnv(), client: makeFakeVerificationRunClient() }),
     });
 
     const result = await tools.verifyFix({
@@ -128,7 +139,8 @@ describe('VerifyTools.verifyFix', () => {
   it('an omitted baseline produces a full-file addition diff', async () => {
     if (!hasRuntime) return;
     const tools = new VerifyTools({
-      verificationRunClient: new VerificationRunClient({ client: makeFakeVerificationRunClient() }),
+      sandboxClient: new SandboxClient({ env: testEnv() }),
+      verificationRunClient: new VerificationRunClient({ env: testEnv(), client: makeFakeVerificationRunClient() }),
     });
 
     const result = await tools.verifyFix({

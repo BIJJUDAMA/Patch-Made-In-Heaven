@@ -5,6 +5,14 @@ import {
   type VerificationRunClientLike,
   type CreateVerificationRunInput,
 } from '../../src/services/verification-run.client.js';
+import { loadEnv, type AppEnv } from '../../src/config/env.js';
+
+// Deterministic test env — never rely on ambient `getEnv()`/process.env, which
+// now reflects this machine's real root `.env` (real OPENROUTER_API_KEY, etc.)
+// since `config/env.ts` was changed to also load the monorepo root `.env`.
+function testEnv(): AppEnv {
+  return loadEnv({ ELASTICSEARCH_URL: 'https://es.example.com:9243' } as NodeJS.ProcessEnv);
+}
 
 function baseEnvironment() {
   return { language: 'python', version: '3.11.4', framework: 'fastapi' };
@@ -56,7 +64,7 @@ function makeFakeClient(): VerificationRunClientLike & { delete: ReturnType<type
 describe('VerificationRunClient', () => {
   it('creates a run then retrieves it by id', async () => {
     const fake = makeFakeClient();
-    const client = new VerificationRunClient({ client: fake });
+    const client = new VerificationRunClient({ env: testEnv(), client: fake });
     await client.initIndex();
 
     const created = await client.create(baseInput());
@@ -76,7 +84,7 @@ describe('VerificationRunClient', () => {
     vi.useFakeTimers();
     try {
       const fake = makeFakeClient();
-      const client = new VerificationRunClient({ client: fake, ttlMs: 1000 });
+      const client = new VerificationRunClient({ env: testEnv(), client: fake, ttlMs: 1000 });
       const created = await client.create(baseInput());
 
       vi.setSystemTime(Date.now() + 2000);
@@ -91,7 +99,7 @@ describe('VerificationRunClient', () => {
 
   it('rejects lookup on a patch-digest mismatch and accepts a matching one', async () => {
     const fake = makeFakeClient();
-    const client = new VerificationRunClient({ client: fake });
+    const client = new VerificationRunClient({ env: testEnv(), client: fake });
     const created = await client.create(baseInput({ patch: 'AAA' }));
 
     const mismatched = await client.lookup(created.verificationRunId, computePatchDigest('BBB'));
@@ -104,14 +112,14 @@ describe('VerificationRunClient', () => {
 
   it('returns null for an unknown verificationRunId', async () => {
     const fake = makeFakeClient();
-    const client = new VerificationRunClient({ client: fake });
+    const client = new VerificationRunClient({ env: testEnv(), client: fake });
     const found = await client.lookup('00000000-0000-0000-0000-000000000000');
     expect(found).toBeNull();
   });
 
   it('initIndex is idempotent: never recreates an existing index', async () => {
     const fake = makeFakeClient();
-    const client = new VerificationRunClient({ client: fake });
+    const client = new VerificationRunClient({ env: testEnv(), client: fake });
 
     await client.initIndex();
     await client.initIndex();
