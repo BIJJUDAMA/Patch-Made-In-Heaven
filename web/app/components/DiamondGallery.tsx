@@ -17,6 +17,14 @@ import {
   ArrowRight,
   Copy,
   Check,
+  ListFilter,
+  Code2,
+  KeyRound,
+  Type,
+  AlertCircle,
+  CheckCircle2,
+  FileCode2,
+  SlidersHorizontal,
 } from "lucide-react";
 
 export interface ToolItem {
@@ -65,7 +73,7 @@ function createToolCardTexture(tool: ToolItem): THREE.CanvasTexture {
   // Number Badge (#ffffff White)
   ctx.font = '700 32px "Geist Mono", "JetBrains Mono", monospace';
   ctx.fillStyle = "#ffffff";
-  ctx.fillText(`/ ${tool.num}`, 45, 75);
+  ctx.fillText(`/ ${tool.num}`, 50, 80);
 
   // Tag Pill (#d4d4d8 Bright Silver-Gray)
   ctx.font = '600 20px "Geist Mono", "JetBrains Mono", monospace';
@@ -324,7 +332,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
   const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [copiedSchema, setCopiedSchema] = useState(false);
   const [activeTab, setActiveTab] = useState<"params" | "schema">("params");
-  
+
   // Dynamic screen bounds for interactive overlay tracking
   const [cardScreenBounds, setCardScreenBounds] = useState<{
     top: number;
@@ -798,7 +806,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               closeCard();
               return;
             }
-            // Bottom Middle [VIEW JSON SCHEMA] Zone: uv.x > 0.10 && uv.x < 0.90 && uv.y < 0.22
+            // Bottom Middle [VIEW JSON SCHEMA] Zone: uv.x > 0.08 && uv.x < 0.92 && uv.y < 0.22
             if (uv.x > 0.08 && uv.x < 0.92 && uv.y < 0.22) {
               setShowSchemaModal(true);
               return;
@@ -1171,7 +1179,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
         </div>
       )}
 
-      {/* JSON Schema Popup Inspector - STYLED IN THE EXACT THEME & AESTHETIC OF THE CARD */}
+      {/* JSON Schema Popup Inspector - STYLED IN THE EXACT 1:1 AESTHETIC & BRANDING OF THE 3D CARD */}
       {expandedTool && expandedTool.schema && showSchemaModal && (
         <div
           style={{
@@ -1186,7 +1194,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             display: "flex",
             flexDirection: "column",
             background: "linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 40%, #030303 100%)",
-            border: "2px solid rgba(255, 255, 255, 0.45)",
+            border: "2.2px solid rgba(255, 255, 255, 0.45)",
             borderRadius: "20px",
             padding: "2rem 2.25rem",
             color: "#ffffff",
@@ -1196,21 +1204,21 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             animation: "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both",
           }}
         >
-          {/* Subtle Linear Grid Pattern matching Card Texture */}
+          {/* Subtle Linear Grid Pattern matching Card Texture 1:1 */}
           <div
             style={{
               position: "absolute",
               inset: 0,
               pointerEvents: "none",
               backgroundImage:
-                "linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+                "linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px)",
               backgroundSize: "45px 45px",
               opacity: 0.7,
               zIndex: 0,
             }}
           />
 
-          {/* Modal Header matching Card Texture typography & badges */}
+          {/* Modal Header matching Card Texture typography & badges 1:1 */}
           <div
             style={{
               position: "relative",
@@ -1239,8 +1247,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     fontSize: "0.875rem",
                     fontWeight: 700,
                     color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
                   }}
                 >
+                  <SlidersHorizontal style={{ width: "14px", height: "14px", strokeWidth: 2 }} />
                   / {expandedTool.num}
                 </span>
                 <span
@@ -1260,7 +1272,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 </span>
               </div>
 
-              {/* Title */}
+              {/* Title in Syne Font */}
               <h3
                 style={{
                   fontFamily: '"Syne", system-ui, sans-serif',
@@ -1278,7 +1290,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               {/* Card White Accent Line */}
               <div
                 style={{
-                  width: "80px",
+                  width: "95px",
                   height: "3.5px",
                   backgroundColor: "#ffffff",
                   borderRadius: "2px",
@@ -1295,7 +1307,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 zIndex: 1,
               }}
             >
-              {/* Tab Selector */}
+              {/* Tab Selector with Icons */}
               <div
                 style={{
                   display: "flex",
@@ -1308,7 +1320,10 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 <button
                   onClick={() => setActiveTab("params")}
                   style={{
-                    padding: "0.35rem 0.85rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    padding: "0.38rem 0.85rem",
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
@@ -1320,12 +1335,15 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     cursor: "pointer",
                   }}
                 >
-                  Parameters
+                  <ListFilter style={{ width: "13px", height: "13px" }} /> Parameters
                 </button>
                 <button
                   onClick={() => setActiveTab("schema")}
                   style={{
-                    padding: "0.35rem 0.85rem",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.375rem",
+                    padding: "0.38rem 0.85rem",
                     borderRadius: "6px",
                     border: "none",
                     backgroundColor:
@@ -1337,11 +1355,11 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                     cursor: "pointer",
                   }}
                 >
-                  Raw JSON Schema
+                  <Code2 style={{ width: "13px", height: "13px" }} /> Raw JSON Schema
                 </button>
               </div>
 
-              {/* Close Modal Button */}
+              {/* Close Modal Button with Icon */}
               <button
                 onClick={() => setShowSchemaModal(false)}
                 className="active-press"
@@ -1360,12 +1378,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                   cursor: "pointer",
                 }}
               >
-                <X style={{ width: "14px", height: "14px" }} /> Close
+                <X style={{ width: "15px", height: "15px" }} /> Close
               </button>
             </div>
           </div>
 
-          {/* Card Tool Description */}
+          {/* Card Tool Description in DM Sans Font */}
           <p
             style={{
               position: "relative",
@@ -1380,7 +1398,7 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
             {expandedTool.desc}
           </p>
 
-          {/* Content Body inside matching dark Obsidian boxes */}
+          {/* Content Body inside matching dark Obsidian boxes with icons */}
           <div
             style={{
               position: "relative",
@@ -1430,8 +1448,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                                 fontSize: "0.9rem",
                                 fontWeight: 700,
                                 color: "#ffffff",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.375rem",
                               }}
                             >
+                              <KeyRound style={{ width: "13px", height: "13px", color: "var(--text-medium)" }} />
                               {key}
                             </span>
                             <span
@@ -1442,8 +1464,12 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                                 borderRadius: "4px",
                                 backgroundColor: "rgba(255, 255, 255, 0.1)",
                                 color: "#d4d4d8",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "0.25rem",
                               }}
                             >
+                              <Type style={{ width: "11px", height: "11px" }} />
                               {prop.type || "string"}
                             </span>
                           </div>
@@ -1461,9 +1487,20 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                                 ? "1px solid rgba(255, 255, 255, 0.4)"
                                 : "none",
                               fontWeight: isRequired ? 700 : 400,
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "0.25rem",
                             }}
                           >
-                            {isRequired ? "Required" : "Optional"}
+                            {isRequired ? (
+                              <>
+                                <AlertCircle style={{ width: "11px", height: "11px" }} /> Required
+                              </>
+                            ) : (
+                              <>
+                                <CheckCircle2 style={{ width: "11px", height: "11px" }} /> Optional
+                              </>
+                            )}
                           </span>
                         </div>
                         {prop.description && (
