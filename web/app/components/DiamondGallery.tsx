@@ -1245,6 +1245,53 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
               animation: !schemaModalClosing ? "fadeUp 260ms cubic-bezier(0.23, 1, 0.32, 1) both" : "none",
             }}
           >
+            {/* Voronoi Crystalline Facet Cell Grid SVG Pattern */}
+            <svg
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                pointerEvents: "none",
+                opacity: 0.16,
+                zIndex: 0,
+              }}
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <pattern
+                  id="voronoiModalGrid"
+                  width="120"
+                  height="120"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M0 0 L60 25 L120 0 L95 60 L120 120 L60 95 L0 120 L25 60 Z M60 25 L60 95 M25 60 L95 60"
+                    fill="none"
+                    stroke="#ffffff"
+                    strokeWidth="1.2"
+                    strokeDasharray="3 3"
+                  />
+                  <polygon points="30,15 90,15 105,60 90,105 30,105 15,60" fill="none" stroke="#ffffff" strokeWidth="1" />
+                  <line x1="15" y1="60" x2="105" y2="60" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
+                  <line x1="60" y1="15" x2="60" y2="105" stroke="#ffffff" strokeWidth="0.8" opacity="0.6" />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#voronoiModalGrid)" />
+            </svg>
+
+            {/* Voronoi Diamond Facet Radial Reflective Shimmer Overlay */}
+            <div
+              style={{
+                position: "absolute",
+                inset: 0,
+                pointerEvents: "none",
+                background:
+                  "radial-gradient(ellipse at 30% 20%, rgba(255, 255, 255, 0.14), transparent 50%), radial-gradient(ellipse at 80% 80%, rgba(255, 255, 255, 0.09), transparent 60%)",
+                zIndex: 0,
+              }}
+            />
+
             {/* Subtle Glossy Holographic Sweeping Shimmer Overlay */}
             <div
               style={{
@@ -1253,20 +1300,6 @@ export default function DiamondGallery({ tools, onSelectTool }: Props) {
                 pointerEvents: "none",
                 background: "linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.18) 50%, rgba(255,255,255,0.03) 60%, transparent 100%)",
                 opacity: 0.8,
-                zIndex: 0,
-              }}
-            />
-
-            {/* Subtle Linear Faceted Diamond Grid Pattern matching Card Texture 1:1 */}
-            <div
-              style={{
-                position: "absolute",
-                inset: 0,
-                pointerEvents: "none",
-                backgroundImage:
-                  "linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px)",
-                backgroundSize: "45px 45px",
-                opacity: 0.7,
                 zIndex: 0,
               }}
             />
