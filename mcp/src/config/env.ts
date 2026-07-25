@@ -1,5 +1,12 @@
-import 'dotenv/config';
+import * as path from 'path';
+import dotenv from 'dotenv';
+
+// Load root .env file if available, followed by local .env
+dotenv.config({ path: path.resolve(process.cwd(), '../.env') });
+dotenv.config();
+
 import { z } from 'zod';
+
 
 /**
  * Centralized, Zod-validated runtime configuration for the HAcksMyMachine MCP server.
