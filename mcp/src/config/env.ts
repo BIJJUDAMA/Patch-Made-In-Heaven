@@ -82,6 +82,17 @@ const rawEnvSchema = z.preprocess(
     SANDBOX_CPU_LIMIT: z.string().trim().min(1).default('1'),
     SANDBOX_PIDS_LIMIT: z.coerce.number().int().positive().default(128),
     SANDBOX_MAX_OUTPUT_BYTES: z.coerce.number().int().positive().default(65536),
+
+    // Decision 010 (Phase 6): production sandbox provider selection. Explicit
+    // opt-in only — always defaults to 'local' (Docker/podman, Decision 005).
+    // NitroCloud's serverless runtime has no container engine at all (confirmed
+    // live: `verify_fix` returned `spawn docker ENOENT`), so the production
+    // deployment must explicitly set SANDBOX_PROVIDER=e2b; nothing here
+    // auto-detects or silently switches providers based on E2B_API_KEY's
+    // presence alone, so a local dev machine with a key configured for testing
+    // can never accidentally run production verification against a paid remote.
+    SANDBOX_PROVIDER: z.enum(['local', 'e2b']).default('local'),
+    E2B_API_KEY: z.string().trim().min(1).optional(),
   })
   .superRefine((value, ctx) => {
     if (value.OPENROUTER_API_KEY && !value.EMBEDDING_VECTOR_DIMENSIONS) {
@@ -97,6 +108,13 @@ const rawEnvSchema = z.preprocess(
         code: z.ZodIssueCode.custom,
         path: ['SEARCH_RESULT_LIMIT_DEFAULT'],
         message: 'SEARCH_RESULT_LIMIT_DEFAULT cannot exceed SEARCH_RESULT_LIMIT_MAX.',
+      });
+    }
+    if (value.SANDBOX_PROVIDER === 'e2b' && !value.E2B_API_KEY) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['E2B_API_KEY'],
+        message: 'E2B_API_KEY is required once SANDBOX_PROVIDER=e2b is set.',
       });
     }
   })
@@ -141,6 +159,8 @@ export interface AppEnv {
     cpuLimit: string;
     pidsLimit: number;
     maxOutputBytes: number;
+    provider: 'local' | 'e2b';
+    e2bApiKey?: string;
   };
 }
 
@@ -189,6 +209,8 @@ function toAppEnv(raw: RawAppEnv): AppEnv {
       cpuLimit: raw.SANDBOX_CPU_LIMIT,
       pidsLimit: raw.SANDBOX_PIDS_LIMIT,
       maxOutputBytes: raw.SANDBOX_MAX_OUTPUT_BYTES,
+      provider: raw.SANDBOX_PROVIDER,
+      e2bApiKey: raw.E2B_API_KEY,
     },
   };
 }
