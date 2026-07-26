@@ -200,6 +200,93 @@ describe('EmbeddingClient', () => {
   });
 });
 
+describe('EmbeddingClient fallback API key (Phase 7 — credits exhaustion)', () => {
+  it('falls back to the second key once the primary is exhausted after retries, and succeeds', async () => {
+    const authHeaders: string[] = [];
+    const fetchImpl = vi.fn(async (_url, init) => {
+      const headers = (init as RequestInit).headers as Record<string, string>;
+      authHeaders.push(headers.Authorization);
+      if (headers.Authorization === 'Bearer fallback-key') {
+        const body = JSON.parse(String((init as RequestInit).body));
+        return fakeResponse(dataFor(body.input));
+      }
+      return fakeResponse({}, { ok: false, status: 500, statusText: 'Internal Server Error' });
+    });
+    const client = new EmbeddingClient({
+      baseUrl: 'https://embeddings.example.com/v1',
+      apiKey: 'primary-key',
+      fallbackApiKey: 'fallback-key',
+      model: 'test-model',
+      maxRetries: 1,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const vectors = await client.embed(['a']);
+    expect(vectors).toEqual([[0.1, 0.2, 0.3]]);
+    // Primary attempted (initial + 1 retry = 2 calls), then fallback succeeded on its first try.
+    expect(authHeaders).toEqual(['Bearer primary-key', 'Bearer primary-key', 'Bearer fallback-key']);
+  });
+
+  it('falls back immediately on a non-retryable primary failure (e.g. 401)', async () => {
+    const authHeaders: string[] = [];
+    const fetchImpl = vi.fn(async (_url, init) => {
+      const headers = (init as RequestInit).headers as Record<string, string>;
+      authHeaders.push(headers.Authorization);
+      if (headers.Authorization === 'Bearer fallback-key') {
+        const body = JSON.parse(String((init as RequestInit).body));
+        return fakeResponse(dataFor(body.input));
+      }
+      return fakeResponse({}, { ok: false, status: 401, statusText: 'Unauthorized' });
+    });
+    const client = new EmbeddingClient({
+      baseUrl: 'https://embeddings.example.com/v1',
+      apiKey: 'primary-key',
+      fallbackApiKey: 'fallback-key',
+      model: 'test-model',
+      maxRetries: 2,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    const vectors = await client.embed(['a']);
+    expect(vectors).toEqual([[0.1, 0.2, 0.3]]);
+    expect(authHeaders).toEqual(['Bearer primary-key', 'Bearer fallback-key']);
+  });
+
+  it('throws if the fallback key also fails, without looping a third time', async () => {
+    const authHeaders: string[] = [];
+    const fetchImpl = vi.fn(async (_url, init) => {
+      const headers = (init as RequestInit).headers as Record<string, string>;
+      authHeaders.push(headers.Authorization);
+      return fakeResponse({}, { ok: false, status: 401, statusText: 'Unauthorized' });
+    });
+    const client = new EmbeddingClient({
+      baseUrl: 'https://embeddings.example.com/v1',
+      apiKey: 'primary-key',
+      fallbackApiKey: 'fallback-key',
+      model: 'test-model',
+      maxRetries: 0,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.embed('a')).rejects.toThrow(EmbeddingProviderError);
+    expect(authHeaders).toEqual(['Bearer primary-key', 'Bearer fallback-key']);
+  });
+
+  it('behaves exactly as before when no fallback key is configured', async () => {
+    const fetchImpl = vi.fn(async () => fakeResponse({}, { ok: false, status: 401, statusText: 'Unauthorized' }));
+    const client = new EmbeddingClient({
+      baseUrl: 'https://embeddings.example.com/v1',
+      apiKey: 'primary-key',
+      model: 'test-model',
+      maxRetries: 0,
+      fetchImpl: fetchImpl as unknown as typeof fetch,
+    });
+
+    await expect(client.embed('a')).rejects.toThrow(EmbeddingProviderError);
+    expect(fetchImpl).toHaveBeenCalledTimes(1);
+  });
+});
+
 describe('createEmbeddingClientFromEnv', () => {
   it('returns null (degraded mode) when no embedding API key is configured', () => {
     const env = loadEnv({} as NodeJS.ProcessEnv);
