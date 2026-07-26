@@ -14,6 +14,9 @@ Implementation_Plans/
 # Personal deep-dive notes (shruhath-response-skill output) — not project docs
 response-output/
 
+# Seminar-prep output (seminar-prep skill) — local rehearsal material, never pushed
+teachings/
+
 # BMad multi-agent orchestrator — local workflow tooling, never pushed
 /_bmad/
 /_bmad-logs/
@@ -21,6 +24,12 @@ response-output/
 /design-artifacts/
 /.agents/
 /.github/agents/
+# Local testing/demo-recording guides — rehearsal material, never pushed
+docs/end-to-end-testing-guide.md
+docs/demo-recording-script-terminal.md
+docs/demo-recording-script-codex.md
+docs/demo-recording-script-claude-code.md
+docs/video-showcase-script.md
 
 # Dependencies
 node_modules/
