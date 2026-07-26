@@ -308,7 +308,7 @@ describe.skipIf(!hasRealCredentials)('embedding provider smoke test (credential-
   it('produces a vector with the configured dimension against the real provider', async () => {
     const env = loadEnv();
     const client = createEmbeddingClientFromEnv(env);
-    const [vector] = await client!.embed('hacksmymachine smoke test');
+    const [vector] = await client!.embed('patch made in heaven smoke test');
     expect(vector).toHaveLength(env.embedding.dimensions!);
   });
 });

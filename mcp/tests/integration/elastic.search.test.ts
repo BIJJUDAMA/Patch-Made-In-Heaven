@@ -6,14 +6,15 @@ import type { KnowledgeCard } from '../../src/domain/knowledge-card.js';
 
 /**
  * Runs against a REAL Elasticsearch cluster in a disposable, uniquely-named
- * scratch index (never the production `hacksmymachine-fixes` index). Self-skips
+ * scratch index (never the production `hacksmymachine-fixes` index — the historical
+ * internal index name, unchanged). Self-skips
  * when ELASTICSEARCH_URL isn't configured, matching the credential-gated smoke
  * test pattern used for the embedding client — this environment has no live
  * Elasticsearch, so the suite is expected to report "skipped", not fabricate a
  * pass.
  */
 const hasRealElasticsearch = Boolean(process.env.ELASTICSEARCH_URL);
-const scratchIndexName = `hacksmymachine-fixes-test-${Date.now()}`;
+const scratchIndexName = `patch-made-in-heaven-fixes-test-${Date.now()}`;
 
 function evidencedCard(overrides: Partial<KnowledgeCard> & Pick<KnowledgeCard, 'id'>): KnowledgeCard {
   return {
@@ -129,7 +130,7 @@ describe.skipIf(!hasRealElasticsearch)('ElasticService integration (real Elastic
 });
 
 const hasRealEmbeddings = Boolean(process.env.OPENROUTER_API_KEY && process.env.EMBEDDING_VECTOR_DIMENSIONS);
-const hybridScratchIndexName = `hacksmymachine-fixes-hybrid-test-${Date.now()}`;
+const hybridScratchIndexName = `patch-made-in-heaven-fixes-hybrid-test-${Date.now()}`;
 
 /**
  * Phase 7: proves index-time embedding generation actually makes hybrid mode

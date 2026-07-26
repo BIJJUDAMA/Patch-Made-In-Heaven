@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "hacksmymachine": {
+    "patch-made-in-heaven": {
       "command": "node",
       "args": ["dist/index.js"]
     }

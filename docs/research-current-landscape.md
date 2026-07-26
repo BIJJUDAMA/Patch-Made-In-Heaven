@@ -1,12 +1,12 @@
-# Current Landscape Research: HAcksMyMachine
+# Current Landscape Research: Patch Made In Heaven
 
 **Research date:** 2026-07-25  
 **Source policy:** Primary and official sources only  
-**Purpose:** Evidence for the HAcksMyMachine PRD, especially interoperability, differentiation, retrieval quality, deployment, and verification requirements.
+**Purpose:** Evidence for the Patch Made In Heaven PRD, especially interoperability, differentiation, retrieval quality, deployment, and verification requirements.
 
 ## Executive Summary
 
-HAcksMyMachine's defensible product wedge is not generic coding-agent memory or automated incident remediation. It is an agent-neutral MCP service for retrieving reusable error-to-patch artifacts with inspectable verification evidence across sessions and repositories.
+Patch Made In Heaven's defensible product wedge is not generic coding-agent memory or automated incident remediation. It is an agent-neutral MCP service for retrieving reusable error-to-patch artifacts with inspectable verification evidence across sessions and repositories.
 
 The strongest requirements implied by the current landscape are:
 
@@ -46,7 +46,7 @@ Source: [MCP 2025-11-25 tasks](https://modelcontextprotocol.io/specification/202
 
 ### PRD Implications (Inference)
 
-- The six HAcksMyMachine tool names, inputs, and structured result envelopes should be treated as a versioned cross-client API.
+- The six Patch Made In Heaven tool names, inputs, and structured result envelopes should be treated as a versioned cross-client API.
 - Contract tests should cover tool discovery, schema validity, successful calls, validation failures, and text fallback behavior.
 - Local `stdio` acceptance and deployed Streamable HTTP acceptance should be separate release gates.
 - Remote acceptance should include origin rejection, unauthenticated rejection, scope enforcement, token audience validation, and successful authorized calls.
@@ -118,7 +118,7 @@ Sources:
 
 ### PRD Implications (Inference)
 
-- NitroCloud claims should be treated as vendor claims, not HAcksMyMachine service-level objectives.
+- NitroCloud claims should be treated as vendor claims, not Patch Made In Heaven service-level objectives.
 - A deployed endpoint must pass an end-to-end Streamable HTTP test from a standard MCP client before remote compatibility is claimed.
 - The implementation should pin the exact NitroStack SDK and CLI versions used by the repository. Public docs alternate between package and executable names, so commands should be proven against the pinned versions.
 - NitroStudio success is useful development evidence but does not replace deployed-client interoperability testing.
@@ -153,7 +153,7 @@ Source: [GitHub third-party coding agents](https://docs.github.com/en/copilot/co
 
 ### PRD Implications (Inference)
 
-- HAcksMyMachine should not position itself as general repository memory. Its stored unit is a reusable problem, error signature, patch, and verification record rather than an uncategorized repository fact.
+- Patch Made In Heaven should not position itself as general repository memory. Its stored unit is a reusable problem, error signature, patch, and verification record rather than an uncategorized repository fact.
 - It should not claim to replace telemetry-based root-cause analysis or autonomous PR generation.
 - Its differentiation is portable retrieval of prior verified fixes across compatible clients, sessions, and repositories through MCP.
 - Provenance, execution evidence, and secret scanning are part of the product value, not back-office implementation details.
@@ -209,4 +209,4 @@ Sources:
 
 ## Research Boundary
 
-This memo records current official documentation and product claims as of 2026-07-25. It does not validate live NitroCloud behavior, confirm a specific Elasticsearch subscription entitlement, benchmark HAcksMyMachine, or establish that any vendor claim is a service-level guarantee. Those items require direct testing in the selected hackathon environment.
+This memo records current official documentation and product claims as of 2026-07-25. It does not validate live NitroCloud behavior, confirm a specific Elasticsearch subscription entitlement, benchmark Patch Made In Heaven, or establish that any vendor claim is a service-level guarantee. Those items require direct testing in the selected hackathon environment.

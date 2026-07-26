@@ -137,7 +137,7 @@ export class SandboxClient {
     const startTime = Date.now();
     // Resolve (and reject unknown languages) before touching the filesystem.
     const image = this.resolveImage(options.environment.language);
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'hacksmymachine-sandbox-'));
+    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'patch-made-in-heaven-sandbox-'));
 
     try {
       const ext = this.getFileExtension(options.environment.language);

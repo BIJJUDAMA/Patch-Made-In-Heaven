@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "hacksmymachine": {
+    "patch-made-in-heaven": {
       "command": "node",
       "args": ["C:/My-Files/College/Hackthons/Nitrostack-Hackathon/mcp/dist/index.js"]
     }

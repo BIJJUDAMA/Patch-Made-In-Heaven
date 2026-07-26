@@ -11,7 +11,7 @@ import { SEED_KNOWLEDGE_CARDS } from '../../src/services/seed.data.js';
  * `hacksmymachine-fixes` index). Self-skips here — no ELASTICSEARCH_URL.
  */
 const hasRealElasticsearch = Boolean(process.env.ELASTICSEARCH_URL);
-const scratchIndexName = `hacksmymachine-fixes-seed-test-${Date.now()}`;
+const scratchIndexName = `patch-made-in-heaven-fixes-seed-test-${Date.now()}`;
 
 describe.skipIf(!hasRealElasticsearch)('bulk seeding idempotency (real Elasticsearch)', () => {
   let service: ElasticService;

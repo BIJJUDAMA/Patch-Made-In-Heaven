@@ -1,4 +1,4 @@
-# HAcksMyMachine PRD Addendum
+# Patch Made In Heaven PRD Addendum
 
 This addendum preserves architecture constraints, brownfield facts, reference-project lessons, current research, and delivery mechanics that are necessary for downstream sessions but do not belong in the capability-focused PRD.
 
@@ -102,7 +102,7 @@ Research was performed on 2026-07-25 using official sources. The full memo is in
   - https://docs.github.com/en/copilot/concepts/agents/copilot-memory
 - Sentry Seer uses issue telemetry and code context to propose changes and open pull requests.
   - https://docs.sentry.io/product/ai-in-sentry/seer
-- HAcksMyMachine's defensible distinction is not generic memory or incident automation. It is MCP-portable, environment-aware error-to-patch reuse with inspectable execution evidence.
+- Patch Made In Heaven's defensible distinction is not generic memory or incident automation. It is MCP-portable, environment-aware error-to-patch reuse with inspectable execution evidence.
 
 ### Docker
 

@@ -1,7 +1,7 @@
 import { defineConfig } from '@nitrostack/core';
 
 export default defineConfig({
-  name: 'hacksmymachine-mcp',
+  name: 'patch-made-in-heaven-mcp',
   version: '1.0.0',
-  description: 'HAcksMyMachine — Permanent, execution-verified agent memory platform.',
+  description: 'Patch Made In Heaven — Permanent, execution-verified agent memory platform.',
 });

@@ -23,7 +23,7 @@ import { SEED_KNOWLEDGE_CARDS } from '../../src/services/seed.data.js';
  * mismatch instead, which the corpus does support.
  */
 const hasRealElasticsearch = Boolean(process.env.ELASTICSEARCH_URL);
-const scratchIndexName = `hacksmymachine-fixes-quality-${Date.now()}`;
+const scratchIndexName = `patch-made-in-heaven-fixes-quality-${Date.now()}`;
 
 interface PositiveCase {
   kind: 'exact' | 'paraphrase' | 'abbreviation';

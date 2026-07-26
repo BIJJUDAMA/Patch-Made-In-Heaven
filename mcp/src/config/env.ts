@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 
 /**
- * Centralized, Zod-validated runtime configuration for the HAcksMyMachine MCP server.
+ * Centralized, Zod-validated runtime configuration for the Patch Made In Heaven MCP server.
  *
  * `loadEnv` never touches `process.env` unless called with no arguments, so tests can
  * validate arbitrary configurations without mutating global state. `getEnv` is the

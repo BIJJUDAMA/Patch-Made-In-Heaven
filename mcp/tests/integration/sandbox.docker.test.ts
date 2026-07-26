@@ -34,7 +34,7 @@ async function runtimeAvailable(): Promise<boolean> {
 
 async function countSandboxTempDirs(): Promise<number> {
   const entries = await fs.promises.readdir(os.tmpdir());
-  return entries.filter((entry) => entry.startsWith('hacksmymachine-sandbox-')).length;
+  return entries.filter((entry) => entry.startsWith('patch-made-in-heaven-sandbox-')).length;
 }
 
 async function listContainersByPrefix(prefix: string): Promise<string[]> {

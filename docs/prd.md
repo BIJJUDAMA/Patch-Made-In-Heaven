@@ -1,15 +1,15 @@
 ---
-title: HAcksMyMachine Product Requirements
+title: Patch Made In Heaven Product Requirements
 status: final
 created: 2026-07-25
 updated: 2026-07-25
 ---
 
-# PRD: HAcksMyMachine
+# PRD: Patch Made In Heaven
 
 ## 0. Document Purpose
 
-This PRD is the product contract for HAcksMyMachine across human contributors, Codex sessions, Claude sessions, architecture work, implementation plans, stories, testing, and hackathon review. It defines required behavior and measurable outcomes, not detailed implementation. Technical decisions and brownfield context are preserved in `addendum.md`.
+This PRD is the product contract for Patch Made In Heaven across human contributors, Codex sessions, Claude sessions, architecture work, implementation plans, stories, testing, and hackathon review. It defines required behavior and measurable outcomes, not detailed implementation. Technical decisions and brownfield context are preserved in `addendum.md`.
 
 Source precedence is:
 
@@ -26,7 +26,7 @@ This PRD narrows acceptable behavior through compatible additions to the existin
 
 AI coding agents repeatedly consume tokens and compute resources and spend developer time solving failures that another agent has already solved. Existing answers and agent memories may be useful, but they rarely prove that a proposed fix executed successfully in a matching environment.
 
-HAcksMyMachine is a shared, execution-verified memory layer for AI coding agents. An Agent searches before reasoning. On a Cache Hit, it receives an environment-compatible Verified Fix with its patch and Verification Evidence. On a Cache Miss, the Agent solves the problem, HAcksMyMachine executes the Candidate Fix in an isolated Sandbox, and only a successful Verification Run can become a reusable Knowledge Card.
+Patch Made In Heaven is a shared, execution-verified memory layer for AI coding agents. An Agent searches before reasoning. On a Cache Hit, it receives an environment-compatible Verified Fix with its patch and Verification Evidence. On a Cache Miss, the Agent solves the problem, Patch Made In Heaven executes the Candidate Fix in an isolated Sandbox, and only a successful Verification Run can become a reusable Knowledge Card.
 
 The product thesis is narrow: portable, inspectable, Verified Fixes reduce redundant debugging better than another unverified answer feed. The winning demo is the complete trust loop working across two different MCP Clients, not a long list of loosely connected features.
 
@@ -34,7 +34,7 @@ The product thesis is narrow: portable, inspectable, Verified Fixes reduce redun
 
 MCP gives coding tools a shared protocol for discovering and calling external capabilities. Elasticsearch can combine exact error-token retrieval with semantic similarity. Together they make a client-neutral shared memory layer practical without requiring a custom plugin for each coding environment.
 
-Adjacent products increasingly store repository facts or automate issue-to-code workflows. HAcksMyMachine does not replace them. Its wedge is cross-session and cross-client reuse of error-to-patch artifacts whose execution evidence is part of the stored product object.
+Adjacent products increasingly store repository facts or automate issue-to-code workflows. Patch Made In Heaven does not replace them. Its wedge is cross-session and cross-client reuse of error-to-patch artifacts whose execution evidence is part of the stored product object.
 
 ## 2. Target User
 
@@ -72,17 +72,17 @@ Cursor and Claude Desktop are the required cross-client demo surfaces; NitroStud
 #### UJ-1. Maya retrieves a known Verified Fix before her Agent reasons
 
 - **Persona + context:** Maya is a backend developer using Cursor on a FastAPI project with a Pydantic version error.
-- **Entry state:** Cursor is configured with the HAcksMyMachine MCP Server and has the error plus Environment Fingerprint.
+- **Entry state:** Cursor is configured with the Patch Made In Heaven MCP Server and has the error plus Environment Fingerprint.
 - **Path:** Maya asks Cursor to resolve the error. The Agent discovers `search_fix`, sends the stack trace and environment, and receives ranked Verified Fixes. It inspects the top Knowledge Card and requests the raw patch or Verification Evidence when needed.
 - **Climax:** The matching patch is returned in less than one second with PASS evidence and an environment match, before the Agent performs independent debugging.
-- **Resolution:** The Agent may apply the patch in Maya's repository. HAcksMyMachine records reuse but never edits Maya's files itself.
+- **Resolution:** The Agent may apply the patch in Maya's repository. Patch Made In Heaven records reuse but never edits Maya's files itself.
 - **Edge case:** If semantic retrieval is unavailable, the result explicitly says it used Lexical Fallback. If Elasticsearch is unavailable, the result is an infrastructure error, not a Cache Miss.
 
 #### UJ-2. Arjun turns a Cache Miss into reusable memory
 
 - **Persona + context:** Arjun is a TypeScript developer using Claude Desktop when his Agent encounters a failure absent from the Seed Corpus.
 - **Entry state:** `search_fix` returned an explicit Cache Miss while the MCP Server remained healthy.
-- **Path:** The Agent reasons about the failure and produces a Candidate Fix plus a reproducible Verification Command. It calls `verify_fix`. HAcksMyMachine runs the candidate in a Sandbox and creates immutable Verification Evidence. The Agent then calls `submit_fix` with the problem, patch, Environment Fingerprint, and server-owned verification reference.
+- **Path:** The Agent reasons about the failure and produces a Candidate Fix plus a reproducible Verification Command. It calls `verify_fix`. Patch Made In Heaven runs the candidate in a Sandbox and creates immutable Verification Evidence. The Agent then calls `submit_fix` with the problem, patch, Environment Fingerprint, and server-owned verification reference.
 - **Climax:** A passing Verification Run creates a trusted Knowledge Card; a failed run creates no trusted card.
 - **Resolution:** The new Knowledge Card becomes searchable and visible in the Inspector Dashboard.
 - **Edge case:** A caller-provided PASS string or edited log cannot substitute for server-owned Verification Evidence.
@@ -93,7 +93,7 @@ Cursor and Claude Desktop are the required cross-client demo surfaces; NitroStud
 - **Entry state:** Her Agent encounters the same underlying failure with a compatible Environment Fingerprint.
 - **Path:** The Agent calls `search_fix`, receives Arjun's Knowledge Card, and inspects its patch and Verification Evidence.
 - **Climax:** The new Verified Fix is available without restarting, reseeding, or sharing conversation history between clients.
-- **Resolution:** Lina's Agent can apply the patch, and HAcksMyMachine increments Reuse Count for the retrieval event without claiming that the patch was applied successfully.
+- **Resolution:** Lina's Agent can apply the patch, and Patch Made In Heaven increments Reuse Count for the retrieval event without claiming that the patch was applied successfully.
 
 #### UJ-4. Priya audits the demo through the Inspector Dashboard
 
@@ -105,7 +105,7 @@ Cursor and Claude Desktop are the required cross-client demo surfaces; NitroStud
 
 ## 3. Glossary
 
-- **Agent** - An AI coding system that calls HAcksMyMachine through an MCP Client.
+- **Agent** - An AI coding system that calls Patch Made In Heaven through an MCP Client.
 - **Cache Hit** - A search outcome containing at least one eligible Verified Fix.
 - **Cache Miss** - A successful search with no eligible Verified Fix. It is not an infrastructure failure.
 - **Candidate Fix** - A proposed solution that has not yet completed a successful Verification Run.
@@ -114,13 +114,13 @@ Cursor and Claude Desktop are the required cross-client demo surfaces; NitroStud
 - **Knowledge Card** - The stored product object containing a problem, Environment Fingerprint, patch, Verification Evidence, provenance, and real reuse metrics.
 - **Lexical Fallback** - A clearly labelled search mode that uses keyword retrieval because semantic retrieval is unavailable.
 - **MCP Client** - A standards-compatible application that connects to the MCP Server, such as Cursor or Claude Desktop.
-- **MCP Server** - The HAcksMyMachine server that exposes the six V1 tools.
+- **MCP Server** - The Patch Made In Heaven server that exposes the six V1 tools.
 - **Retrieval Confidence** - Ranking metadata derived from actual search signals. It is not Verification Status and never overrides eligibility.
 - **Reuse Count** - The number of times a Knowledge Card was returned or explicitly retrieved. It does not prove that a caller applied the patch or resolved the failure.
 - **Sandbox** - The constrained Docker execution environment used for a Verification Run.
 - **Seed Corpus** - The initial collection of reproducibly verified Knowledge Cards available before live usage.
 - **Verification Command** - The bounded command used to reproduce the expected behavior inside a Sandbox.
-- **Verification Evidence** - Immutable stdout, stderr, exit status, duration, Sandbox identity, runtime image/version, and timestamp produced by HAcksMyMachine.
+- **Verification Evidence** - Immutable stdout, stderr, exit status, duration, Sandbox identity, runtime image/version, and timestamp produced by Patch Made In Heaven.
 - **Verification Run** - One Sandbox execution of a Candidate Fix and Verification Command.
 - **Verification Status** - The factual outcome of a Verification Run: PASS, FAIL, or TIMEOUT. It is not a probability or ranking score.
 - **Verified Fix** - A Candidate Fix whose successful Verification Run is linked to its Knowledge Card.
@@ -133,13 +133,13 @@ Cursor and Claude Desktop are the required cross-client demo surfaces; NitroStud
 3. **Honest states over demo theater.** Cache Miss, Lexical Fallback, timeout, dependency failure, and PASS are distinct observable outcomes.
 4. **MCP interoperability over proprietary clients.** Standard tool contracts are the product boundary.
 5. **A narrow complete loop over feature count.** Search, miss, verify, store, inspect, and cross-client reuse must work before adjacent features.
-6. **The caller applies patches.** HAcksMyMachine retrieves and verifies patches; it does not modify the caller's repository. [ASSUMPTION: The calling Agent, not HAcksMyMachine, applies a returned patch to a repository.]
+6. **The caller applies patches.** Patch Made In Heaven retrieves and verifies patches; it does not modify the caller's repository. [ASSUMPTION: The calling Agent, not Patch Made In Heaven, applies a returned patch to a repository.]
 
 ## 5. Features
 
 ### 5.1 MCP-Native Access
 
-**Description:** An MCP Client can discover and call the complete V1 product surface without a HAcksMyMachine-specific plugin. Realizes UJ-1, UJ-2, and UJ-3.
+**Description:** An MCP Client can discover and call the complete V1 product surface without a Patch Made In Heaven-specific plugin. Realizes UJ-1, UJ-2, and UJ-3.
 
 #### FR-1: Discover the six V1 tools
 
@@ -253,7 +253,7 @@ An Agent can call `verify_fix` with post-fix candidate source, a Verification Co
 
 #### FR-9: Create server-owned Verification Evidence
 
-HAcksMyMachine creates an immutable verification reference only from an actual Verification Run.
+Patch Made In Heaven creates an immutable verification reference only from an actual Verification Run.
 
 **Consequences (testable):**
 
@@ -617,7 +617,7 @@ Verification Evidence contains Verification Run ID, Verification Status, canonic
 - **SM-6: Evidence parity** - 100% of sampled dashboard cards show the same patch and Verification Evidence as MCP retrieval. Validates FR-7, FR-16, and FR-17.
 - **SM-7: Demo repeatability** - the canonical UJ-1 through UJ-4 sequence succeeds three consecutive times before judging without manual state manipulation. Validates FR-21.
 - **SM-8: Contract compatibility** - the six tools are discovered and exercised successfully from pinned target versions of Cursor, Claude Desktop, and NitroStudio. Validates FR-1, FR-2, and FR-20.
-- **SM-9: Reduced repeated reasoning** - on a paired benchmark of at least 10 known Seed Corpus failures using the same Agent/model settings, HAcksMyMachine reduces median time to an actionable patch by at least 50% versus independent Agent reasoning. Report model-token usage when the client exposes it. Validates the Vision, FR-3, and SM-1.
+- **SM-9: Reduced repeated reasoning** - on a paired benchmark of at least 10 known Seed Corpus failures using the same Agent/model settings, Patch Made In Heaven reduces median time to an actionable patch by at least 50% versus independent Agent reasoning. Report model-token usage when the client exposes it. Validates the Vision, FR-3, and SM-1.
 
 ### Counter-Metrics
 
@@ -677,5 +677,5 @@ Verification Evidence contains Verification Run ID, Verification Status, canonic
 
 ## 14. Assumptions Index
 
-- **A-1 from Product Principle 6:** The calling Agent, not HAcksMyMachine, applies a returned patch to a repository.
+- **A-1 from Product Principle 6:** The calling Agent, not Patch Made In Heaven, applies a returned patch to a repository.
 - **A-2 from MVP Scope:** English is the only required dashboard and tool-description language for the hackathon MVP.
