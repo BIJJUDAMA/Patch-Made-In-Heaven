@@ -27,21 +27,22 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          # package-lock.json is written by npm 12.0.1, which requires Node
-          # ^22.22.2 || ^24.15.0 || >=26.0.0 and cannot be read correctly by
-          # the older npm bundled with Node 20 (`npm ci` fails with spurious
-          # "Missing: ... from lock file" errors). Pin to the exact toolchain
-          # that produced the lockfile until a lower-Node-compatible lockfile
-          # is validated.
+          # Keep pinned to the toolchain this project develops against.
           node-version: "26.4.0"
           cache: "npm"
           cache-dependency-path: mcp/package-lock.json
 
-      - name: Pin npm to the version that generated the lockfile
+      - name: Pin npm to the project's toolchain version
         run: npm install -g npm@12.0.1
 
-      - name: Install dependencies (locked)
-        run: npm ci
+      # `npm ci` cannot be used here: the repo root became an npm workspaces
+      # monorepo (root package.json declares "workspaces": ["mcp", "web"]),
+      # so npm resolves the lockfile at the workspace root, not mcp/package-lock.json
+      # — and the root lockfile is intentionally gitignored/absent so NitroCloud's
+      # build can do a dynamic install. `npm install` works the same way NitroCloud's
+      # own build does.
+      - name: Install dependencies
+        run: npm install
 
       - name: Typecheck
         run: npm run typecheck
