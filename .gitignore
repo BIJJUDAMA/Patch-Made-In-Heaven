@@ -30,6 +30,8 @@ docs/demo-recording-script-terminal.md
 docs/demo-recording-script-codex.md
 docs/demo-recording-script-claude-code.md
 docs/video-showcase-script.md
+docs/claude-code-recording-checklist.md
+docs/deployment-error.txt
 
 # Dependencies
 node_modules/
