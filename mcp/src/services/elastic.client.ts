@@ -260,6 +260,7 @@ export class ElasticService {
   private readonly indexName: string;
   private readonly apiKey?: string;
   private readonly embeddingDimensions?: number;
+  private readonly embeddingModel: string;
   private readonly embeddingClient: QueryEmbedder | null;
 
   constructor(options: ElasticServiceOptions = {}) {
@@ -267,6 +268,7 @@ export class ElasticService {
     this.indexName = options.indexName ?? INDEX_NAME;
     this.apiKey = env.elasticsearch.apiKey;
     this.embeddingDimensions = env.embedding.dimensions;
+    this.embeddingModel = env.embedding.model;
     this.embeddingClient = options.embeddingClient !== undefined ? options.embeddingClient : createEmbeddingClientFromEnv(env);
 
     if (options.client) {
@@ -355,12 +357,43 @@ export class ElasticService {
     }
   }
 
+  /** Text a card is matched against by both query-time and index-time embeddings — keep these composed the same way. */
+  private composeEmbeddingText(card: KnowledgeCard): string {
+    return `${card.problem}\n${card.errorType}`;
+  }
+
+  /**
+   * Attaches a real embedding vector to each card before it's written, when an
+   * embedding client is configured. Degrades gracefully — returns the cards
+   * unchanged (no `embedding` field, exactly like today) on any embedding
+   * failure or when no client is configured — indexing must never fail just
+   * because embedding generation hiccupped, mirroring `tryEmbedQuery`'s same
+   * degrade-not-fail principle on the read side.
+   */
+  private async attachEmbeddings(cards: KnowledgeCard[]): Promise<KnowledgeCard[]> {
+    if (!this.embeddingClient || cards.length === 0) {
+      return cards;
+    }
+    try {
+      const vectors = await this.embeddingClient.embed(cards.map((card) => this.composeEmbeddingText(card)));
+      return cards.map((card, position) => ({
+        ...card,
+        embedding: vectors[position],
+        embeddingModel: this.embeddingModel,
+        embeddingDimensions: vectors[position]?.length,
+      }));
+    } catch {
+      return cards;
+    }
+  }
+
   public async indexFix(card: KnowledgeCard): Promise<void> {
     if (!this.client) {
       return;
     }
+    const [cardToIndex] = await this.attachEmbeddings([card]);
     try {
-      await this.client.index({ index: this.indexName, id: card.id, document: card });
+      await this.client.index({ index: this.indexName, id: card.id, document: cardToIndex });
       await this.client.indices.refresh({ index: this.indexName });
     } catch (error) {
       throw this.wrapError('Failed to index a knowledge card', error);
@@ -376,7 +409,8 @@ export class ElasticService {
       return { created: 0, updated: 0, failed: 0, errors: [] };
     }
 
-    const operations = cards.flatMap((card) => [
+    const cardsToUpsert = await this.attachEmbeddings(cards);
+    const operations = cardsToUpsert.flatMap((card) => [
       { update: { _index: this.indexName, _id: card.id } },
       { doc: card, doc_as_upsert: true },
     ]);
