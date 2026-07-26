@@ -2,7 +2,7 @@
   "mcpServers": {
     "patch-made-in-heaven": {
       "command": "node",
-      "args": ["C:/My-Files/College/Hackthons/Nitrostack-Hackathon/mcp/dist/index.js"]
+      "args": ["/absolute/path/to/Patch-Made-In-Heaven/mcp/dist/index.js"]
     }
   }
 }
