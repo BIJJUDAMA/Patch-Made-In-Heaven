@@ -46,6 +46,32 @@ export interface ElasticClientLike {
 interface MappingFieldLike {
   type?: string;
   dims?: number;
+  /** Present on object/nested fields — real Elasticsearch mapping responses always nest this way, never as flat dotted keys. */
+  properties?: Record<string, MappingFieldLike>;
+}
+
+/**
+ * `buildMappingProperties()` defines fields with flat dotted keys (e.g.
+ * `'environment.language'`) — Elasticsearch auto-expands these into real
+ * nested objects when the index is *created*, but always returns them
+ * nested (never as a flat dotted key) when the mapping is *read back*. A
+ * naive `actualProperties[dottedKey]` lookup would therefore never find a
+ * genuinely-present nested field. Walks the dotted path through `.properties`
+ * one segment at a time instead.
+ */
+function resolveMappingField(properties: Record<string, MappingFieldLike>, dottedPath: string): MappingFieldLike | undefined {
+  const segments = dottedPath.split('.');
+  let currentProperties: Record<string, MappingFieldLike> | undefined = properties;
+  let field: MappingFieldLike | undefined;
+
+  for (const segment of segments) {
+    if (!currentProperties) return undefined;
+    field = currentProperties[segment];
+    if (!field) return undefined;
+    currentProperties = field.properties;
+  }
+
+  return field;
 }
 
 export class ElasticServiceError extends Error {
@@ -338,7 +364,7 @@ export class ElasticService {
 
     for (const [field, expectedDef] of Object.entries(expected)) {
       const expectedType = (expectedDef as MappingFieldLike).type;
-      const actualDef = actualProperties[field];
+      const actualDef = resolveMappingField(actualProperties, field);
 
       if (!actualDef) {
         mismatches.push(`missing field "${field}" (expected type "${expectedType}")`);

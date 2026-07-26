@@ -92,6 +92,13 @@ describe('ElasticService.initIndex', () => {
   });
 
   it('is idempotent: does not recreate an already-compatible existing index', async () => {
+    // Shaped exactly like a real Elasticsearch getMapping response: dotted
+    // field names (e.g. 'environment.language') are always returned already
+    // expanded into real nested objects — never as flat dotted-string keys,
+    // even though buildMappingProperties() *defines* them with dotted keys
+    // (ES itself expands them on index creation). A flat-shaped fake here
+    // would mask a real bug in the comparison logic (see DOUBTS.md, Phase 7
+    // Checkpoint 3) rather than catch it.
     const client = baseFakeClient();
     (client.indices.exists as ReturnType<typeof vi.fn>).mockResolvedValue(true);
     (client.indices.getMapping as ReturnType<typeof vi.fn>).mockResolvedValue({
@@ -103,26 +110,38 @@ describe('ElasticService.initIndex', () => {
             problem: { type: 'text' },
             errorType: { type: 'keyword' },
             stacktrace: { type: 'text' },
-            'environment.language': { type: 'keyword' },
-            'environment.version': { type: 'keyword' },
-            'environment.framework': { type: 'keyword' },
-            'environment.packageVersions': { type: 'flattened' },
+            environment: {
+              properties: {
+                language: { type: 'keyword' },
+                version: { type: 'keyword' },
+                framework: { type: 'keyword' },
+                packageVersions: { type: 'flattened' },
+              },
+            },
             patch: { type: 'text' },
-            'verification.status': { type: 'keyword' },
-            'verification.score': { type: 'float' },
-            'verification.lastVerified': { type: 'date' },
-            'verification.sandbox': { type: 'keyword' },
-            'verification.exitCode': { type: 'integer' },
-            'verification.durationMs': { type: 'integer' },
-            'verification.stdout': { type: 'text' },
-            'verification.stderr': { type: 'text' },
-            'metrics.reuseCount': { type: 'integer' },
+            verification: {
+              properties: {
+                status: { type: 'keyword' },
+                score: { type: 'float' },
+                lastVerified: { type: 'date' },
+                sandbox: { type: 'keyword' },
+                exitCode: { type: 'integer' },
+                durationMs: { type: 'integer' },
+                stdout: { type: 'text' },
+                stderr: { type: 'text' },
+              },
+            },
+            metrics: { properties: { reuseCount: { type: 'integer' } } },
             embeddingModel: { type: 'keyword' },
             embeddingDimensions: { type: 'integer' },
-            'provenance.source': { type: 'keyword' },
-            'provenance.category': { type: 'keyword' },
-            'provenance.addedAt': { type: 'date' },
-            'provenance.addedBy': { type: 'keyword' },
+            provenance: {
+              properties: {
+                source: { type: 'keyword' },
+                category: { type: 'keyword' },
+                addedAt: { type: 'date' },
+                addedBy: { type: 'keyword' },
+              },
+            },
           },
         },
       },
@@ -133,6 +152,34 @@ describe('ElasticService.initIndex', () => {
 
     expect(result).toBe(true);
     expect(client.indices.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a nested field with the wrong type, correctly resolved through a dotted path', async () => {
+    const client = baseFakeClient();
+    (client.indices.exists as ReturnType<typeof vi.fn>).mockResolvedValue(true);
+    (client.indices.getMapping as ReturnType<typeof vi.fn>).mockResolvedValue({
+      [INDEX_NAME]: {
+        mappings: {
+          properties: {
+            schemaVersion: { type: 'keyword' },
+            id: { type: 'keyword' },
+            problem: { type: 'text' },
+            errorType: { type: 'keyword' },
+            stacktrace: { type: 'text' },
+            environment: { properties: { language: { type: 'text' } } }, // wrong: should be keyword
+            patch: { type: 'text' },
+            verification: { properties: { status: { type: 'keyword' } } },
+            metrics: { properties: { reuseCount: { type: 'integer' } } },
+            embeddingModel: { type: 'keyword' },
+            embeddingDimensions: { type: 'integer' },
+            provenance: { properties: { source: { type: 'keyword' } } },
+          },
+        },
+      },
+    });
+
+    const service = new ElasticService({ env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }), client });
+    await expect(service.initIndex()).rejects.toThrow(ElasticMappingIncompatibleError);
   });
 
   it('rejects an incompatible existing mapping without modifying the index', async () => {
