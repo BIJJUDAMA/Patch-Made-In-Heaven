@@ -57,6 +57,9 @@ const rawEnvSchema = z.preprocess(
     ELASTICSEARCH_REQUEST_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
 
     OPENROUTER_API_KEY: z.string().trim().min(1).optional(),
+    // Fallback embedding key for when the primary runs out of credits (Phase 7).
+    // Purely optional — never required even when OPENROUTER_API_KEY is set.
+    OPENROUTER_API_KEY_2: z.string().trim().min(1).optional(),
     OPENROUTER_BASE_URL: optionalUrl().default('https://openrouter.ai/api/v1'),
     OPENROUTER_EMBEDDING_MODEL: z.string().trim().min(1).default('nvidia/nemotron-3-embed-1b:free'),
     EMBEDDING_VECTOR_DIMENSIONS: z.coerce.number().int().positive().optional(),
@@ -134,6 +137,8 @@ export interface AppEnv {
   embedding: {
     baseUrl: string;
     apiKey?: string;
+    /** Credits-exhaustion fallback for `apiKey` (Phase 7) — tried once if the primary key's own retries are exhausted. */
+    fallbackApiKey?: string;
     model: string;
     dimensions?: number;
     requestTimeoutMs: number;
@@ -184,6 +189,7 @@ function toAppEnv(raw: RawAppEnv): AppEnv {
     embedding: {
       baseUrl: raw.OPENROUTER_BASE_URL,
       apiKey: raw.OPENROUTER_API_KEY,
+      fallbackApiKey: raw.OPENROUTER_API_KEY_2,
       model: raw.OPENROUTER_EMBEDDING_MODEL,
       dimensions: raw.EMBEDDING_VECTOR_DIMENSIONS,
       requestTimeoutMs: raw.EMBEDDING_REQUEST_TIMEOUT_MS,
@@ -231,6 +237,7 @@ export function loadEnv(source: NodeJS.ProcessEnv = process.env): AppEnv {
 export interface EnvCapabilities {
   elasticsearchConfigured: boolean;
   embeddingConfigured: boolean;
+  embeddingFallbackConfigured: boolean;
   reasoningConfigured: boolean;
   embeddingModel: string;
   embeddingDimensions: number | null;
@@ -243,6 +250,7 @@ export function describeCapabilities(appEnv: AppEnv): EnvCapabilities {
   return {
     elasticsearchConfigured: Boolean(appEnv.elasticsearch.url),
     embeddingConfigured: Boolean(appEnv.embedding.apiKey),
+    embeddingFallbackConfigured: Boolean(appEnv.embedding.fallbackApiKey),
     reasoningConfigured: Boolean(appEnv.reasoning.apiKey),
     embeddingModel: appEnv.embedding.model,
     embeddingDimensions: appEnv.embedding.dimensions ?? null,

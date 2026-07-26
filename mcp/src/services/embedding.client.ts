@@ -12,6 +12,13 @@ import type { AppEnv } from '../config/env.js';
 export interface EmbeddingClientOptions {
   baseUrl: string;
   apiKey: string;
+  /**
+   * Credits-exhaustion fallback (Phase 7): tried once, with its own full
+   * retry budget, only after `apiKey`'s own bounded retries are exhausted —
+   * regardless of why the primary key failed (rate limited, out of credits,
+   * transient network error). Never used if `apiKey` succeeds.
+   */
+  fallbackApiKey?: string;
   model: string;
   /** Expected vector length. When set, any mismatch is a hard failure. */
   dimensions?: number;
@@ -71,6 +78,7 @@ interface RawEmbeddingResponse {
 export class EmbeddingClient {
   private readonly baseUrl: string;
   private readonly apiKey: string;
+  private readonly fallbackApiKey?: string;
   private readonly model: string;
   private readonly dimensions?: number;
   private readonly requestTimeoutMs: number;
@@ -81,6 +89,7 @@ export class EmbeddingClient {
   constructor(options: EmbeddingClientOptions) {
     this.baseUrl = options.baseUrl.replace(/\/+$/, '');
     this.apiKey = options.apiKey;
+    this.fallbackApiKey = options.fallbackApiKey;
     this.model = options.model;
     this.dimensions = options.dimensions;
     this.requestTimeoutMs = options.requestTimeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
@@ -110,16 +119,28 @@ export class EmbeddingClient {
     return results;
   }
 
-  private async requestBatch(batch: string[], attempt = 0): Promise<number[][]> {
+  private async requestBatch(batch: string[], attempt = 0, usingFallback = false): Promise<number[][]> {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), this.requestTimeoutMs);
+    const apiKey = usingFallback ? this.fallbackApiKey! : this.apiKey;
+
+    // Any failure mode — non-retryable HTTP status, retries exhausted, or a
+    // thrown network/timeout error — falls through here exactly once, to
+    // retry the same batch fresh on the fallback key (its own full retry
+    // budget) before giving up for good. Never used if the primary succeeds.
+    const fallbackOnce = (): Promise<number[][]> | undefined => {
+      if (!usingFallback && this.fallbackApiKey) {
+        return this.requestBatch(batch, 0, true);
+      }
+      return undefined;
+    };
 
     try {
       const response = await this.fetchImpl(`${this.baseUrl}/embeddings`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({ model: this.model, input: batch }),
         signal: controller.signal,
@@ -129,8 +150,10 @@ export class EmbeddingClient {
         const retryable = response.status === 429 || response.status >= 500;
         if (retryable && attempt < this.maxRetries) {
           await delay(backoffMs(attempt));
-          return this.requestBatch(batch, attempt + 1);
+          return this.requestBatch(batch, attempt + 1, usingFallback);
         }
+        const fallback = fallbackOnce();
+        if (fallback) return fallback;
         throw new EmbeddingProviderError(
           `Embedding provider responded with HTTP ${response.status} ${response.statusText}`.trim()
         );
@@ -145,8 +168,10 @@ export class EmbeddingClient {
       const isTimeout = error instanceof Error && error.name === 'AbortError';
       if (attempt < this.maxRetries) {
         await delay(backoffMs(attempt));
-        return this.requestBatch(batch, attempt + 1);
+        return this.requestBatch(batch, attempt + 1, usingFallback);
       }
+      const fallback = fallbackOnce();
+      if (fallback) return fallback;
       throw new EmbeddingProviderError(
         isTimeout
           ? `Embedding request timed out after ${this.requestTimeoutMs}ms.`
@@ -196,6 +221,7 @@ export function createEmbeddingClientFromEnv(env: AppEnv, fetchImpl?: typeof fet
   return new EmbeddingClient({
     baseUrl: env.embedding.baseUrl,
     apiKey: env.embedding.apiKey,
+    fallbackApiKey: env.embedding.fallbackApiKey,
     model: env.embedding.model,
     dimensions: env.embedding.dimensions,
     requestTimeoutMs: env.embedding.requestTimeoutMs,

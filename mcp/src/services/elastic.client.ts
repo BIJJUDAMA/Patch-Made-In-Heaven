@@ -46,6 +46,32 @@ export interface ElasticClientLike {
 interface MappingFieldLike {
   type?: string;
   dims?: number;
+  /** Present on object/nested fields — real Elasticsearch mapping responses always nest this way, never as flat dotted keys. */
+  properties?: Record<string, MappingFieldLike>;
+}
+
+/**
+ * `buildMappingProperties()` defines fields with flat dotted keys (e.g.
+ * `'environment.language'`) — Elasticsearch auto-expands these into real
+ * nested objects when the index is *created*, but always returns them
+ * nested (never as a flat dotted key) when the mapping is *read back*. A
+ * naive `actualProperties[dottedKey]` lookup would therefore never find a
+ * genuinely-present nested field. Walks the dotted path through `.properties`
+ * one segment at a time instead.
+ */
+function resolveMappingField(properties: Record<string, MappingFieldLike>, dottedPath: string): MappingFieldLike | undefined {
+  const segments = dottedPath.split('.');
+  let currentProperties: Record<string, MappingFieldLike> | undefined = properties;
+  let field: MappingFieldLike | undefined;
+
+  for (const segment of segments) {
+    if (!currentProperties) return undefined;
+    field = currentProperties[segment];
+    if (!field) return undefined;
+    currentProperties = field.properties;
+  }
+
+  return field;
 }
 
 export class ElasticServiceError extends Error {
@@ -260,6 +286,7 @@ export class ElasticService {
   private readonly indexName: string;
   private readonly apiKey?: string;
   private readonly embeddingDimensions?: number;
+  private readonly embeddingModel: string;
   private readonly embeddingClient: QueryEmbedder | null;
 
   constructor(options: ElasticServiceOptions = {}) {
@@ -267,6 +294,7 @@ export class ElasticService {
     this.indexName = options.indexName ?? INDEX_NAME;
     this.apiKey = env.elasticsearch.apiKey;
     this.embeddingDimensions = env.embedding.dimensions;
+    this.embeddingModel = env.embedding.model;
     this.embeddingClient = options.embeddingClient !== undefined ? options.embeddingClient : createEmbeddingClientFromEnv(env);
 
     if (options.client) {
@@ -336,7 +364,7 @@ export class ElasticService {
 
     for (const [field, expectedDef] of Object.entries(expected)) {
       const expectedType = (expectedDef as MappingFieldLike).type;
-      const actualDef = actualProperties[field];
+      const actualDef = resolveMappingField(actualProperties, field);
 
       if (!actualDef) {
         mismatches.push(`missing field "${field}" (expected type "${expectedType}")`);
@@ -355,12 +383,43 @@ export class ElasticService {
     }
   }
 
+  /** Text a card is matched against by both query-time and index-time embeddings — keep these composed the same way. */
+  private composeEmbeddingText(card: KnowledgeCard): string {
+    return `${card.problem}\n${card.errorType}`;
+  }
+
+  /**
+   * Attaches a real embedding vector to each card before it's written, when an
+   * embedding client is configured. Degrades gracefully — returns the cards
+   * unchanged (no `embedding` field, exactly like today) on any embedding
+   * failure or when no client is configured — indexing must never fail just
+   * because embedding generation hiccupped, mirroring `tryEmbedQuery`'s same
+   * degrade-not-fail principle on the read side.
+   */
+  private async attachEmbeddings(cards: KnowledgeCard[]): Promise<KnowledgeCard[]> {
+    if (!this.embeddingClient || cards.length === 0) {
+      return cards;
+    }
+    try {
+      const vectors = await this.embeddingClient.embed(cards.map((card) => this.composeEmbeddingText(card)));
+      return cards.map((card, position) => ({
+        ...card,
+        embedding: vectors[position],
+        embeddingModel: this.embeddingModel,
+        embeddingDimensions: vectors[position]?.length,
+      }));
+    } catch {
+      return cards;
+    }
+  }
+
   public async indexFix(card: KnowledgeCard): Promise<void> {
     if (!this.client) {
       return;
     }
+    const [cardToIndex] = await this.attachEmbeddings([card]);
     try {
-      await this.client.index({ index: this.indexName, id: card.id, document: card });
+      await this.client.index({ index: this.indexName, id: card.id, document: cardToIndex });
       await this.client.indices.refresh({ index: this.indexName });
     } catch (error) {
       throw this.wrapError('Failed to index a knowledge card', error);
@@ -376,7 +435,8 @@ export class ElasticService {
       return { created: 0, updated: 0, failed: 0, errors: [] };
     }
 
-    const operations = cards.flatMap((card) => [
+    const cardsToUpsert = await this.attachEmbeddings(cards);
+    const operations = cardsToUpsert.flatMap((card) => [
       { update: { _index: this.indexName, _id: card.id } },
       { doc: card, doc_as_upsert: true },
     ]);

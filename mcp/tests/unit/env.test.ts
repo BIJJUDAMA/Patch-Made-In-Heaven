@@ -44,6 +44,21 @@ describe('loadEnv', () => {
     expect(env.embedding.dimensions).toBe(1024);
   });
 
+  it('accepts an optional OPENROUTER_API_KEY_2 fallback, never required even when the primary key is set', () => {
+    const env = loadEnv({
+      OPENROUTER_API_KEY: 'super-secret-openrouter-key',
+      OPENROUTER_API_KEY_2: 'super-secret-fallback-key',
+      EMBEDDING_VECTOR_DIMENSIONS: '1024',
+    } as NodeJS.ProcessEnv);
+    expect(env.embedding.fallbackApiKey).toBe('super-secret-fallback-key');
+
+    const envWithoutFallback = loadEnv({
+      OPENROUTER_API_KEY: 'super-secret-openrouter-key',
+      EMBEDDING_VECTOR_DIMENSIONS: '1024',
+    } as NodeJS.ProcessEnv);
+    expect(envWithoutFallback.embedding.fallbackApiKey).toBeUndefined();
+  });
+
   it('rejects a malformed Elasticsearch URL', () => {
     expect(() =>
       loadEnv({ ELASTICSEARCH_URL: 'not-a-valid-url' } as NodeJS.ProcessEnv)

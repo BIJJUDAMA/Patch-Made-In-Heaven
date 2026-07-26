@@ -92,6 +92,13 @@ describe('ElasticService.initIndex', () => {
   });
 
   it('is idempotent: does not recreate an already-compatible existing index', async () => {
+    // Shaped exactly like a real Elasticsearch getMapping response: dotted
+    // field names (e.g. 'environment.language') are always returned already
+    // expanded into real nested objects — never as flat dotted-string keys,
+    // even though buildMappingProperties() *defines* them with dotted keys
+    // (ES itself expands them on index creation). A flat-shaped fake here
+    // would mask a real bug in the comparison logic (see DOUBTS.md, Phase 7
+    // Checkpoint 3) rather than catch it.
     const client = baseFakeClient();
     (client.indices.exists as ReturnType<typeof vi.fn>).mockResolvedValue(true);
     (client.indices.getMapping as ReturnType<typeof vi.fn>).mockResolvedValue({
@@ -103,26 +110,38 @@ describe('ElasticService.initIndex', () => {
             problem: { type: 'text' },
             errorType: { type: 'keyword' },
             stacktrace: { type: 'text' },
-            'environment.language': { type: 'keyword' },
-            'environment.version': { type: 'keyword' },
-            'environment.framework': { type: 'keyword' },
-            'environment.packageVersions': { type: 'flattened' },
+            environment: {
+              properties: {
+                language: { type: 'keyword' },
+                version: { type: 'keyword' },
+                framework: { type: 'keyword' },
+                packageVersions: { type: 'flattened' },
+              },
+            },
             patch: { type: 'text' },
-            'verification.status': { type: 'keyword' },
-            'verification.score': { type: 'float' },
-            'verification.lastVerified': { type: 'date' },
-            'verification.sandbox': { type: 'keyword' },
-            'verification.exitCode': { type: 'integer' },
-            'verification.durationMs': { type: 'integer' },
-            'verification.stdout': { type: 'text' },
-            'verification.stderr': { type: 'text' },
-            'metrics.reuseCount': { type: 'integer' },
+            verification: {
+              properties: {
+                status: { type: 'keyword' },
+                score: { type: 'float' },
+                lastVerified: { type: 'date' },
+                sandbox: { type: 'keyword' },
+                exitCode: { type: 'integer' },
+                durationMs: { type: 'integer' },
+                stdout: { type: 'text' },
+                stderr: { type: 'text' },
+              },
+            },
+            metrics: { properties: { reuseCount: { type: 'integer' } } },
             embeddingModel: { type: 'keyword' },
             embeddingDimensions: { type: 'integer' },
-            'provenance.source': { type: 'keyword' },
-            'provenance.category': { type: 'keyword' },
-            'provenance.addedAt': { type: 'date' },
-            'provenance.addedBy': { type: 'keyword' },
+            provenance: {
+              properties: {
+                source: { type: 'keyword' },
+                category: { type: 'keyword' },
+                addedAt: { type: 'date' },
+                addedBy: { type: 'keyword' },
+              },
+            },
           },
         },
       },
@@ -133,6 +152,34 @@ describe('ElasticService.initIndex', () => {
 
     expect(result).toBe(true);
     expect(client.indices.create).not.toHaveBeenCalled();
+  });
+
+  it('rejects a nested field with the wrong type, correctly resolved through a dotted path', async () => {
+    const client = baseFakeClient();
+    (client.indices.exists as ReturnType<typeof vi.fn>).mockResolvedValue(true);
+    (client.indices.getMapping as ReturnType<typeof vi.fn>).mockResolvedValue({
+      [INDEX_NAME]: {
+        mappings: {
+          properties: {
+            schemaVersion: { type: 'keyword' },
+            id: { type: 'keyword' },
+            problem: { type: 'text' },
+            errorType: { type: 'keyword' },
+            stacktrace: { type: 'text' },
+            environment: { properties: { language: { type: 'text' } } }, // wrong: should be keyword
+            patch: { type: 'text' },
+            verification: { properties: { status: { type: 'keyword' } } },
+            metrics: { properties: { reuseCount: { type: 'integer' } } },
+            embeddingModel: { type: 'keyword' },
+            embeddingDimensions: { type: 'integer' },
+            provenance: { properties: { source: { type: 'keyword' } } },
+          },
+        },
+      },
+    });
+
+    const service = new ElasticService({ env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }), client });
+    await expect(service.initIndex()).rejects.toThrow(ElasticMappingIncompatibleError);
   });
 
   it('rejects an incompatible existing mapping without modifying the index', async () => {
@@ -246,6 +293,113 @@ describe('ElasticService.bulkUpsertFixes', () => {
     const service = new ElasticService({ env: testEnv({ ELASTICSEARCH_URL: undefined }) });
     await expect(service.bulkUpsertFixes([sampleCard('fix_a')])).rejects.toThrow(ElasticServiceError);
   });
+
+  it('attaches a real embedding to every card before writing, when an embedding client is configured (Phase 7)', async () => {
+    const client = baseFakeClient();
+    (client.bulk as ReturnType<typeof vi.fn>).mockResolvedValue({
+      errors: false,
+      items: [
+        { update: { result: 'created', _id: 'fix_a' } },
+        { update: { result: 'created', _id: 'fix_b' } },
+      ],
+    });
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatReturnsMany([[0.1, 0.2], [0.3, 0.4]]),
+    });
+    await service.bulkUpsertFixes([sampleCard('fix_a'), sampleCard('fix_b')]);
+
+    const bulkArgs = (client.bulk as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const docs = bulkArgs.operations.filter((op: Record<string, unknown>) => 'doc' in op).map((op: any) => op.doc);
+    expect(docs[0].embedding).toEqual([0.1, 0.2]);
+    expect(docs[0].embeddingDimensions).toBe(2);
+    expect(typeof docs[0].embeddingModel).toBe('string');
+    expect(docs[1].embedding).toEqual([0.3, 0.4]);
+  });
+
+  it('writes cards without an embedding, unchanged, when no embedding client is configured', async () => {
+    const client = baseFakeClient();
+    (client.bulk as ReturnType<typeof vi.fn>).mockResolvedValue({
+      errors: false,
+      items: [{ update: { result: 'created', _id: 'fix_a' } }],
+    });
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: null,
+    });
+    await service.bulkUpsertFixes([sampleCard('fix_a')]);
+
+    const bulkArgs = (client.bulk as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const doc = bulkArgs.operations.find((op: Record<string, unknown>) => 'doc' in op) as { doc: KnowledgeCard };
+    expect(doc.doc.embedding).toBeUndefined();
+  });
+
+  it('still writes cards (without an embedding) when the embedding client throws — never fails the whole batch', async () => {
+    const client = baseFakeClient();
+    (client.bulk as ReturnType<typeof vi.fn>).mockResolvedValue({
+      errors: false,
+      items: [{ update: { result: 'created', _id: 'fix_a' } }],
+    });
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatFails(),
+    });
+    const result = await service.bulkUpsertFixes([sampleCard('fix_a')]);
+
+    expect(result.created).toBe(1);
+    const bulkArgs = (client.bulk as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    const doc = bulkArgs.operations.find((op: Record<string, unknown>) => 'doc' in op) as { doc: KnowledgeCard };
+    expect(doc.doc.embedding).toBeUndefined();
+  });
+});
+
+describe('ElasticService.indexFix', () => {
+  it('attaches a real embedding before writing, when an embedding client is configured (Phase 7)', async () => {
+    const client = baseFakeClient();
+    (client.index as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (client.indices.refresh as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatReturnsMany([[0.5, 0.6, 0.7]]),
+    });
+    await service.indexFix(sampleCard('fix_a'));
+
+    const indexArgs = (client.index as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(indexArgs.document.embedding).toEqual([0.5, 0.6, 0.7]);
+    expect(indexArgs.document.embeddingDimensions).toBe(3);
+  });
+
+  it('degrades gracefully — still indexes the card — when the embedding client throws', async () => {
+    const client = baseFakeClient();
+    (client.index as ReturnType<typeof vi.fn>).mockResolvedValue({});
+    (client.indices.refresh as ReturnType<typeof vi.fn>).mockResolvedValue({});
+
+    const service = new ElasticService({
+      env: testEnv({ EMBEDDING_VECTOR_DIMENSIONS: undefined }),
+      client,
+      embeddingClient: embedderThatFails(),
+    });
+    await service.indexFix(sampleCard('fix_a'));
+
+    const indexArgs = (client.index as ReturnType<typeof vi.fn>).mock.calls[0][0];
+    expect(indexArgs.document.embedding).toBeUndefined();
+    expect(client.index).toHaveBeenCalledTimes(1);
+  });
+
+  it('is a no-op (no embedding call) when Elasticsearch itself is not configured', async () => {
+    const embeddingClient = embedderThatReturnsMany([[0.1]]);
+    const service = new ElasticService({ env: testEnv({ ELASTICSEARCH_URL: undefined }), embeddingClient });
+    await service.indexFix(sampleCard('fix_a'));
+    expect(embeddingClient.embed as ReturnType<typeof vi.fn>).not.toHaveBeenCalled();
+  });
 });
 
 describe('query builders', () => {
@@ -296,6 +450,11 @@ describe('query builders', () => {
 
 function embedderThatReturns(vector: number[]): QueryEmbedder {
   return { embed: vi.fn().mockResolvedValue([vector]) };
+}
+
+/** For index-time (batch) embedding — returns one vector per input, in order. */
+function embedderThatReturnsMany(vectors: number[][]): QueryEmbedder {
+  return { embed: vi.fn().mockResolvedValue(vectors) };
 }
 
 function embedderThatFails(): QueryEmbedder {
